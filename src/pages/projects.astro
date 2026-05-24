@@ -31,6 +31,8 @@ const unspecifiedProjects = projects.filter((project) => getProjectStatus(projec
         <button 
           type="button"
           data-filter="all"
+          data-active="true"
+          aria-pressed="true"
           class="filter-btn active flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-accent-100 dark:bg-accent-900/30 text-sm cursor-pointer border-none transition-all"
         >
           <span class="i-mdi:code-braces text-accent-600 dark:text-accent-400 text-base"></span>
@@ -41,6 +43,8 @@ const unspecifiedProjects = projects.filter((project) => getProjectStatus(projec
           <button 
             type="button"
             data-filter="active"
+            data-active="false"
+            aria-pressed="false"
             class="filter-btn flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-sm cursor-pointer border-none hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
           >
             <span class="i-mdi:rocket-launch text-gray-500 dark:text-gray-400 text-base"></span>
@@ -52,6 +56,8 @@ const unspecifiedProjects = projects.filter((project) => getProjectStatus(projec
           <button 
             type="button"
             data-filter="past"
+            data-active="false"
+            aria-pressed="false"
             class="filter-btn flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-sm cursor-pointer border-none hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
           >
             <span class="i-mdi:archive text-gray-500 dark:text-gray-400 text-base"></span>
@@ -63,6 +69,8 @@ const unspecifiedProjects = projects.filter((project) => getProjectStatus(projec
           <button 
             type="button"
             data-filter="unspecified"
+            data-active="false"
+            aria-pressed="false"
             class="filter-btn flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-sm cursor-pointer border-none hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
           >
             <span class="i-mdi:folder-open text-gray-500 dark:text-gray-400 text-base"></span>
@@ -76,7 +84,7 @@ const unspecifiedProjects = projects.filter((project) => getProjectStatus(projec
     <div class="fade-in-up animation-delay-200 space-y-6" id="projects-container">
       <!-- Active Projects -->
       {activeProjects.length > 0 && (
-        <section class="space-y-3 project-section" data-category="active">
+        <section class="space-y-3 project-section" data-filter-section="active">
           <h2 class="text-sm font-semibold text-accent-600 dark:text-accent-400 uppercase tracking-wide">
             Active
           </h2>
@@ -146,7 +154,7 @@ const unspecifiedProjects = projects.filter((project) => getProjectStatus(projec
 
       <!-- Past/Other Projects -->
       {pastProjects.length > 0 && (
-        <section class="space-y-3 project-section" data-category="past">
+        <section class="space-y-3 project-section" data-filter-section="past">
           <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
             Past
           </h2>
@@ -203,7 +211,7 @@ const unspecifiedProjects = projects.filter((project) => getProjectStatus(projec
       )}
 
       {unspecifiedProjects.length > 0 && (
-        <section class="space-y-3 project-section" data-category="unspecified">
+        <section class="space-y-3 project-section" data-filter-section="unspecified">
           <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
             Other
           </h2>
@@ -254,45 +262,8 @@ const unspecifiedProjects = projects.filter((project) => getProjectStatus(projec
   </div>
 </Layout>
 
-<script is:inline>
-  document.addEventListener("DOMContentLoaded", () => {
-    const filterBtns = document.querySelectorAll(".filter-btn");
-    const sections = document.querySelectorAll(".project-section");
+<script>
+  import { setupFilterControls } from "../scripts/ui";
 
-    filterBtns.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const filter = btn.getAttribute("data-filter");
-        
-        // Update active button styles
-        filterBtns.forEach((b) => {
-          b.classList.remove("bg-accent-100", "dark:bg-accent-900/30");
-          b.classList.add("bg-gray-100", "dark:bg-gray-800");
-          b.querySelector("span:first-child")?.classList.remove("text-accent-600", "dark:text-accent-400");
-          b.querySelector("span:first-child")?.classList.add("text-gray-500", "dark:text-gray-400");
-          b.querySelector("span:nth-child(2)")?.classList.remove("text-accent-700", "dark:text-accent-300");
-          b.querySelector("span:nth-child(2)")?.classList.add("text-gray-700", "dark:text-gray-300");
-          b.querySelector("span:nth-child(3)")?.classList.remove("text-accent-600", "dark:text-accent-400");
-          b.querySelector("span:nth-child(3)")?.classList.add("text-gray-500", "dark:text-gray-500");
-        });
-        
-        btn.classList.remove("bg-gray-100", "dark:bg-gray-800");
-        btn.classList.add("bg-accent-100", "dark:bg-accent-900/30");
-        btn.querySelector("span:first-child")?.classList.remove("text-gray-500", "dark:text-gray-400");
-        btn.querySelector("span:first-child")?.classList.add("text-accent-600", "dark:text-accent-400");
-        btn.querySelector("span:nth-child(2)")?.classList.remove("text-gray-700", "dark:text-gray-300");
-        btn.querySelector("span:nth-child(2)")?.classList.add("text-accent-700", "dark:text-accent-300");
-        btn.querySelector("span:nth-child(3)")?.classList.remove("text-gray-500", "dark:text-gray-500");
-        btn.querySelector("span:nth-child(3)")?.classList.add("text-accent-600", "dark:text-accent-400");
-
-        // Filter sections
-        sections.forEach((section) => {
-          if (filter === "all" || section.getAttribute("data-category") === filter) {
-            section.classList.remove("hidden");
-          } else {
-            section.classList.add("hidden");
-          }
-        });
-      });
-    });
-  });
+  setupFilterControls();
 </script>

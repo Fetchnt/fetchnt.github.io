@@ -53,6 +53,8 @@ const totalPast = past.reduce((acc, s) => acc + (s.modules?.length || 0), 0);
         <button 
           type="button"
           data-filter="all"
+          data-active="true"
+          aria-pressed="true"
           class="filter-btn active flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-accent-100 dark:bg-accent-900/30 text-sm cursor-pointer border-none transition-all"
         >
           <span class="i-mdi:school text-accent-600 dark:text-accent-400 text-base"></span>
@@ -63,6 +65,8 @@ const totalPast = past.reduce((acc, s) => acc + (s.modules?.length || 0), 0);
           <button 
             type="button"
             data-filter="current"
+            data-active="false"
+            aria-pressed="false"
             class="filter-btn flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-sm cursor-pointer border-none hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
           >
             <span class="i-mdi:calendar-check text-gray-500 dark:text-gray-400 text-base"></span>
@@ -74,6 +78,8 @@ const totalPast = past.reduce((acc, s) => acc + (s.modules?.length || 0), 0);
           <button 
             type="button"
             data-filter="past"
+            data-active="false"
+            aria-pressed="false"
             class="filter-btn flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-sm cursor-pointer border-none hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
           >
             <span class="i-mdi:history text-gray-500 dark:text-gray-400 text-base"></span>
@@ -88,7 +94,7 @@ const totalPast = past.reduce((acc, s) => acc + (s.modules?.length || 0), 0);
       <!-- Current Modules -->
       {
         current.length > 0 && (
-          <section class="space-y-4 teaching-section" data-category="current">
+          <section class="space-y-4 teaching-section" data-filter-section="current">
             <h2 class="text-sm font-semibold text-accent-600 dark:text-accent-400 uppercase tracking-wide">
               Current Courses
             </h2>
@@ -159,7 +165,7 @@ const totalPast = past.reduce((acc, s) => acc + (s.modules?.length || 0), 0);
       <!-- Past Modules -->
       {
         past.length > 0 && (
-          <section class="space-y-4 teaching-section" data-category="past">
+          <section class="space-y-4 teaching-section" data-filter-section="past">
             <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
               Past Courses
             </h2>
@@ -227,45 +233,8 @@ const totalPast = past.reduce((acc, s) => acc + (s.modules?.length || 0), 0);
   </div>
 </Layout>
 
-<script is:inline>
-  document.addEventListener("DOMContentLoaded", () => {
-    const filterBtns = document.querySelectorAll(".filter-btn");
-    const sections = document.querySelectorAll(".teaching-section");
+<script>
+  import { setupFilterControls } from "../scripts/ui";
 
-    filterBtns.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const filter = btn.getAttribute("data-filter");
-        
-        // Update active button styles
-        filterBtns.forEach((b) => {
-          b.classList.remove("bg-accent-100", "dark:bg-accent-900/30");
-          b.classList.add("bg-gray-100", "dark:bg-gray-800");
-          b.querySelector("span:first-child")?.classList.remove("text-accent-600", "dark:text-accent-400");
-          b.querySelector("span:first-child")?.classList.add("text-gray-500", "dark:text-gray-400");
-          b.querySelector("span:nth-child(2)")?.classList.remove("text-accent-700", "dark:text-accent-300");
-          b.querySelector("span:nth-child(2)")?.classList.add("text-gray-700", "dark:text-gray-300");
-          b.querySelector("span:nth-child(3)")?.classList.remove("text-accent-600", "dark:text-accent-400");
-          b.querySelector("span:nth-child(3)")?.classList.add("text-gray-500", "dark:text-gray-500");
-        });
-        
-        btn.classList.remove("bg-gray-100", "dark:bg-gray-800");
-        btn.classList.add("bg-accent-100", "dark:bg-accent-900/30");
-        btn.querySelector("span:first-child")?.classList.remove("text-gray-500", "dark:text-gray-400");
-        btn.querySelector("span:first-child")?.classList.add("text-accent-600", "dark:text-accent-400");
-        btn.querySelector("span:nth-child(2)")?.classList.remove("text-gray-700", "dark:text-gray-300");
-        btn.querySelector("span:nth-child(2)")?.classList.add("text-accent-700", "dark:text-accent-300");
-        btn.querySelector("span:nth-child(3)")?.classList.remove("text-gray-500", "dark:text-gray-500");
-        btn.querySelector("span:nth-child(3)")?.classList.add("text-accent-600", "dark:text-accent-400");
-
-        // Filter sections
-        sections.forEach((section) => {
-          if (filter === "all" || section.getAttribute("data-category") === filter) {
-            section.classList.remove("hidden");
-          } else {
-            section.classList.add("hidden");
-          }
-        });
-      });
-    });
-  });
+  setupFilterControls();
 </script>
