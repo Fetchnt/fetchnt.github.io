@@ -20,8 +20,6 @@ const ogImage = image || "/profile.svg";
 const currentYear = new Date().getFullYear();
 const siteTitle = siteConfig.author || siteConfig.title;
 const navLinks = siteConfig.navLinks;
-const inlineLinkClasses =
-  "block px-3 py-2 text-center font-medium text-slate-600 no-underline transition-colors duration-200 hover:bg-accent-100 hover:text-accent-700 dark:text-slate-300 dark:hover:bg-accent-500/20 dark:hover:text-accent-200 rounded-full";
 ---
 
 <!doctype html>
@@ -33,7 +31,6 @@ const inlineLinkClasses =
 
     <meta name="keywords" content={siteConfig.keywords.join(", ")} />
     <meta name="generator" content={Astro.generator} />
-    <title>{siteConfig.title}</title>
     <link rel="sitemap" href="/sitemap-index.xml" />
 
     <SEO
