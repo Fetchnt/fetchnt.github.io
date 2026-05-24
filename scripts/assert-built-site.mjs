@@ -42,3 +42,10 @@ try {
 } catch (error) {
 	if (error.code !== "ENOENT") throw error;
 }
+
+const about = await readDist("about/index.html");
+assert(about.includes("Current Role"), "about page should render profile data");
+assert(
+	about.includes("Research Areas"),
+	"about page should render research areas profile data",
+);
