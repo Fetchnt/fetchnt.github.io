@@ -20,6 +20,14 @@ const ogImage = image || "/profile.svg";
 const currentYear = new Date().getFullYear();
 const siteTitle = siteConfig.author || siteConfig.title;
 const navLinks = siteConfig.navLinks;
+const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
+
+function isActiveNav(href: string): boolean {
+  const normalizedHref = href.replace(/\/$/, "") || "/";
+  return normalizedHref === "/"
+    ? currentPath === "/"
+    : currentPath === normalizedHref || currentPath.startsWith(`${normalizedHref}/`);
+}
 ---
 
 <!doctype html>
@@ -73,8 +81,14 @@ const navLinks = siteConfig.navLinks;
                 navLinks.map((link) => (
                   <li>
                     <a
-                      class="block px-3 py-1.5 text-sm font-medium text-gray-600 no-underline transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+                      class:list={[
+                        "block px-3 py-1.5 text-sm font-medium no-underline transition-all rounded-full",
+                        isActiveNav(link.href)
+                          ? "bg-accent-100 text-accent-800 dark:bg-accent-900/40 dark:text-accent-200"
+                          : "text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-100 dark:hover:bg-gray-800",
+                      ]}
                       href={link.href}
+                      aria-current={isActiveNav(link.href) ? "page" : undefined}
                     >
                       {link.label}
                     </a>
@@ -105,6 +119,7 @@ const navLinks = siteConfig.navLinks;
           id="mobile-menu-toggle"
           class="sm:hidden inline-flex h-8 w-8 items-center justify-center rounded-full bg-white border border-gray-200 shadow-sketch transition-all hover:shadow-sketch-hover hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 text-gray-600 cursor-pointer z-50"
           aria-label="Toggle menu"
+          aria-controls="mobile-menu"
           aria-expanded="false"
         >
           <span class="sr-only">Toggle menu</span>
@@ -121,6 +136,7 @@ const navLinks = siteConfig.navLinks;
         <!-- Mobile Dropdown Menu -->
         <div
           id="mobile-menu"
+          hidden
           class="absolute top-full right-0 z-40 mt-2 w-44 origin-top-right rounded-xl bg-white p-1.5 shadow-sketch ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700 opacity-0 scale-95 invisible transition-all duration-200 transform"
         >
           <nav>
@@ -129,8 +145,14 @@ const navLinks = siteConfig.navLinks;
                 navLinks.map((link) => (
                   <li>
                     <a
-                      class="block px-3 py-2 text-sm font-medium text-gray-600 no-underline transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+                      class:list={[
+                        "block px-3 py-2 text-sm font-medium no-underline transition-all rounded-lg",
+                        isActiveNav(link.href)
+                          ? "bg-accent-100 text-accent-800 dark:bg-accent-900/40 dark:text-accent-200"
+                          : "text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-100 dark:hover:bg-gray-800",
+                      ]}
                       href={link.href}
+                      aria-current={isActiveNav(link.href) ? "page" : undefined}
                     >
                       {link.label}
                     </a>
@@ -220,24 +242,28 @@ const navLinks = siteConfig.navLinks;
           const iconClose = document.getElementById("icon-close");
 
           if (menuBtn && menu && iconMenu && iconClose) {
+            const closeMenu = () => {
+              menuBtn.setAttribute("aria-expanded", "false");
+              menu.hidden = true;
+              menu.classList.add("opacity-0", "scale-95", "invisible");
+              menu.classList.remove("opacity-100", "scale-100", "visible");
+              iconMenu.classList.remove("hidden");
+              iconClose.classList.add("hidden");
+            };
+
+            const openMenu = () => {
+              menuBtn.setAttribute("aria-expanded", "true");
+              menu.hidden = false;
+              menu.classList.remove("opacity-0", "scale-95", "invisible");
+              menu.classList.add("opacity-100", "scale-100", "visible");
+              iconMenu.classList.add("hidden");
+              iconClose.classList.remove("hidden");
+            };
+
             const toggleMenu = () => {
               const isExpanded =
                 menuBtn.getAttribute("aria-expanded") === "true";
-              if (isExpanded) {
-                // Close
-                menuBtn.setAttribute("aria-expanded", "false");
-                menu.classList.add("opacity-0", "scale-95", "invisible");
-                menu.classList.remove("opacity-100", "scale-100", "visible");
-                iconMenu.classList.remove("hidden");
-                iconClose.classList.add("hidden");
-              } else {
-                // Open
-                menuBtn.setAttribute("aria-expanded", "true");
-                menu.classList.remove("opacity-0", "scale-95", "invisible");
-                menu.classList.add("opacity-100", "scale-100", "visible");
-                iconMenu.classList.add("hidden");
-                iconClose.classList.remove("hidden");
-              }
+              isExpanded ? closeMenu() : openMenu();
             };
 
             menuBtn.addEventListener("click", (e) => {
@@ -254,7 +280,17 @@ const navLinks = siteConfig.navLinks;
                 !menu.contains(e.target) &&
                 !menuBtn.contains(e.target)
               ) {
-                toggleMenu();
+                closeMenu();
+              }
+            });
+
+            document.addEventListener("keydown", (event) => {
+              if (
+                event.key === "Escape" &&
+                menuBtn.getAttribute("aria-expanded") === "true"
+              ) {
+                closeMenu();
+                menuBtn.focus();
               }
             });
           }
