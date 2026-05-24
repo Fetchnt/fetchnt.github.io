@@ -50,6 +50,23 @@ Your site will be running at `http://localhost:4321`
 | `bun build`     | Build production site to `./dist/`             |
 | `bun preview`   | Preview production build locally               |
 | `bun astro ...` | Run Astro CLI commands (e.g., `astro check`)   |
+| `bun test`      | Run unit tests                                 |
+| `bun run verify`| Run tests, Astro checks, build, and HTML checks|
+
+---
+
+## Personalization Checklist
+
+Before publishing, replace every placeholder in:
+
+- `src/side.config.ts`: name, title, affiliation, social links, keywords, status badge, profile image.
+- `src/data/publications.bib`: publication metadata, URLs, abstracts, and `public` category.
+- `src/data/about.yml`: profile, education, experience, service, and awards.
+- `src/data/projects.yml`: project title, status, period, description, technology tags, and URL.
+- `src/data/teaching.yml`: current and past course records.
+- `src/content/posts`: remove sample posts or mark drafts with `draft: true`.
+
+Run `bun run verify` before deployment.
 
 ---
 
@@ -142,7 +159,7 @@ export const siteConfig: SiteConfig = {
     subheadline: 'A longer bio describing your work and interests...',
     profileAlt: 'Portrait of Your Name',
     profileImage: '/profile.svg',  // or full URL
-    statusBadge: '📬 Open to collaboration',  // optional
+    statusBadge: 'Open to collaboration',  // optional
   },
 
   // ─────────────────────────────────────────────────────────────

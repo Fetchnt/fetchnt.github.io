@@ -48,6 +48,23 @@ bun dev
 | \`bun build\`     | 构建生产版本到 \`./dist/\`            |
 | \`bun preview\`   | 本地预览生产版本                    |
 | \`bun astro ...\` | 运行 Astro CLI 命令（如 \`astro check\`）|
+| \`bun test\`      | 运行单元测试                        |
+| \`bun run verify\`| 运行测试、Astro 检查、构建和 HTML 检查 |
+
+---
+
+## 个性化发布前检查
+
+发布前请替换以下文件中的示例内容：
+
+- \`src/side.config.ts\`：姓名、标题、单位、社交链接、关键词、状态徽标和头像。
+- \`src/data/publications.bib\`：论文元数据、链接、摘要和 \`public\` 分类。
+- \`src/data/about.yml\`：个人资料、教育经历、工作经历、学术服务和奖项。
+- \`src/data/projects.yml\`：项目标题、状态、时间、简介、技术标签和链接。
+- \`src/data/teaching.yml\`：当前和过往课程。
+- \`src/content/posts\`：删除示例文章，或使用 \`draft: true\` 标记为草稿。
+
+部署前运行 \`bun run verify\`。
 
 ---
 
@@ -140,7 +157,7 @@ export const siteConfig: SiteConfig = {
     subheadline: '更详细的自我介绍，描述您的研究工作和学术兴趣...',
     profileAlt: '张三的头像',
     profileImage: '/profile.svg',  // 或完整 URL
-    statusBadge: '📬 欢迎合作',    // 可选
+    statusBadge: '欢迎合作',       // 可选
   },
 
   // ─────────────────────────────────────────────────────────────
