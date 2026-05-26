@@ -140,8 +140,8 @@ export const siteConfig: SiteConfig = {
 		profileImageHeight: 160,
 		profileImageWidth: 160,
 
-		/** Optional: Status badge (e.g., "📬 Open to collaboration", "🎓 PhD Candidate") */
-		statusBadge: '📬 Open to collaboration',
+		/** Optional: Status badge (e.g., "Open to collaboration", "PhD Candidate") */
+		statusBadge: 'Open to collaboration',
 	},
 
 	// ---------------------------------------------------------------------------

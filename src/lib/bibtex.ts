@@ -11,6 +11,77 @@ export interface BibEntry {
 	keywords: string[];
 }
 
+function stripOuterBraces(value: string): string {
+	return value.replace(/[{}]/g, '').replace(/\s+/g, ' ').trim();
+}
+
+function formatAuthor(name: string): string {
+	const trimmed = name.replace(/\s+/g, ' ').trim();
+	if (!trimmed.includes(',')) return trimmed;
+
+	const [family, ...givenParts] = trimmed.split(',').map((part) => part.trim());
+	const given = givenParts.join(' ');
+	return [given, family].filter(Boolean).join(' ');
+}
+
+function splitAuthors(value: string): string[] {
+	return value
+		.split(/\s+and\s+/i)
+		.map(formatAuthor)
+		.filter(Boolean);
+}
+
+function parseFields(body: string): Record<string, string> {
+	const fields: Record<string, string> = {};
+	let index = 0;
+
+	while (index < body.length) {
+		const keyMatch = body.slice(index).match(/\s*([A-Za-z][\w-]*)\s*=\s*/);
+		if (!keyMatch) break;
+
+		const key = keyMatch[1].toLowerCase();
+		index += keyMatch.index ?? 0;
+		index += keyMatch[0].length;
+
+		const opener = body[index];
+		let value = '';
+
+		if (opener === '{') {
+			let depth = 0;
+			const start = index + 1;
+			for (; index < body.length; index++) {
+				const char = body[index];
+				if (char === '{') depth += 1;
+				if (char === '}') depth -= 1;
+				if (depth === 0) {
+					value = body.slice(start, index);
+					index += 1;
+					break;
+				}
+			}
+		} else if (opener === '"') {
+			const start = index + 1;
+			index += 1;
+			for (; index < body.length; index++) {
+				if (body[index] === '"' && body[index - 1] !== '\\') {
+					value = body.slice(start, index);
+					index += 1;
+					break;
+				}
+			}
+		} else {
+			const end = body.indexOf(',', index);
+			value = body.slice(index, end === -1 ? body.length : end);
+			index = end === -1 ? body.length : end + 1;
+		}
+
+		fields[key] = stripOuterBraces(value);
+		while (body[index] === ',' || /\s/.test(body[index] ?? '')) index += 1;
+	}
+
+	return fields;
+}
+
 export function parseBibtex(raw: string): BibEntry[] {
 	const entries: BibEntry[] = [];
 	const entryRegex = /@(\w+)\s*\{\s*([^,]+),([\s\S]*?)\}\s*(?=@|$)/g;
@@ -18,23 +89,11 @@ export function parseBibtex(raw: string): BibEntry[] {
 
 	while ((match = entryRegex.exec(raw)) !== null) {
 		const [, type, id, body] = match;
-		const fieldRegex = /(\w+)\s*=\s*\{([^}]*)\}/g;
-		const fields: Record<string, string> = {};
-		let fieldMatch: RegExpExecArray | null;
-
-		while ((fieldMatch = fieldRegex.exec(body)) !== null) {
-			const [, key, value] = fieldMatch;
-			fields[key.toLowerCase()] = value.trim();
-		}
+		const fields = parseFields(body);
 
 		if (!fields.title) continue;
 
-		const authors = fields.author
-			? fields.author
-					.split(/\s+and\s+/i)
-					.map((name) => name.trim())
-					.filter(Boolean)
-			: [];
+		const authors = fields.author ? splitAuthors(fields.author) : [];
 
 		const publicField = fields.public?.toLowerCase();
 		let category = 'Other';

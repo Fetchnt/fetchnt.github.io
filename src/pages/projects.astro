@@ -2,17 +2,18 @@
 import Layout from "../layouts/Layout.astro";
 import { projects } from "../components/projects";
 import siteConfig from "../side.config";
+import { getProjectStatus } from "../lib/projects";
 
 const pageTitle = siteConfig.pageTitles.projects.title || "Projects";
 const pageDescription = siteConfig.pageTitles.projects.description ||
   "Selected lab and community projects with a focus on reproducible research infrastructure, learning analytics, and open collaboration.";
 
-// Group projects by status (if they have period info)
-const activeProjects = projects.filter(p => p.period?.includes('Present'));
-const pastProjects = projects.filter(p => !p.period?.includes('Present'));
+const activeProjects = projects.filter((project) => getProjectStatus(project) === "active");
+const pastProjects = projects.filter((project) => getProjectStatus(project) === "past");
+const unspecifiedProjects = projects.filter((project) => getProjectStatus(project) === "unspecified");
 ---
 
-<Layout title={pageTitle}>
+<Layout title={pageTitle} description={pageDescription}>
   <div class="space-y-6">
     <!-- Page Header -->
     <header class="space-y-4">
@@ -30,6 +31,8 @@ const pastProjects = projects.filter(p => !p.period?.includes('Present'));
         <button 
           type="button"
           data-filter="all"
+          data-active="true"
+          aria-pressed="true"
           class="filter-btn active flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-accent-100 dark:bg-accent-900/30 text-sm cursor-pointer border-none transition-all"
         >
           <span class="i-mdi:code-braces text-accent-600 dark:text-accent-400 text-base"></span>
@@ -40,6 +43,8 @@ const pastProjects = projects.filter(p => !p.period?.includes('Present'));
           <button 
             type="button"
             data-filter="active"
+            data-active="false"
+            aria-pressed="false"
             class="filter-btn flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-sm cursor-pointer border-none hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
           >
             <span class="i-mdi:rocket-launch text-gray-500 dark:text-gray-400 text-base"></span>
@@ -51,11 +56,26 @@ const pastProjects = projects.filter(p => !p.period?.includes('Present'));
           <button 
             type="button"
             data-filter="past"
+            data-active="false"
+            aria-pressed="false"
             class="filter-btn flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-sm cursor-pointer border-none hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
           >
             <span class="i-mdi:archive text-gray-500 dark:text-gray-400 text-base"></span>
             <span class="font-medium text-gray-700 dark:text-gray-300">{pastProjects.length}</span>
             <span class="text-gray-500 dark:text-gray-500">past</span>
+          </button>
+        )}
+        {unspecifiedProjects.length > 0 && (
+          <button 
+            type="button"
+            data-filter="unspecified"
+            data-active="false"
+            aria-pressed="false"
+            class="filter-btn flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-sm cursor-pointer border-none hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
+          >
+            <span class="i-mdi:folder-open text-gray-500 dark:text-gray-400 text-base"></span>
+            <span class="font-medium text-gray-700 dark:text-gray-300">{unspecifiedProjects.length}</span>
+            <span class="text-gray-500 dark:text-gray-500">other</span>
           </button>
         )}
       </div>
@@ -64,7 +84,7 @@ const pastProjects = projects.filter(p => !p.period?.includes('Present'));
     <div class="fade-in-up animation-delay-200 space-y-6" id="projects-container">
       <!-- Active Projects -->
       {activeProjects.length > 0 && (
-        <section class="space-y-3 project-section" data-category="active">
+        <section class="space-y-3 project-section" data-filter-section="active">
           <h2 class="text-sm font-semibold text-accent-600 dark:text-accent-400 uppercase tracking-wide">
             Active
           </h2>
@@ -134,7 +154,7 @@ const pastProjects = projects.filter(p => !p.period?.includes('Present'));
 
       <!-- Past/Other Projects -->
       {pastProjects.length > 0 && (
-        <section class="space-y-3 project-section" data-category="past">
+        <section class="space-y-3 project-section" data-filter-section="past">
           <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
             Past
           </h2>
@@ -190,10 +210,14 @@ const pastProjects = projects.filter(p => !p.period?.includes('Present'));
         </section>
       )}
 
-      {/* If no period info, show all projects in a grid */}
-      {activeProjects.length === 0 && pastProjects.length === 0 && (
-        <div class="grid gap-4 sm:grid-cols-2">
-          {projects.map((project) => {
+      {unspecifiedProjects.length > 0 && (
+        <section class="space-y-3 project-section" data-filter-section="unspecified">
+          <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+            Other
+          </h2>
+
+          <div class="grid gap-4 sm:grid-cols-2">
+          {unspecifiedProjects.map((project) => {
             const hasUrl = Boolean(project.url);
             const Wrapper = hasUrl ? 'a' : 'div';
             return (
@@ -231,51 +255,15 @@ const pastProjects = projects.filter(p => !p.period?.includes('Present'));
               </Wrapper>
             );
           })}
-        </div>
+          </div>
+        </section>
       )}
     </div>
   </div>
 </Layout>
 
-<script is:inline>
-  document.addEventListener("DOMContentLoaded", () => {
-    const filterBtns = document.querySelectorAll(".filter-btn");
-    const sections = document.querySelectorAll(".project-section");
+<script>
+  import { setupFilterControls } from "../scripts/ui";
 
-    filterBtns.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const filter = btn.getAttribute("data-filter");
-        
-        // Update active button styles
-        filterBtns.forEach((b) => {
-          b.classList.remove("bg-accent-100", "dark:bg-accent-900/30");
-          b.classList.add("bg-gray-100", "dark:bg-gray-800");
-          b.querySelector("span:first-child")?.classList.remove("text-accent-600", "dark:text-accent-400");
-          b.querySelector("span:first-child")?.classList.add("text-gray-500", "dark:text-gray-400");
-          b.querySelector("span:nth-child(2)")?.classList.remove("text-accent-700", "dark:text-accent-300");
-          b.querySelector("span:nth-child(2)")?.classList.add("text-gray-700", "dark:text-gray-300");
-          b.querySelector("span:nth-child(3)")?.classList.remove("text-accent-600", "dark:text-accent-400");
-          b.querySelector("span:nth-child(3)")?.classList.add("text-gray-500", "dark:text-gray-500");
-        });
-        
-        btn.classList.remove("bg-gray-100", "dark:bg-gray-800");
-        btn.classList.add("bg-accent-100", "dark:bg-accent-900/30");
-        btn.querySelector("span:first-child")?.classList.remove("text-gray-500", "dark:text-gray-400");
-        btn.querySelector("span:first-child")?.classList.add("text-accent-600", "dark:text-accent-400");
-        btn.querySelector("span:nth-child(2)")?.classList.remove("text-gray-700", "dark:text-gray-300");
-        btn.querySelector("span:nth-child(2)")?.classList.add("text-accent-700", "dark:text-accent-300");
-        btn.querySelector("span:nth-child(3)")?.classList.remove("text-gray-500", "dark:text-gray-500");
-        btn.querySelector("span:nth-child(3)")?.classList.add("text-accent-600", "dark:text-accent-400");
-
-        // Filter sections
-        sections.forEach((section) => {
-          if (filter === "all" || section.getAttribute("data-category") === filter) {
-            section.classList.remove("hidden");
-          } else {
-            section.classList.add("hidden");
-          }
-        });
-      });
-    });
-  });
+  setupFilterControls();
 </script>

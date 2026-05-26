@@ -45,7 +45,7 @@ const pageDescription = siteConfig.pageTitles.researches.description ||
   "Peer-reviewed publications, workshop papers, and essays focusing on the flow of learning signals across scholarly and civic platforms.";
 ---
 
-<Layout title={pageTitle}>
+<Layout title={pageTitle} description={pageDescription}>
   <div class="space-y-6">
     <!-- Page Header -->
     <header class="space-y-4">
@@ -63,6 +63,8 @@ const pageDescription = siteConfig.pageTitles.researches.description ||
         <button 
           type="button"
           data-filter="all"
+          data-active="true"
+          aria-pressed="true"
           class="filter-btn active flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-accent-100 dark:bg-accent-900/30 text-sm cursor-pointer border-none transition-all"
         >
           <span class="i-mdi:file-document-multiple text-accent-600 dark:text-accent-400 text-base"></span>
@@ -73,11 +75,13 @@ const pageDescription = siteConfig.pageTitles.researches.description ||
           const count = grouped.get(category)?.length || 0;
           const categorySlug = category.toLowerCase().replace(/\s+/g, '-');
           return (
-            <button 
-              type="button"
-              data-filter={categorySlug}
-              class="filter-btn flex items-center gap-1 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-sm cursor-pointer border-none hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
-            >
+              <button 
+                type="button"
+                data-filter={categorySlug}
+                data-active="false"
+                aria-pressed="false"
+                class="filter-btn flex items-center gap-1 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-sm cursor-pointer border-none hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
+              >
               <span class={`${categoryIcons[category] || 'i-mdi:file-document'} text-sm text-gray-600 dark:text-gray-300`}></span>
               <span class="font-medium text-gray-800 dark:text-gray-200">{count}</span>
               <span class="text-gray-600 dark:text-gray-400">{category.toLowerCase()}</span>
@@ -97,7 +101,7 @@ const pageDescription = siteConfig.pageTitles.researches.description ||
           const categorySlug = category.toLowerCase().replace(/\s+/g, '-');
 
           return (
-            <section class="space-y-3 paper-section" data-category={categorySlug}>
+            <section class="space-y-3 paper-section" data-filter-section={categorySlug}>
               <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                 {category} <span class="text-gray-400 dark:text-gray-500 font-normal">({categoryPapers.length})</span>
               </h2>
@@ -162,13 +166,14 @@ const pageDescription = siteConfig.pageTitles.researches.description ||
                           <div class="flex items-center gap-2">
                             {hasAbstract && (
                               <button
-                                class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-gray-700 dark:text-gray-300 bg-gray-100 hover:bg-accent-100 hover:text-accent-700 dark:bg-gray-800 dark:hover:bg-accent-900/40 dark:hover:text-accent-300 rounded-lg border-none cursor-pointer toggle-abstract transition-colors"
+                                class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-gray-700 dark:text-gray-300 bg-gray-100 hover:bg-accent-100 hover:text-accent-700 dark:bg-gray-800 dark:hover:bg-accent-900/40 dark:hover:text-accent-300 rounded-lg border-none cursor-pointer transition-colors"
                                 type="button"
+                                data-abstract-toggle
                                 data-target={abstractId}
                                 aria-controls={abstractId}
                                 aria-expanded="false"
                               >
-                                <span class="i-mdi:chevron-down text-base transition-transform duration-200"></span>
+                                <span data-abstract-icon class="i-mdi:chevron-down text-base transition-transform duration-200"></span>
                                 Abstract
                               </button>
                             )}
@@ -187,7 +192,7 @@ const pageDescription = siteConfig.pageTitles.researches.description ||
                         </div>
 
                         {hasAbstract && (
-                          <div class="hidden mt-3 p-4 text-sm leading-relaxed text-gray-600 dark:text-gray-400 bg-gradient-to-br from-gray-50 to-gray-100/50 dark:from-gray-800/50 dark:to-gray-800/30 rounded-lg border-l-3 border-accent-500" id={abstractId}>
+                          <div hidden class="hidden mt-3 p-4 text-sm leading-relaxed text-gray-600 dark:text-gray-400 bg-gradient-to-br from-gray-50 to-gray-100/50 dark:from-gray-800/50 dark:to-gray-800/30 rounded-lg border-l-3 border-accent-500" id={abstractId}>
                             <div class="flex items-start gap-2">
                               <span class="i-mdi:format-quote-open text-lg text-accent-400 shrink-0 mt-0.5"></span>
                               <p class="flex-1">{paper.abstract}</p>
@@ -207,65 +212,9 @@ const pageDescription = siteConfig.pageTitles.researches.description ||
   </div>
 </Layout>
 
-<script is:inline>
-  document.addEventListener("DOMContentLoaded", () => {
-    // Abstract toggle
-    document.querySelectorAll(".toggle-abstract").forEach((toggle) => {
-      toggle.addEventListener("click", () => {
-        const targetId = toggle.getAttribute("data-target");
-        if (!targetId) return;
-        const abstract = document.getElementById(targetId);
-        if (!abstract) return;
-        abstract.classList.toggle("hidden");
-        const isExpanded = toggle.getAttribute("aria-expanded") === "true";
-        toggle.setAttribute("aria-expanded", (!isExpanded).toString());
-        
-        // Rotate icon
-        const icon = toggle.querySelector("span:first-child");
-        if (icon) {
-            icon.classList.toggle("rotate-180");
-        }
-      });
-    });
+<script>
+  import { setupAbstractToggles, setupFilterControls } from "../scripts/ui";
 
-    // Filter functionality
-    const filterBtns = document.querySelectorAll(".filter-btn");
-    const sections = document.querySelectorAll(".paper-section");
-
-    filterBtns.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const filter = btn.getAttribute("data-filter");
-        
-        // Update active button styles
-        filterBtns.forEach((b) => {
-          b.classList.remove("bg-accent-100", "dark:bg-accent-900/30");
-          b.classList.add("bg-gray-100", "dark:bg-gray-800");
-          b.querySelector("span:first-child")?.classList.remove("text-accent-600", "dark:text-accent-400");
-          b.querySelector("span:first-child")?.classList.add("text-gray-500", "dark:text-gray-400");
-          b.querySelector("span:nth-child(2)")?.classList.remove("text-accent-700", "dark:text-accent-300");
-          b.querySelector("span:nth-child(2)")?.classList.add("text-gray-700", "dark:text-gray-300");
-          b.querySelector("span:nth-child(3)")?.classList.remove("text-accent-600", "dark:text-accent-400");
-          b.querySelector("span:nth-child(3)")?.classList.add("text-gray-500", "dark:text-gray-400");
-        });
-        
-        btn.classList.remove("bg-gray-100", "dark:bg-gray-800");
-        btn.classList.add("bg-accent-100", "dark:bg-accent-900/30");
-        btn.querySelector("span:first-child")?.classList.remove("text-gray-500", "dark:text-gray-400");
-        btn.querySelector("span:first-child")?.classList.add("text-accent-600", "dark:text-accent-400");
-        btn.querySelector("span:nth-child(2)")?.classList.remove("text-gray-700", "dark:text-gray-300");
-        btn.querySelector("span:nth-child(2)")?.classList.add("text-accent-700", "dark:text-accent-300");
-        btn.querySelector("span:nth-child(3)")?.classList.remove("text-gray-500", "dark:text-gray-400");
-        btn.querySelector("span:nth-child(3)")?.classList.add("text-accent-600", "dark:text-accent-400");
-
-        // Filter sections
-        sections.forEach((section) => {
-          if (filter === "all" || section.getAttribute("data-category") === filter) {
-            section.classList.remove("hidden");
-          } else {
-            section.classList.add("hidden");
-          }
-        });
-      });
-    });
-  });
+  setupAbstractToggles();
+  setupFilterControls();
 </script>

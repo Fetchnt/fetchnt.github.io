@@ -2,6 +2,7 @@
 import Layout from "../../layouts/Layout.astro";
 import { getCollection } from "astro:content";
 import siteConfig from "../../side.config";
+import { getReadingTimeMinutes } from "../../lib/reading-time";
 
 const posts = (await getCollection("posts"))
   .filter((post) => !post.data.draft)
@@ -31,7 +32,7 @@ const pageDescription =
 const totalPosts = posts.length;
 ---
 
-<Layout title={pageTitle}>
+<Layout title={pageTitle} description={pageDescription}>
   <div class="space-y-6">
     <!-- Page Header -->
     <header class="space-y-3">
@@ -109,7 +110,7 @@ const totalPosts = posts.length;
                         ·
                       </span>
                       <span class="text-xs text-gray-400 dark:text-gray-500 hidden sm:block">
-                        {Math.ceil(post.body?.length / 1000) || 3} min read
+                        {getReadingTimeMinutes(post.body)} min read
                       </span>
                     </div>
 
