@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { parseBibtex } from "../src/lib/bibtex";
 
 describe("parseBibtex", () => {

@@ -24,7 +24,7 @@ A modern, elegant academic portfolio theme for Astro. Build your professional re
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) (v18+ recommended)
-- [Bun](https://bun.sh/) (recommended) or npm/pnpm
+- [pnpm](https://pnpm.io/) (recommended) or npm
 
 ### Installation
 
@@ -34,10 +34,10 @@ git clone https://github.com/jxpeng98/astro-scholars.git
 cd astro-scholars
 
 # Install dependencies
-bun install
+pnpm install
 
 # Start development server
-bun dev
+pnpm dev
 ```
 
 Your site will be running at `http://localhost:4321`
@@ -46,12 +46,12 @@ Your site will be running at `http://localhost:4321`
 
 | Command         | Description                                    |
 | --------------- | ---------------------------------------------- |
-| `bun dev`       | Start development server with hot reload       |
-| `bun build`     | Build production site to `./dist/`             |
-| `bun preview`   | Preview production build locally               |
-| `bun astro ...` | Run Astro CLI commands (e.g., `astro check`)   |
-| `bun test`      | Run unit tests                                 |
-| `bun run verify`| Run tests, Astro checks, build, and HTML checks|
+| `pnpm dev`      | Start development server with hot reload       |
+| `pnpm build`    | Build production site to `./dist/`             |
+| `pnpm preview`  | Preview production build locally               |
+| `pnpm astro ...`| Run Astro CLI commands (e.g., `astro check`)   |
+| `pnpm test`     | Run unit tests                                 |
+| `pnpm verify`   | Run tests, Astro checks, build, and HTML checks|
 
 ---
 
@@ -66,7 +66,7 @@ Before publishing, replace every placeholder in:
 - `src/data/teaching.yml`: current and past course records.
 - `src/content/posts`: remove sample posts or mark drafts with `draft: true`.
 
-Run `bun run verify` before deployment.
+Run `pnpm verify` before deployment.
 
 ---
 
@@ -455,7 +455,7 @@ Find icons at: [icones.js.org](https://icones.js.org)
 Build and deploy to any static hosting provider:
 
 ```bash
-bun build
+pnpm build
 ```
 
 Upload the `dist/` folder to:
@@ -478,7 +478,7 @@ vercel
 ### Netlify
 
 ```bash
-# Build command: bun build
+# Build command: pnpm build
 # Publish directory: dist
 ```
 

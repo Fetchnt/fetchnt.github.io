@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { getReadingTimeMinutes } from "../src/lib/reading-time";
 
 describe("getReadingTimeMinutes", () => {
