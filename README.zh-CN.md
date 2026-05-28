@@ -28,8 +28,8 @@
 
 \`\`\`bash
 # 克隆仓库
-git clone https://github.com/jxpeng98/astro-scholars.git
-cd astro-scholars
+git clone https://github.com/jxpeng98/astro-theme-scholars.git
+cd astro-theme-scholars
 
 # 安装依赖
 pnpm install
@@ -65,6 +65,31 @@ pnpm dev
 - \`src/content/posts\`：删除示例文章，或使用 \`draft: true\` 标记为草稿。
 
 部署前运行 \`pnpm verify\`。
+
+---
+
+## 版本化模板更新
+
+这个模板使用 SemVer release tag 追踪版本，例如 \`v0.4.0\`。\`package.json\`、
+\`.template-version\` 和 \`CHANGELOG.md\` 最新条目应保持同一个版本号。
+
+维护者发布前可以先检查版本一致性：
+
+\`\`\`bash
+node scripts/check-release.mjs --tag v0.4.0
+pnpm verify
+git tag -a v0.4.0 -m "Release v0.4.0"
+git push origin main --tags
+\`\`\`
+
+通过 GitHub template 创建的使用者仓库可以保留复制过来的
+\`.github/workflows/template-update.yml\`。该 workflow 会检查上游模板是否有新的
+release tag，并创建一个 PR 来覆盖模板维护的文件，同时根据
+\`.template-sync.json\` 保护个人内容路径，例如 \`src/side.config.ts\`、
+\`src/data/**\`、\`src/content/posts/**\` 和 \`public/profile.*\`。
+
+后续也可以并存 npm package 路径：这个仓库继续服务 GitHub template 用户，同时
+将布局和组件导出为包，让基于 package 的站点通过 Dependabot 升级依赖。
 
 ---
 
@@ -288,13 +313,26 @@ sections:
 
 \`\`\`yaml
 - title: 项目名称
+  subtitle: 可选的简短说明
   period: 2023 — 至今    # 包含「至今」会归类为进行中
   description: 项目简介...
+  badges:
+    - Featured
+  highlights:
+    - 可选的项目亮点或职责描述。
+  metadata:
+    - label: 角色
+      value: 维护者
   tech:
     - Astro
     - TypeScript
     - PostgreSQL
-  url: https://github.com/...   # 可选
+  url: https://github.com/...   # 可选的默认链接
+  links:                        # 可选；存在时优先于 url
+    - label: Repository
+      href: https://github.com/...
+    - label: Demo
+      href: https://example.com
 \`\`\`
 
 **页面功能：**
@@ -316,12 +354,21 @@ current:
       - title: 课程名称
         code: INFO 742
         summary: 课程简介...
+        badges:                 # 可选
+          - Graduate
+        highlights:             # 可选
+          - 学生完成一个可复现的期末项目。
         tags:                    # 可选
           - 研究生
           - 研讨课
-        link:                    # 可选
+        link:                    # 可选的单个链接
           label: 课程网站
           href: https://...
+        links:                   # 可选的多个链接；存在时优先于 link
+          - label: Syllabus
+            href: https://...
+          - label: Readings
+            href: https://...
 
 past:
   - term: 2024 秋季
@@ -521,9 +568,24 @@ theme: {
 \`\`\`yaml
 sections:
   - title: 您的模块标题
+    icon: i-mdi:trophy-award
     items:
-      - 内容条目
+      - title: 详细条目
+        subtitle: 可选副标题
+        date: 2026
+        description: 可选的详细说明
+        badges:
+          - Award
+        highlights:
+          - 可选的补充亮点。
+        links:
+          - label: 相关页面
+            href: https://example.com
+      - 简单文本条目
 \`\`\`
+
+如果在 YAML 字段中使用自定义图标类名，请将它们加入 \`uno.config.ts\` 的
+safelist，确保 UnoCSS 会生成对应样式。
 
 ---
 
@@ -531,7 +593,7 @@ sections:
 
 欢迎参与项目建设！您可以：
 
-- 🐛 通过 [Issues](https://github.com/jxpeng98/astro-scholars/issues) 反馈问题
+- 🐛 通过 [Issues](https://github.com/jxpeng98/astro-theme-scholars/issues) 反馈问题
 - 💡 提出功能建议
 - 🔧 提交 Pull Request
 

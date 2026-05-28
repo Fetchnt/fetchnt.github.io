@@ -1,5 +1,9 @@
 import projectsRaw from '../data/projects.yml?raw';
 import { parse } from 'yaml';
-import type { ProjectEntry } from '../lib/projects';
+import { normalizeProject, type ProjectEntry } from '../lib/projects';
 
-export const projects = parse(projectsRaw) as ProjectEntry[];
+const parsedProjects = parse(projectsRaw) as ProjectEntry[] | null;
+
+export const projects = Array.isArray(parsedProjects)
+	? parsedProjects.map(normalizeProject)
+	: [];

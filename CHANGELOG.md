@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.4.0 - 2026-05-28
+
+### Features
+
+- Added SemVer release tracking with `.template-version`, release validation
+  scripts, and a GitHub release workflow for pushed `vX.Y.Z` tags.
+- Added a downstream template update workflow that checks upstream release tags,
+  overlays template-owned files, and opens pull requests in user repositories.
+- Extended YAML content fields for Projects, Teaching, and About custom sections
+  with optional links, badges, highlights, and metadata while preserving the
+  existing simple structure.
+
 ## 0.3.0 - 2025-12-11
 
 ### Features

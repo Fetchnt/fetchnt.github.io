@@ -91,11 +91,13 @@ const unspecifiedProjects = projects.filter((project) => getProjectStatus(projec
           
           <div class="grid gap-4 sm:grid-cols-2">
             {activeProjects.map((project) => {
-              const hasUrl = Boolean(project.url);
-              const Wrapper = hasUrl ? 'a' : 'div';
+              const primaryLink = project.links[0];
+              const hasUrl = Boolean(primaryLink);
+              const hasMultipleLinks = project.links.length > 1;
+              const Wrapper = hasUrl && !hasMultipleLinks ? 'a' : 'div';
               return (
                 <Wrapper
-                  {...(hasUrl ? { href: project.url, target: "_blank", rel: "noopener noreferrer" } : {})}
+                  {...(hasUrl && !hasMultipleLinks ? { href: primaryLink.href, target: "_blank", rel: "noopener noreferrer" } : {})}
                   class={`group relative block p-6 rounded-2xl bg-white dark:bg-gray-800/50 shadow-sm hover:shadow-md transition-all duration-300 no-underline ${hasUrl ? 'cursor-pointer' : ''}`}
                 >
                   <!-- Status indicator -->
@@ -114,6 +116,11 @@ const unspecifiedProjects = projects.filter((project) => getProjectStatus(projec
                       <h3 class="font-bold text-gray-900 dark:text-gray-100 group-hover:text-accent-600 dark:group-hover:text-accent-400 transition-colors leading-snug">
                         {project.title}
                       </h3>
+                      {project.subtitle && (
+                        <p class="text-xs font-medium text-accent-600 dark:text-accent-400">
+                          {project.subtitle}
+                        </p>
+                      )}
                       {project.period && (
                         <p class="text-xs text-gray-500 dark:text-gray-500 flex items-center gap-1">
                           <span class="i-mdi:calendar-range"></span>
@@ -125,6 +132,39 @@ const unspecifiedProjects = projects.filter((project) => getProjectStatus(projec
                     <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 leading-relaxed">
                       {project.description}
                     </p>
+
+                    {project.badges.length > 0 && (
+                      <div class="flex flex-wrap items-center gap-1.5">
+                        {project.badges.map((badge) => (
+                          <span class="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-900/30">
+                            <span class="i-mdi:sparkles text-emerald-500 text-xs"></span>
+                            {badge}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    {project.highlights.length > 0 && (
+                      <ul class="space-y-1">
+                        {project.highlights.slice(0, 3).map((highlight) => (
+                          <li class="flex items-start gap-2 text-xs text-gray-600 dark:text-gray-400">
+                            <span class="i-mdi:check-circle-outline text-accent-500 shrink-0 mt-0.5"></span>
+                            <span>{highlight}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+
+                    {project.metadata.length > 0 && (
+                      <div class="grid gap-2 text-xs sm:grid-cols-2">
+                        {project.metadata.slice(0, 4).map((item) => (
+                          <div class="rounded-lg bg-gray-50 dark:bg-gray-900/50 px-2 py-1.5">
+                            <span class="font-semibold text-gray-500 dark:text-gray-400">{item.label}: </span>
+                            <span class="text-gray-700 dark:text-gray-300">{item.value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                     
                     <div class="flex flex-wrap items-center gap-1.5 pt-1">
                       {project.tech.slice(0, 4).map((tag) => (
@@ -138,9 +178,26 @@ const unspecifiedProjects = projects.filter((project) => getProjectStatus(projec
                       )}
                     </div>
                     
-                    {hasUrl && (
+                    {hasMultipleLinks && (
+                      <div class="flex flex-wrap items-center gap-2 pt-1">
+                        {project.links.map((link) => (
+                          <a
+                            href={link.href}
+                            target="_blank"
+                            rel="noreferrer"
+                            class="inline-flex items-center gap-1 text-xs font-medium text-accent-600 dark:text-accent-400 no-underline hover:text-accent-700 dark:hover:text-accent-300"
+                          >
+                            {link.icon && <span class={link.icon}></span>}
+                            <span>{link.label}</span>
+                            <span class="i-mdi:open-in-new text-xs"></span>
+                          </a>
+                        ))}
+                      </div>
+                    )}
+
+                    {hasUrl && !hasMultipleLinks && (
                       <div class="flex items-center gap-1 text-xs font-medium text-accent-600 dark:text-accent-400 pt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span>View Project</span>
+                        <span>{primaryLink.label}</span>
                         <span class="i-mdi:arrow-right"></span>
                       </div>
                     )}
@@ -161,11 +218,13 @@ const unspecifiedProjects = projects.filter((project) => getProjectStatus(projec
           
           <div class="grid gap-4 sm:grid-cols-2">
             {pastProjects.map((project) => {
-              const hasUrl = Boolean(project.url);
-              const Wrapper = hasUrl ? 'a' : 'div';
+              const primaryLink = project.links[0];
+              const hasUrl = Boolean(primaryLink);
+              const hasMultipleLinks = project.links.length > 1;
+              const Wrapper = hasUrl && !hasMultipleLinks ? 'a' : 'div';
               return (
                 <Wrapper
-                  {...(hasUrl ? { href: project.url, target: "_blank", rel: "noopener noreferrer" } : {})}
+                  {...(hasUrl && !hasMultipleLinks ? { href: primaryLink.href, target: "_blank", rel: "noopener noreferrer" } : {})}
                   class={`group relative block p-6 rounded-2xl bg-white dark:bg-gray-800/50 shadow-sm hover:shadow-md transition-all duration-300 no-underline ${hasUrl ? 'cursor-pointer' : ''}`}
                 >
                   <div class="space-y-3">
@@ -173,6 +232,11 @@ const unspecifiedProjects = projects.filter((project) => getProjectStatus(projec
                       <h3 class="font-bold text-gray-900 dark:text-gray-100 group-hover:text-accent-600 dark:group-hover:text-accent-400 transition-colors leading-snug">
                         {project.title}
                       </h3>
+                      {project.subtitle && (
+                        <p class="text-xs font-medium text-accent-600 dark:text-accent-400">
+                          {project.subtitle}
+                        </p>
+                      )}
                       {project.period && (
                         <p class="text-xs text-gray-500 dark:text-gray-500 flex items-center gap-1">
                           <span class="i-mdi:calendar-range"></span>
@@ -184,6 +248,39 @@ const unspecifiedProjects = projects.filter((project) => getProjectStatus(projec
                     <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 leading-relaxed">
                       {project.description}
                     </p>
+
+                    {project.badges.length > 0 && (
+                      <div class="flex flex-wrap items-center gap-1.5">
+                        {project.badges.map((badge) => (
+                          <span class="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800">
+                            <span class="i-mdi:tag-outline text-gray-400 text-xs"></span>
+                            {badge}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    {project.highlights.length > 0 && (
+                      <ul class="space-y-1">
+                        {project.highlights.slice(0, 3).map((highlight) => (
+                          <li class="flex items-start gap-2 text-xs text-gray-600 dark:text-gray-400">
+                            <span class="i-mdi:check-circle-outline text-accent-500 shrink-0 mt-0.5"></span>
+                            <span>{highlight}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+
+                    {project.metadata.length > 0 && (
+                      <div class="grid gap-2 text-xs sm:grid-cols-2">
+                        {project.metadata.slice(0, 4).map((item) => (
+                          <div class="rounded-lg bg-gray-50 dark:bg-gray-900/50 px-2 py-1.5">
+                            <span class="font-semibold text-gray-500 dark:text-gray-400">{item.label}: </span>
+                            <span class="text-gray-700 dark:text-gray-300">{item.value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                     
                     <div class="flex flex-wrap items-center gap-1.5 pt-1">
                       {project.tech.slice(0, 4).map((tag) => (
@@ -196,9 +293,26 @@ const unspecifiedProjects = projects.filter((project) => getProjectStatus(projec
                       )}
                     </div>
                     
-                    {hasUrl && (
+                    {hasMultipleLinks && (
+                      <div class="flex flex-wrap items-center gap-2 pt-1">
+                        {project.links.map((link) => (
+                          <a
+                            href={link.href}
+                            target="_blank"
+                            rel="noreferrer"
+                            class="inline-flex items-center gap-1 text-xs font-medium text-accent-600 dark:text-accent-400 no-underline hover:text-accent-700 dark:hover:text-accent-300"
+                          >
+                            {link.icon && <span class={link.icon}></span>}
+                            <span>{link.label}</span>
+                            <span class="i-mdi:open-in-new text-xs"></span>
+                          </a>
+                        ))}
+                      </div>
+                    )}
+
+                    {hasUrl && !hasMultipleLinks && (
                       <div class="flex items-center gap-1 text-xs font-medium text-accent-600 dark:text-accent-400 pt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span>View Project</span>
+                        <span>{primaryLink.label}</span>
                         <span class="i-mdi:arrow-right"></span>
                       </div>
                     )}
@@ -218,21 +332,50 @@ const unspecifiedProjects = projects.filter((project) => getProjectStatus(projec
 
           <div class="grid gap-4 sm:grid-cols-2">
           {unspecifiedProjects.map((project) => {
-            const hasUrl = Boolean(project.url);
-            const Wrapper = hasUrl ? 'a' : 'div';
+            const primaryLink = project.links[0];
+            const hasUrl = Boolean(primaryLink);
+            const hasMultipleLinks = project.links.length > 1;
+            const Wrapper = hasUrl && !hasMultipleLinks ? 'a' : 'div';
             return (
               <Wrapper
-                {...(hasUrl ? { href: project.url, target: "_blank", rel: "noopener noreferrer" } : {})}
+                {...(hasUrl && !hasMultipleLinks ? { href: primaryLink.href, target: "_blank", rel: "noopener noreferrer" } : {})}
                 class={`group relative block p-5 rounded-xl bg-white dark:bg-gray-900/50 border border-gray-200 dark:border-gray-800 hover:border-accent-300 dark:hover:border-accent-700 hover:shadow-lg hover:shadow-accent-500/5 transition-all duration-300 no-underline ${hasUrl ? 'cursor-pointer' : ''}`}
               >
                 <div class="space-y-3">
                   <h3 class="font-bold text-gray-900 dark:text-gray-100 group-hover:text-accent-600 dark:group-hover:text-accent-400 transition-colors leading-snug">
                     {project.title}
                   </h3>
+                  {project.subtitle && (
+                    <p class="text-xs font-medium text-accent-600 dark:text-accent-400">
+                      {project.subtitle}
+                    </p>
+                  )}
                   
                   <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 leading-relaxed">
                     {project.description}
                   </p>
+
+                  {project.badges.length > 0 && (
+                    <div class="flex flex-wrap items-center gap-1.5">
+                      {project.badges.map((badge) => (
+                        <span class="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800">
+                          <span class="i-mdi:tag-outline text-gray-400 text-xs"></span>
+                          {badge}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {project.highlights.length > 0 && (
+                    <ul class="space-y-1">
+                      {project.highlights.slice(0, 3).map((highlight) => (
+                        <li class="flex items-start gap-2 text-xs text-gray-600 dark:text-gray-400">
+                          <span class="i-mdi:check-circle-outline text-accent-500 shrink-0 mt-0.5"></span>
+                          <span>{highlight}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                   
                   <div class="flex flex-wrap items-center gap-1.5 pt-1">
                     {project.tech.slice(0, 4).map((tag) => (
@@ -245,9 +388,26 @@ const unspecifiedProjects = projects.filter((project) => getProjectStatus(projec
                     )}
                   </div>
                   
-                  {hasUrl && (
+                  {hasMultipleLinks && (
+                    <div class="flex flex-wrap items-center gap-2 pt-1">
+                      {project.links.map((link) => (
+                        <a
+                          href={link.href}
+                          target="_blank"
+                          rel="noreferrer"
+                          class="inline-flex items-center gap-1 text-xs font-medium text-accent-600 dark:text-accent-400 no-underline hover:text-accent-700 dark:hover:text-accent-300"
+                        >
+                          {link.icon && <span class={link.icon}></span>}
+                          <span>{link.label}</span>
+                          <span class="i-mdi:open-in-new text-xs"></span>
+                        </a>
+                      ))}
+                    </div>
+                  )}
+
+                  {hasUrl && !hasMultipleLinks && (
                     <div class="flex items-center gap-1 text-xs font-medium text-accent-600 dark:text-accent-400 pt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <span>View Project</span>
+                      <span>{primaryLink.label}</span>
                       <span class="i-mdi:arrow-right"></span>
                     </div>
                   )}

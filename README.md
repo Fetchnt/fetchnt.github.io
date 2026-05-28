@@ -30,8 +30,8 @@ A modern, elegant academic portfolio theme for Astro. Build your professional re
 
 ```bash
 # Clone the repository
-git clone https://github.com/jxpeng98/astro-scholars.git
-cd astro-scholars
+git clone https://github.com/jxpeng98/astro-theme-scholars.git
+cd astro-theme-scholars
 
 # Install dependencies
 pnpm install
@@ -67,6 +67,34 @@ Before publishing, replace every placeholder in:
 - `src/content/posts`: remove sample posts or mark drafts with `draft: true`.
 
 Run `pnpm verify` before deployment.
+
+---
+
+## Versioned Template Updates
+
+This template is tracked with SemVer release tags such as `v0.4.0`.
+`package.json`, `.template-version`, and the latest `CHANGELOG.md` entry should
+always describe the same version.
+
+Maintainers can check a release before tagging:
+
+```bash
+node scripts/check-release.mjs --tag v0.4.0
+pnpm verify
+git tag -a v0.4.0 -m "Release v0.4.0"
+git push origin main --tags
+```
+
+Repositories created from this GitHub template can keep the copied
+`.github/workflows/template-update.yml` workflow. It checks the upstream template
+for newer release tags and opens a pull request that overlays template-owned
+files while preserving personal content paths from `.template-sync.json`, such
+as `src/side.config.ts`, `src/data/**`, `src/content/posts/**`, and
+`public/profile.*`.
+
+The npm package path can coexist later: this repository can keep serving GitHub
+template users while a future package exports reusable layouts and components
+that Dependabot can bump in package-based sites.
 
 ---
 
@@ -286,13 +314,26 @@ sections:
 
 ```yaml
 - title: Project Name
+  subtitle: Optional short context
   period: 2023 — Present    # Include "Present" for active projects
   description: What this project does...
+  badges:
+    - Featured
+  highlights:
+    - Optional short achievement or responsibility.
+  metadata:
+    - label: Role
+      value: Maintainer
   tech:
     - Astro
     - TypeScript
     - PostgreSQL
-  url: https://github.com/...   # optional
+  url: https://github.com/...   # optional fallback link
+  links:                        # optional; takes precedence over url
+    - label: Repository
+      href: https://github.com/...
+    - label: Demo
+      href: https://example.com
 ```
 
 **Page Features:**
@@ -313,12 +354,21 @@ current:
       - title: Course Title
         code: INFO 742
         summary: Course description...
+        badges:                 # optional
+          - Graduate
+        highlights:             # optional
+          - Students build a reproducible final project.
         tags:                    # optional
           - graduate
           - seminar
-        link:                    # optional
+        link:                    # optional single link
           label: Course Site
           href: https://...
+        links:                   # optional multiple links; takes precedence over link
+          - label: Syllabus
+            href: https://...
+          - label: Readings
+            href: https://...
 
 past:
   - term: Fall 2024
@@ -515,9 +565,24 @@ For the About page, add new sections in `about.yml`:
 ```yaml
 sections:
   - title: Your Section Title
+    icon: i-mdi:trophy-award
     items:
-      - Your item content
+      - title: Detailed item
+        subtitle: Optional subtitle
+        date: 2026
+        description: Optional longer description
+        badges:
+          - Award
+        highlights:
+          - Optional short detail.
+        links:
+          - label: Related page
+            href: https://example.com
+      - Simple text item
 ```
+
+If you use custom icon class names in YAML fields, add them to the `uno.config.ts`
+safelist so UnoCSS includes them in the generated CSS.
 
 ---
 
@@ -525,7 +590,7 @@ sections:
 
 Contributions are welcome! Feel free to:
 
-- 🐛 Report bugs via [Issues](https://github.com/jxpeng98/astro-scholars/issues)
+- 🐛 Report bugs via [Issues](https://github.com/jxpeng98/astro-theme-scholars/issues)
 - 💡 Suggest features
 - 🔧 Submit pull requests
 
