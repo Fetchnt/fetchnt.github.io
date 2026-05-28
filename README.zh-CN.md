@@ -22,7 +22,7 @@
 ### 环境要求
 
 - [Node.js](https://nodejs.org/) (推荐 v18+)
-- [Bun](https://bun.sh/) (推荐) 或 npm/pnpm
+- [pnpm](https://pnpm.io/)（推荐）或 npm
 
 ### 安装步骤
 
@@ -32,10 +32,10 @@ git clone https://github.com/jxpeng98/astro-scholars.git
 cd astro-scholars
 
 # 安装依赖
-bun install
+pnpm install
 
 # 启动开发服务器
-bun dev
+pnpm dev
 \`\`\`
 
 浏览器访问 \`http://localhost:4321\` 即可预览
@@ -44,12 +44,12 @@ bun dev
 
 | 命令            | 说明                                |
 | --------------- | ----------------------------------- |
-| \`bun dev\`       | 启动开发服务器（热更新）            |
-| \`bun build\`     | 构建生产版本到 \`./dist/\`            |
-| \`bun preview\`   | 本地预览生产版本                    |
-| \`bun astro ...\` | 运行 Astro CLI 命令（如 \`astro check\`）|
-| \`bun test\`      | 运行单元测试                        |
-| \`bun run verify\`| 运行测试、Astro 检查、构建和 HTML 检查 |
+| \`pnpm dev\`      | 启动开发服务器（热更新）            |
+| \`pnpm build\`    | 构建生产版本到 \`./dist/\`            |
+| \`pnpm preview\`  | 本地预览生产版本                    |
+| \`pnpm astro ...\`| 运行 Astro CLI 命令（如 \`astro check\`）|
+| \`pnpm test\`     | 运行单元测试                        |
+| \`pnpm verify\`   | 运行测试、Astro 检查、构建和 HTML 检查 |
 
 ---
 
@@ -64,7 +64,7 @@ bun dev
 - \`src/data/teaching.yml\`：当前和过往课程。
 - \`src/content/posts\`：删除示例文章，或使用 \`draft: true\` 标记为草稿。
 
-部署前运行 \`bun run verify\`。
+部署前运行 \`pnpm verify\`。
 
 ---
 
@@ -461,7 +461,7 @@ draft: false              # 设为 true 则不显示
 构建并部署到任意静态托管服务：
 
 \`\`\`bash
-bun build
+pnpm build
 \`\`\`
 
 将 \`dist/\` 文件夹上传至：
@@ -484,7 +484,7 @@ vercel
 ### Netlify
 
 \`\`\`bash
-# 构建命令: bun build
+# 构建命令: pnpm build
 # 发布目录: dist
 \`\`\`
 

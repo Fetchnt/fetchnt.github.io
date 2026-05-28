@@ -2,14 +2,15 @@
   "name": "astro-theme-scholars",
   "type": "module",
   "version": "0.2.0",
+  "packageManager": "pnpm@11.3.0",
   "description": "Customizable Astro theme for academic and research portfolios.",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "test": "bun test",
-    "verify": "bun test && bun run astro check && bun run build && node scripts/assert-built-site.mjs"
+    "test": "vitest run",
+    "verify": "pnpm test && pnpm astro check && pnpm build && node scripts/assert-built-site.mjs"
   },
   "author": "Jiaxin Peng",
   "license": "MIT",
@@ -36,7 +37,7 @@
   },
   "devDependencies": {
     "@iconify/json": "^2.2.399",
-    "@types/bun": "^1.3.0",
-    "unocss": "^66.5.4"
+    "unocss": "^66.5.4",
+    "vitest": "^3.2.4"
   }
 }
