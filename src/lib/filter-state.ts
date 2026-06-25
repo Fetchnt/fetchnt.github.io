@@ -21,3 +21,10 @@ export function buildFilterSearch(search: string, filter: string): string {
 	const nextSearch = params.toString();
 	return nextSearch ? `?${nextSearch}` : "";
 }
+
+export function isFilterSectionVisible(
+	activeFilter: string,
+	sectionFilter: string | undefined,
+): boolean {
+	return activeFilter === "all" || sectionFilter === activeFilter;
+}

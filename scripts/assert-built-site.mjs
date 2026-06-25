@@ -61,6 +61,12 @@ function assertFilterToolbar(html, pageName, filters) {
 			html.includes('aria-pressed="true"'),
 		`${pageName} page should render one active all filter button`,
 	);
+	assert(
+		html.includes("data-filter-icon") &&
+			html.includes("data-filter-count") &&
+			html.includes("data-filter-label"),
+		`${pageName} page should render semantic filter button markers`,
+	);
 
 	for (const filter of filters) {
 		assert(

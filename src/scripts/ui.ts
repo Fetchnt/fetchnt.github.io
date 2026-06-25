@@ -1,4 +1,8 @@
-import { buildFilterSearch, readFilterFromSearch } from "../lib/filter-state";
+import {
+	buildFilterSearch,
+	isFilterSectionVisible,
+	readFilterFromSearch,
+} from "../lib/filter-state";
 
 function toggleClasses(element: Element, enabled: boolean, classes: string[]) {
 	for (const className of classes) {
@@ -9,7 +13,9 @@ function toggleClasses(element: Element, enabled: boolean, classes: string[]) {
 function setActiveButton(buttons: NodeListOf<HTMLElement>, activeButton: HTMLElement) {
 	buttons.forEach((button) => {
 		const isActive = button === activeButton;
-		const spans = button.querySelectorAll("span");
+		const icon = button.querySelector("[data-filter-icon]");
+		const count = button.querySelector("[data-filter-count]");
+		const label = button.querySelector("[data-filter-label]");
 
 		button.dataset.active = String(isActive);
 		button.setAttribute("aria-pressed", String(isActive));
@@ -17,17 +23,17 @@ function setActiveButton(buttons: NodeListOf<HTMLElement>, activeButton: HTMLEle
 		toggleClasses(button, isActive, ["bg-accent-100", "dark:bg-accent-900/30"]);
 		toggleClasses(button, !isActive, ["bg-gray-100", "dark:bg-gray-800"]);
 
-		if (spans[0]) {
-			toggleClasses(spans[0], isActive, ["text-accent-600", "dark:text-accent-400"]);
-			toggleClasses(spans[0], !isActive, ["text-gray-500", "dark:text-gray-400"]);
+		if (icon) {
+			toggleClasses(icon, isActive, ["text-accent-600", "dark:text-accent-400"]);
+			toggleClasses(icon, !isActive, ["text-gray-500", "dark:text-gray-400"]);
 		}
-		if (spans[1]) {
-			toggleClasses(spans[1], isActive, ["text-accent-700", "dark:text-accent-300"]);
-			toggleClasses(spans[1], !isActive, ["text-gray-700", "dark:text-gray-300"]);
+		if (count) {
+			toggleClasses(count, isActive, ["text-accent-700", "dark:text-accent-300"]);
+			toggleClasses(count, !isActive, ["text-gray-700", "dark:text-gray-300"]);
 		}
-		if (spans[2]) {
-			toggleClasses(spans[2], isActive, ["text-accent-600", "dark:text-accent-400"]);
-			toggleClasses(spans[2], !isActive, ["text-gray-500", "dark:text-gray-400"]);
+		if (label) {
+			toggleClasses(label, isActive, ["text-accent-600", "dark:text-accent-400"]);
+			toggleClasses(label, !isActive, ["text-gray-500", "dark:text-gray-400"]);
 		}
 	});
 }
@@ -53,7 +59,7 @@ export function setupFilterControls(root: ParentNode = document) {
 		const initialFilter = initialButton.dataset.filter;
 
 		sections.forEach((section) => {
-			const visible = initialFilter === "all" || section.dataset.filterSection === initialFilter;
+			const visible = isFilterSectionVisible(initialFilter ?? "all", section.dataset.filterSection);
 			section.hidden = !visible;
 			section.classList.toggle("hidden", !visible);
 		});
@@ -67,7 +73,7 @@ export function setupFilterControls(root: ParentNode = document) {
 			setActiveButton(buttons, button);
 
 			sections.forEach((section) => {
-				const visible = filter === "all" || section.dataset.filterSection === filter;
+				const visible = isFilterSectionVisible(filter, section.dataset.filterSection);
 				section.hidden = !visible;
 				section.classList.toggle("hidden", !visible);
 			});

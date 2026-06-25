@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { buildFilterSearch, readFilterFromSearch } from "../src/lib/filter-state";
+import {
+	buildFilterSearch,
+	isFilterSectionVisible,
+	readFilterFromSearch,
+} from "../src/lib/filter-state";
 
 describe("filter state helpers", () => {
 	it("reads only allowed filters from the search params", () => {
@@ -15,5 +19,12 @@ describe("filter state helpers", () => {
 			"?page=2&filter=working-paper",
 		);
 		expect(buildFilterSearch("?page=2&filter=working-paper", "all")).toBe("?page=2");
+	});
+
+	it("checks whether a section should be visible for the active filter", () => {
+		expect(isFilterSectionVisible("all", "current")).toBe(true);
+		expect(isFilterSectionVisible("current", "current")).toBe(true);
+		expect(isFilterSectionVisible("past", "current")).toBe(false);
+		expect(isFilterSectionVisible("current", undefined)).toBe(false);
 	});
 });
