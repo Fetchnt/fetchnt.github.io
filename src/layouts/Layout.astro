@@ -219,140 +219,24 @@ function isActiveNav(href: string): boolean {
 
     <script is:inline>
       (() => {
-        // --- Theme management ---
         const STORAGE_KEY = "site-theme";
-        const getStored = () => {
-          try {
-            return localStorage.getItem(STORAGE_KEY);
-          } catch (err) {
-            return null;
-          }
-        };
-
-        const applyTheme = (mode) => {
-          if (mode === "dark") {
+        try {
+          const stored = localStorage.getItem(STORAGE_KEY);
+          const prefersDark = window.matchMedia?.(
+            "(prefers-color-scheme: dark)",
+          ).matches;
+          if (stored === "dark" || (!stored && prefersDark)) {
             document.documentElement.classList.add("dark");
-          } else {
-            document.documentElement.classList.remove("dark");
           }
-        };
-
-        const stored = getStored();
-        if (stored) {
-          applyTheme(stored);
-        } else if (
-          window.matchMedia &&
-          window.matchMedia("(prefers-color-scheme: dark)").matches
-        ) {
-          applyTheme("dark");
+        } catch {
+          // Keep the default light theme when storage is unavailable.
         }
-
-        // --- Event Listeners ---
-        document.addEventListener("DOMContentLoaded", () => {
-          // Mobile menu functionality
-          const menuBtn = document.getElementById("mobile-menu-toggle");
-          const menu = document.getElementById("mobile-menu");
-          const iconMenu = document.getElementById("icon-menu");
-          const iconClose = document.getElementById("icon-close");
-
-          if (menuBtn && menu && iconMenu && iconClose) {
-            const closeMenu = () => {
-              menuBtn.setAttribute("aria-expanded", "false");
-              menu.hidden = true;
-              menu.classList.add("opacity-0", "scale-95", "invisible");
-              menu.classList.remove("opacity-100", "scale-100", "visible");
-              iconMenu.classList.remove("hidden");
-              iconClose.classList.add("hidden");
-            };
-
-            const openMenu = () => {
-              menuBtn.setAttribute("aria-expanded", "true");
-              menu.hidden = false;
-              menu.classList.remove("opacity-0", "scale-95", "invisible");
-              menu.classList.add("opacity-100", "scale-100", "visible");
-              iconMenu.classList.add("hidden");
-              iconClose.classList.remove("hidden");
-            };
-
-            const toggleMenu = () => {
-              const isExpanded =
-                menuBtn.getAttribute("aria-expanded") === "true";
-              isExpanded ? closeMenu() : openMenu();
-            };
-
-            menuBtn.addEventListener("click", (e) => {
-              e.stopPropagation();
-              toggleMenu();
-            });
-
-            // Close on click outside
-            document.addEventListener("click", (e) => {
-              const isExpanded =
-                menuBtn.getAttribute("aria-expanded") === "true";
-              if (
-                isExpanded &&
-                !menu.contains(e.target) &&
-                !menuBtn.contains(e.target)
-              ) {
-                closeMenu();
-              }
-            });
-
-            document.addEventListener("keydown", (event) => {
-              if (
-                event.key === "Escape" &&
-                menuBtn.getAttribute("aria-expanded") === "true"
-              ) {
-                closeMenu();
-                menuBtn.focus();
-              }
-            });
-          }
-
-          // Theme toggle buttons
-          const toggleButtons = document.querySelectorAll(
-            "[data-theme-toggle]",
-          );
-          toggleButtons.forEach((btn) => {
-            btn.addEventListener("click", () => {
-              const isDark = document.documentElement.classList.toggle("dark");
-              try {
-                localStorage.setItem(STORAGE_KEY, isDark ? "dark" : "light");
-              } catch (err) {
-                /* ignore */
-              }
-            });
-          });
-
-          // System theme change
-          if (window.matchMedia) {
-            window
-              .matchMedia("(prefers-color-scheme: dark)")
-              .addEventListener("change", (event) => {
-                if (!getStored()) {
-                  applyTheme(event.matches ? "dark" : "light");
-                }
-              });
-          }
-
-          // Back to top functionality
-          const backToTopBtn = document.getElementById("back-to-top");
-          if (backToTopBtn) {
-            const toggleBackToTop = () => {
-              if (window.scrollY > 300) {
-                backToTopBtn.setAttribute("data-visible", "true");
-              } else {
-                backToTopBtn.setAttribute("data-visible", "false");
-              }
-            };
-
-            window.addEventListener("scroll", toggleBackToTop);
-            backToTopBtn.addEventListener("click", () => {
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            });
-          }
-        });
       })();
+    </script>
+    <script>
+      import { setupLayoutUi } from "../scripts/layout-ui";
+
+      setupLayoutUi();
     </script>
   </body>
 </html>

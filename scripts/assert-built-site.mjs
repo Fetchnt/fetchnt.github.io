@@ -165,3 +165,7 @@ assert(
 		css.includes("transition-duration:.01ms!important"),
 	"layout should include global reduced-motion overrides",
 );
+assert(
+	index.includes("_astro/") && index.includes('type="module"'),
+	"home page should load external module scripts for layout behavior",
+);
