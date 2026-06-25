@@ -72,15 +72,15 @@ pnpm dev
 
 ## 版本化模板更新
 
-这个模板使用 SemVer release tag 追踪版本，例如 \`v0.4.0\`。\`package.json\`、
+这个模板使用 SemVer release tag 追踪版本，例如 \`v0.5.0\`。\`package.json\`、
 \`.template-version\` 和 \`CHANGELOG.md\` 最新条目应保持同一个版本号。
 
 维护者发布前可以先检查版本一致性：
 
 \`\`\`bash
-node scripts/check-release.mjs --tag v0.4.0
+node scripts/check-release.mjs --tag v0.5.0
 pnpm verify
-git tag -a v0.4.0 -m "Release v0.4.0"
+git tag -a v0.5.0 -m "Release v0.5.0"
 git push origin main --tags
 \`\`\`
 

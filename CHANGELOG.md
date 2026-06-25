@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.5.0 - 2026-06-25
+
+### Features
+
+- Added shared filter and page jump components for Research, Projects,
+  Teaching, and About pages.
+- Added URL-persisted filter state and shared section-anchor generation.
+- Added `siteUrl` and `ogImage` configuration for canonical URLs, Open Graph
+  image URLs, and sitemap consistency.
+
+### Improvements
+
+- Extracted layout browser behavior into a reusable script module while keeping
+  the pre-paint theme bootstrap inline.
+- Replaced fragile filter span-order updates with semantic marker attributes.
+- Migrated UnoCSS config from deprecated `presetWind` to `presetWind3`.
+- Expanded generated-site assertions for SEO, accessibility, layout scripts,
+  filter controls, canonical URLs, and section anchors.
+- Updated English and Chinese documentation for the current configuration shape
+  and release verification flow.
+
 ## 0.4.0 - 2026-05-28
 
 ### Features

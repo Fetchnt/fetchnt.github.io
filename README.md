@@ -74,16 +74,16 @@ the Astro sitemap integration. Update it before publishing a copied site.
 
 ## Versioned Template Updates
 
-This template is tracked with SemVer release tags such as `v0.4.0`.
+This template is tracked with SemVer release tags such as `v0.5.0`.
 `package.json`, `.template-version`, and the latest `CHANGELOG.md` entry should
 always describe the same version.
 
 Maintainers can check a release before tagging:
 
 ```bash
-node scripts/check-release.mjs --tag v0.4.0
+node scripts/check-release.mjs --tag v0.5.0
 pnpm verify
-git tag -a v0.4.0 -m "Release v0.4.0"
+git tag -a v0.5.0 -m "Release v0.5.0"
 git push origin main --tags
 ```
 
