@@ -67,6 +67,8 @@ Before publishing, replace every placeholder in:
 - `src/content/posts`: remove sample posts or mark drafts with `draft: true`.
 
 Run `pnpm verify` before deployment.
+`siteUrl` is the single source for canonical URLs, Open Graph image URLs, and
+the Astro sitemap integration. Update it before publishing a copied site.
 
 ---
 

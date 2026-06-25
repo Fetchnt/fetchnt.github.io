@@ -139,6 +139,12 @@ assert(
 	"about page should render section jump links with matching anchors",
 );
 
+const aboutCanonical = 'link rel="canonical" href="https://astro-theme-scholars.pages.dev/about/"';
+const researchCanonical = 'link rel="canonical" href="https://astro-theme-scholars.pages.dev/researches/"';
+
+assert(about.includes(aboutCanonical), "about page canonical should use siteConfig.siteUrl");
+assert(research.includes(researchCanonical), "research page canonical should use siteConfig.siteUrl");
+
 const projects = await readDist("projects/index.html");
 const projectStatusFilters = ["active", "past", "unspecified"];
 const visibleProjectStatusFilters = projectStatusFilters.filter((filter) =>

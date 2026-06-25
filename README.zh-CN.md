@@ -65,6 +65,8 @@ pnpm dev
 - \`src/content/posts\`：删除示例文章，或使用 \`draft: true\` 标记为草稿。
 
 部署前运行 \`pnpm verify\`。
+`siteUrl` 是 canonical URL、Open Graph 图片 URL 和 Astro sitemap 集成的唯一来源。
+复制模板后发布前请先更新它。
 
 ---
 
