@@ -515,7 +515,7 @@ Find icons at: [icones.js.org](https://icones.js.org)
 │   │   └── config.ts          # TypeScript interfaces
 │   └── side.config.ts         # ⭐ Main configuration
 ├── uno.config.ts              # UnoCSS configuration
-├── astro.config.mjs           # Astro configuration
+├── astro.config.ts            # Astro configuration
 └── package.json
 ```
 

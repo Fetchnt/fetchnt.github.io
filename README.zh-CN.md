@@ -518,7 +518,7 @@ draft: false              # 设为 true 则不显示
 │   │   └── config.ts          # TypeScript 类型定义
 │   └── side.config.ts         # ⭐ 核心配置文件
 ├── uno.config.ts              # UnoCSS 配置
-├── astro.config.mjs           # Astro 配置
+├── astro.config.ts            # Astro 配置
 └── package.json
 \`\`\`
 
