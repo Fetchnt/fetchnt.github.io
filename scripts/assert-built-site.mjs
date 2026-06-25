@@ -26,6 +26,16 @@ async function readDistCss() {
 	return contents.join("\n");
 }
 
+async function readDistJs() {
+	const assetRoot = new URL("_astro/", root);
+	const entries = await readdir(assetRoot);
+	const jsFiles = entries.filter((entry) => entry.endsWith(".js"));
+	const contents = await Promise.all(
+		jsFiles.map((file) => readFile(new URL(file, assetRoot), "utf8")),
+	);
+	return contents.join("\n");
+}
+
 function assert(condition, message) {
 	if (!condition) {
 		throw new Error(message);
@@ -165,7 +175,11 @@ assert(
 		css.includes("transition-duration:.01ms!important"),
 	"layout should include global reduced-motion overrides",
 );
+
+const js = await readDistJs();
 assert(
-	index.includes("_astro/") && index.includes('type="module"'),
-	"home page should load external module scripts for layout behavior",
+	js.includes("mobile-menu-toggle") &&
+		js.includes("back-to-top") &&
+		js.includes("prefers-reduced-motion: reduce"),
+	"layout browser behavior should be bundled in generated JavaScript",
 );

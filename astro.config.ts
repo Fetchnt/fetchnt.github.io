@@ -10,6 +10,9 @@ export default defineConfig({
 	site: withTrailingSlash(siteConfig.siteUrl),
 	integrations: [icon(), sitemap()],
 	vite: {
+		build: {
+			assetsInlineLimit: 0,
+		},
 		plugins: [UnoCSS()],
 	},
 	prefetch: true,
