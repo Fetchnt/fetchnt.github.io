@@ -1,5 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import FilterBar from "../components/FilterBar.astro";
+import PageJumpNav from "../components/PageJumpNav.astro";
 import { getAllPapers } from "../lib/papers";
 import siteConfig from "../side.config";
 
@@ -58,38 +60,24 @@ const pageDescription = siteConfig.pageTitles.researches.description ||
         </p>
       </div>
       
-      <!-- Filter Bar -->
-      <div class="flex flex-wrap items-center gap-2">
-        <button 
-          type="button"
-          data-filter="all"
-          data-active="true"
-          aria-pressed="true"
-          class="filter-btn active flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-accent-100 dark:bg-accent-900/30 text-sm cursor-pointer border-none transition-all"
-        >
-          <span class="i-mdi:file-document-multiple text-accent-600 dark:text-accent-400 text-base"></span>
-          <span class="font-medium text-accent-800 dark:text-accent-200">{totalPapers}</span>
-          <span class="text-accent-700 dark:text-accent-300">all</span>
-        </button>
-        {orderedCategories.map((category) => {
-          const count = grouped.get(category)?.length || 0;
-          const categorySlug = category.toLowerCase().replace(/\s+/g, '-');
-          return (
-              <button 
-                type="button"
-                data-filter={categorySlug}
-                data-active="false"
-                aria-pressed="false"
-                class="filter-btn flex items-center gap-1 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-sm cursor-pointer border-none hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
-              >
-              <span class={`${categoryIcons[category] || 'i-mdi:file-document'} text-sm text-gray-600 dark:text-gray-300`}></span>
-              <span class="font-medium text-gray-800 dark:text-gray-200">{count}</span>
-              <span class="text-gray-600 dark:text-gray-400">{category.toLowerCase()}</span>
-            </button>
-          );
-        })}
-      </div>
+      <FilterBar
+        total={totalPapers}
+        allIcon="i-mdi:file-document-multiple"
+        items={orderedCategories.map((category) => ({
+          filter: category.toLowerCase().replace(/\s+/g, "-"),
+          label: category.toLowerCase(),
+          count: grouped.get(category)?.length || 0,
+          icon: categoryIcons[category] || "i-mdi:file-document",
+        }))}
+      />
     </header>
+
+    <PageJumpNav
+      items={orderedCategories.map((category) => ({
+        href: `#${category.toLowerCase().replace(/\s+/g, "-")}`,
+        label: category,
+      }))}
+    />
 
     <div class="fade-in-up animation-delay-200 space-y-8" id="papers-container">
       {
@@ -101,7 +89,7 @@ const pageDescription = siteConfig.pageTitles.researches.description ||
           const categorySlug = category.toLowerCase().replace(/\s+/g, '-');
 
           return (
-            <section class="space-y-3 paper-section" data-filter-section={categorySlug}>
+            <section id={categorySlug} class="scroll-mt-20 space-y-3 paper-section" data-filter-section={categorySlug}>
               <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                 {category} <span class="text-gray-400 dark:text-gray-500 font-normal">({categoryPapers.length})</span>
               </h2>

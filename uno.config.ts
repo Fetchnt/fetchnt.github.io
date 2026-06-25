@@ -1,4 +1,4 @@
-import { defineConfig, presetWind, presetTypography, transformerDirectives, presetIcons } from 'unocss';
+import { defineConfig, presetWind3, presetTypography, transformerDirectives, presetIcons } from 'unocss';
 import siteConfig from './src/side.config';
 
 // Extract icons from social links
@@ -61,7 +61,7 @@ iconSafelist.push(
 export default defineConfig({
 	safelist: iconSafelist,
 	presets: [
-		presetWind(),
+		presetWind3(),
 		presetTypography({
 			cssExtend: {
 				':where(p, li, blockquote)': {

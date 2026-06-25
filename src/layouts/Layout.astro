@@ -15,7 +15,11 @@ const { title, description, image } = Astro.props;
 const seoTitle = title ? `${title} | ${siteConfig.title}` : siteConfig.title;
 const seoDesc = description || siteConfig.description;
 // Assumes a default OG image is specified in siteConfig, with a fallback.
-const ogImage = image || "/profile.svg";
+const rawOgImage = image || siteConfig.ogImage || "/profile.svg";
+const siteUrl = siteConfig.siteUrl.replace(/\/$/, "");
+const ogImage = /^https?:/i.test(rawOgImage)
+  ? rawOgImage
+  : `${siteUrl}${rawOgImage.startsWith("/") ? rawOgImage : `/${rawOgImage}`}`;
 
 const currentYear = new Date().getFullYear();
 const siteTitle = siteConfig.author || siteConfig.title;
@@ -57,6 +61,18 @@ function isActiveNav(href: string): boolean {
       }}
     />
     <slot name="head" />
+    <style is:global>
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
   </head>
   <body
     class="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300"

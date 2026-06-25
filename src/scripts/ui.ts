@@ -1,3 +1,5 @@
+import { buildFilterSearch, readFilterFromSearch } from "../lib/filter-state";
+
 function toggleClasses(element: Element, enabled: boolean, classes: string[]) {
 	for (const className of classes) {
 		element.classList.toggle(className, enabled);
@@ -33,13 +35,28 @@ function setActiveButton(buttons: NodeListOf<HTMLElement>, activeButton: HTMLEle
 export function setupFilterControls(root: ParentNode = document) {
 	const buttons = root.querySelectorAll<HTMLElement>("[data-filter]");
 	const sections = root.querySelectorAll<HTMLElement>("[data-filter-section]");
+	const allowedFilters = Array.from(buttons)
+		.map((button) => button.dataset.filter)
+		.filter((filter): filter is string => Boolean(filter));
+	const requestedFilter = readFilterFromSearch(window.location.search, allowedFilters);
+	const requestedButton = requestedFilter
+		? Array.from(buttons).find((button) => button.dataset.filter === requestedFilter)
+		: undefined;
 	const initialButton =
+		requestedButton ??
 		root.querySelector<HTMLElement>("[data-filter][data-active='true']") ??
 		root.querySelector<HTMLElement>("[data-filter][aria-pressed='true']") ??
 		root.querySelector<HTMLElement>("[data-filter].active");
 
 	if (initialButton) {
 		setActiveButton(buttons, initialButton);
+		const initialFilter = initialButton.dataset.filter;
+
+		sections.forEach((section) => {
+			const visible = initialFilter === "all" || section.dataset.filterSection === initialFilter;
+			section.hidden = !visible;
+			section.classList.toggle("hidden", !visible);
+		});
 	}
 
 	buttons.forEach((button) => {
@@ -54,6 +71,10 @@ export function setupFilterControls(root: ParentNode = document) {
 				section.hidden = !visible;
 				section.classList.toggle("hidden", !visible);
 			});
+
+			const nextSearch = buildFilterSearch(window.location.search, filter);
+			const nextUrl = `${window.location.pathname}${nextSearch}${window.location.hash}`;
+			window.history.replaceState({}, "", nextUrl);
 		});
 	});
 }

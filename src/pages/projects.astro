@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import FilterBar from "../components/FilterBar.astro";
 import { projects } from "../components/projects";
 import siteConfig from "../side.config";
 import { getProjectStatus } from "../lib/projects";
@@ -11,6 +12,26 @@ const pageDescription = siteConfig.pageTitles.projects.description ||
 const activeProjects = projects.filter((project) => getProjectStatus(project) === "active");
 const pastProjects = projects.filter((project) => getProjectStatus(project) === "past");
 const unspecifiedProjects = projects.filter((project) => getProjectStatus(project) === "unspecified");
+const filterItems = [
+  {
+    filter: "active",
+    label: "active",
+    count: activeProjects.length,
+    icon: "i-mdi:rocket-launch",
+  },
+  {
+    filter: "past",
+    label: "past",
+    count: pastProjects.length,
+    icon: "i-mdi:archive",
+  },
+  {
+    filter: "unspecified",
+    label: "other",
+    count: unspecifiedProjects.length,
+    icon: "i-mdi:folder-open",
+  },
+];
 ---
 
 <Layout title={pageTitle} description={pageDescription}>
@@ -26,59 +47,11 @@ const unspecifiedProjects = projects.filter((project) => getProjectStatus(projec
         </p>
       </div>
       
-      <!-- Filter Bar -->
-      <div class="flex flex-wrap items-center gap-2">
-        <button 
-          type="button"
-          data-filter="all"
-          data-active="true"
-          aria-pressed="true"
-          class="filter-btn active flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-accent-100 dark:bg-accent-900/30 text-sm cursor-pointer border-none transition-all"
-        >
-          <span class="i-mdi:code-braces text-accent-600 dark:text-accent-400 text-base"></span>
-          <span class="font-medium text-accent-700 dark:text-accent-300">{projects.length}</span>
-          <span class="text-accent-600 dark:text-accent-400">all</span>
-        </button>
-        {activeProjects.length > 0 && (
-          <button 
-            type="button"
-            data-filter="active"
-            data-active="false"
-            aria-pressed="false"
-            class="filter-btn flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-sm cursor-pointer border-none hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
-          >
-            <span class="i-mdi:rocket-launch text-gray-500 dark:text-gray-400 text-base"></span>
-            <span class="font-medium text-gray-700 dark:text-gray-300">{activeProjects.length}</span>
-            <span class="text-gray-500 dark:text-gray-500">active</span>
-          </button>
-        )}
-        {pastProjects.length > 0 && (
-          <button 
-            type="button"
-            data-filter="past"
-            data-active="false"
-            aria-pressed="false"
-            class="filter-btn flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-sm cursor-pointer border-none hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
-          >
-            <span class="i-mdi:archive text-gray-500 dark:text-gray-400 text-base"></span>
-            <span class="font-medium text-gray-700 dark:text-gray-300">{pastProjects.length}</span>
-            <span class="text-gray-500 dark:text-gray-500">past</span>
-          </button>
-        )}
-        {unspecifiedProjects.length > 0 && (
-          <button 
-            type="button"
-            data-filter="unspecified"
-            data-active="false"
-            aria-pressed="false"
-            class="filter-btn flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-sm cursor-pointer border-none hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
-          >
-            <span class="i-mdi:folder-open text-gray-500 dark:text-gray-400 text-base"></span>
-            <span class="font-medium text-gray-700 dark:text-gray-300">{unspecifiedProjects.length}</span>
-            <span class="text-gray-500 dark:text-gray-500">other</span>
-          </button>
-        )}
-      </div>
+      <FilterBar
+        allIcon="i-mdi:code-braces"
+        total={projects.length}
+        items={filterItems}
+      />
     </header>
 
     <div class="fade-in-up animation-delay-200 space-y-6" id="projects-container">

@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import PageJumpNav from "../components/PageJumpNav.astro";
 import aboutRaw from "../data/about.yml?raw";
 import siteConfig from "../side.config";
 import { parse } from "yaml";
@@ -57,6 +58,47 @@ const {
 
 const pageTitle = siteConfig.pageTitles.about.title || hero.title || "About";
 const pageDescription = siteConfig.pageTitles.about.description || hero.description || "";
+
+const fixedSectionIds = new Set(["profile", "education", "experience", "service"]);
+const usedSectionIds = new Set(fixedSectionIds);
+
+const slugSectionTitle = (title = "") =>
+  title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+
+const uniqueSectionIdFor = (title: string | undefined, index: number) => {
+  const fallback = `section-${index + 1}`;
+  const base = slugSectionTitle(title) || fallback;
+  let id = base;
+  let suffix = 2;
+
+  while (usedSectionIds.has(id)) {
+    id = `${base}-${suffix}`;
+    suffix += 1;
+  }
+
+  usedSectionIds.add(id);
+  return id;
+};
+
+const customSections = sections.map((section, index) => ({
+  ...section,
+  id: uniqueSectionIdFor(section.title, index),
+  label: section.title?.trim() || `Section ${index + 1}`,
+}));
+
+const aboutNavItems = [
+  ...(profile.length > 0 ? [{ href: "#profile", label: "Profile" }] : []),
+  ...(education.length > 0 ? [{ href: "#education", label: "Education" }] : []),
+  ...(experience.length > 0 ? [{ href: "#experience", label: "Experience" }] : []),
+  ...(service.length > 0 ? [{ href: "#service", label: "Service" }] : []),
+  ...customSections.map((section) => ({
+    href: `#${section.id}`,
+    label: section.label,
+  })),
+];
 ---
 
 <Layout title={pageTitle} description={pageDescription}>
@@ -71,9 +113,11 @@ const pageDescription = siteConfig.pageTitles.about.description || hero.descript
       </p>
     </header>
 
+    <PageJumpNav items={aboutNavItems} />
+
     {
       profile.length > 0 && (
-        <section class="grid gap-3 sm:grid-cols-3">
+        <section id="profile" class="scroll-mt-20 grid gap-3 sm:grid-cols-3">
           {profile.map((item) => (
             <div class="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800/50">
               <p class="m-0 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
@@ -92,7 +136,7 @@ const pageDescription = siteConfig.pageTitles.about.description || hero.descript
       <!-- Education Section -->
       {
         education.length > 0 && (
-          <section class="space-y-3">
+          <section id="education" class="scroll-mt-20 space-y-3">
             <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Education</h2>
             <div class="space-y-3">
               {education.map((edu) => (
@@ -125,7 +169,7 @@ const pageDescription = siteConfig.pageTitles.about.description || hero.descript
       <!-- Experience Section -->
       {
         experience.length > 0 && (
-          <section class="space-y-3">
+          <section id="experience" class="scroll-mt-20 space-y-3">
             <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Experience</h2>
             <div class="space-y-4">
               {experience.map((exp) => (
@@ -169,7 +213,7 @@ const pageDescription = siteConfig.pageTitles.about.description || hero.descript
       <!-- Service Section -->
       {
         service.length > 0 && (
-          <section class="space-y-3">
+          <section id="service" class="scroll-mt-20 space-y-3">
             <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Academic Service</h2>
             <div class="grid gap-3 sm:grid-cols-2">
               {service.map((item) => {
@@ -209,8 +253,8 @@ const pageDescription = siteConfig.pageTitles.about.description || hero.descript
 
       <!-- Custom Sections (Awards, etc.) -->
       {
-        sections.map((section) => (
-          <section class="space-y-3">
+        customSections.map((section) => (
+          <section id={section.id} class="scroll-mt-20 space-y-3">
             <h2 class="flex items-center gap-1.5 text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
               {section.icon && <span class={section.icon}></span>}
               <span>{section.title}</span>

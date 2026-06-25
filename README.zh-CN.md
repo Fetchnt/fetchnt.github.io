@@ -113,6 +113,12 @@ export const siteConfig: SiteConfig = {
   
   /** SEO 描述（出现在搜索结果中） */
   description: '专注于学习分析与人机交互研究...',
+
+  /** 生产站点 URL，用于 canonical、Open Graph 和 sitemap */
+  siteUrl: 'https://your-site.example',
+
+  /** 默认 Open Graph 图片路径或完整 URL */
+  ogImage: '/profile.svg',
   
   /** 网站图标路径（相对于 /public） */
   favicon: '/favicon.svg',
@@ -186,15 +192,30 @@ export const siteConfig: SiteConfig = {
   },
 
   // ─────────────────────────────────────────────────────────────
-  // 📄 各页面描述（SEO 及副标题）
+  // 📄 各页面标题与描述（SEO 及副标题）
   // ─────────────────────────────────────────────────────────────
   
-  pageDescriptions: {
-    about: '关于我的简介...',
-    researches: '研究方向与成果介绍...',
-    projects: '项目展示说明...',
-    teaching: '教学理念介绍...',
-    posts: '博客简介...',
+  pageTitles: {
+    about: {
+      title: '关于',
+      description: '关于我的简介...',
+    },
+    researches: {
+      title: '论文',
+      description: '研究方向与成果介绍...',
+    },
+    projects: {
+      title: '项目',
+      description: '项目展示说明...',
+    },
+    teaching: {
+      title: '教学',
+      description: '教学理念介绍...',
+    },
+    posts: {
+      title: '博客',
+      description: '博客简介...',
+    },
   },
 };
 \`\`\`

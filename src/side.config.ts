@@ -28,6 +28,12 @@ export const siteConfig: SiteConfig = {
 	description:
 		'Scholarship at the intersection of learning analytics and web infrastructure, building equitable tooling for open scholarship.',
 
+	/** Production site URL used for canonical, Open Graph, and sitemap URLs */
+	siteUrl: 'https://astro-theme-scholars.pages.dev',
+
+	/** Default Open Graph image. Use a /public path or full URL. */
+	ogImage: '/profile.svg',
+
 	/** Path to favicon in /public directory */
 	favicon: '/favicon.svg',
 
@@ -133,7 +139,7 @@ export const siteConfig: SiteConfig = {
 		/** Alt text for profile image (for accessibility) */
 		profileAlt: 'Portrait of Your Name',
 
-		/** Profile image: use '/image.jpg' for public folder, or full URL */
+		/** Profile image: use '/image.jpg' for public folder, relative asset URL, or full URL */
 		profileImage: '/profile.svg',
 
 		/** Optional: Profile image dimensions in pixels */

@@ -118,6 +118,12 @@ export const siteConfig: SiteConfig = {
   
   /** SEO description (appears in search results) */
   description: 'Your research focus and expertise...',
+
+  /** Production URL used for canonical, Open Graph, and sitemap URLs */
+  siteUrl: 'https://your-site.example',
+
+  /** Default Open Graph image path or full URL */
+  ogImage: '/profile.svg',
   
   /** Favicon path (relative to /public) */
   favicon: '/favicon.svg',
@@ -191,15 +197,30 @@ export const siteConfig: SiteConfig = {
   },
 
   // ─────────────────────────────────────────────────────────────
-  // 📄 PAGE DESCRIPTIONS (SEO & subtitles)
+  // 📄 PAGE TITLES AND DESCRIPTIONS (SEO & subtitles)
   // ─────────────────────────────────────────────────────────────
   
-  pageDescriptions: {
-    about: 'Your brief bio for the About page...',
-    researches: 'Description of your research focus...',
-    projects: 'Description of your projects...',
-    teaching: 'Description of your teaching philosophy...',
-    posts: 'Description of your blog...',
+  pageTitles: {
+    about: {
+      title: 'About',
+      description: 'Your brief bio for the About page...',
+    },
+    researches: {
+      title: 'Publications',
+      description: 'Description of your research focus...',
+    },
+    projects: {
+      title: 'Projects',
+      description: 'Description of your projects...',
+    },
+    teaching: {
+      title: 'Teaching',
+      description: 'Description of your teaching philosophy...',
+    },
+    posts: {
+      title: 'Blog',
+      description: 'Description of your blog...',
+    },
   },
 };
 ```

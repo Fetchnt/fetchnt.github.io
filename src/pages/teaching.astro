@@ -1,5 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import FilterBar from "../components/FilterBar.astro";
+import PageJumpNav from "../components/PageJumpNav.astro";
 import teachingRaw from "../data/teaching.yml?raw";
 import siteConfig from "../side.config";
 import { parse } from "yaml";
@@ -31,53 +33,28 @@ const totalPast = past.reduce((acc, s) => acc + (s.modules?.length || 0), 0);
         </p>
       </div>
       
-      <!-- Filter Bar -->
-      <div class="flex flex-wrap items-center gap-2">
-        <button 
-          type="button"
-          data-filter="all"
-          data-active="true"
-          aria-pressed="true"
-          class="filter-btn active flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-accent-100 dark:bg-accent-900/30 text-sm cursor-pointer border-none transition-all"
-        >
-          <span class="i-mdi:school text-accent-600 dark:text-accent-400 text-base"></span>
-          <span class="font-medium text-accent-700 dark:text-accent-300">{totalCurrent + totalPast}</span>
-          <span class="text-accent-600 dark:text-accent-400">all</span>
-        </button>
-        {totalCurrent > 0 && (
-          <button 
-            type="button"
-            data-filter="current"
-            data-active="false"
-            aria-pressed="false"
-            class="filter-btn flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-sm cursor-pointer border-none hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
-          >
-            <span class="i-mdi:calendar-check text-gray-500 dark:text-gray-400 text-base"></span>
-            <span class="font-medium text-gray-700 dark:text-gray-300">{totalCurrent}</span>
-            <span class="text-gray-500 dark:text-gray-500">current</span>
-          </button>
-        )}
-        {totalPast > 0 && (
-          <button 
-            type="button"
-            data-filter="past"
-            data-active="false"
-            aria-pressed="false"
-            class="filter-btn flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-sm cursor-pointer border-none hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
-          >
-            <span class="i-mdi:history text-gray-500 dark:text-gray-400 text-base"></span>
-            <span class="font-medium text-gray-700 dark:text-gray-300">{totalPast}</span>
-            <span class="text-gray-500 dark:text-gray-500">past</span>
-          </button>
-        )}
-      </div>
+      <FilterBar
+        total={totalCurrent + totalPast}
+        allIcon="i-mdi:school"
+        items={[
+          { filter: "current", label: "current", count: totalCurrent, icon: "i-mdi:calendar-check" },
+          { filter: "past", label: "past", count: totalPast, icon: "i-mdi:history" },
+        ]}
+      />
     </header>
+
+    <PageJumpNav
+      items={[
+        ...(current.length > 0 ? [{ href: "#current", label: "Current" }] : []),
+        ...(past.length > 0 ? [{ href: "#past", label: "Past" }] : []),
+      ]}
+    />
 
     <div class="fade-in-up animation-delay-200 space-y-8" id="teaching-container">
       <!-- Current Modules -->
       {
         current.length > 0 && (
-          <section class="space-y-4 teaching-section" data-filter-section="current">
+          <section id="current" class="scroll-mt-20 space-y-4 teaching-section" data-filter-section="current">
             <h2 class="text-sm font-semibold text-accent-600 dark:text-accent-400 uppercase tracking-wide">
               Current Courses
             </h2>
@@ -174,7 +151,7 @@ const totalPast = past.reduce((acc, s) => acc + (s.modules?.length || 0), 0);
       <!-- Past Modules -->
       {
         past.length > 0 && (
-          <section class="space-y-4 teaching-section" data-filter-section="past">
+          <section id="past" class="scroll-mt-20 space-y-4 teaching-section" data-filter-section="past">
             <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
               Past Courses
             </h2>
