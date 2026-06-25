@@ -3,6 +3,7 @@ import Layout from "../layouts/Layout.astro";
 import FilterBar from "../components/FilterBar.astro";
 import PageJumpNav from "../components/PageJumpNav.astro";
 import { getAllPapers } from "../lib/papers";
+import { slugifySectionId } from "../lib/section-id";
 import siteConfig from "../side.config";
 
 const papers = getAllPapers();
@@ -64,7 +65,7 @@ const pageDescription = siteConfig.pageTitles.researches.description ||
         total={totalPapers}
         allIcon="i-mdi:file-document-multiple"
         items={orderedCategories.map((category) => ({
-          filter: category.toLowerCase().replace(/\s+/g, "-"),
+          filter: slugifySectionId(category),
           label: category.toLowerCase(),
           count: grouped.get(category)?.length || 0,
           icon: categoryIcons[category] || "i-mdi:file-document",
@@ -74,7 +75,7 @@ const pageDescription = siteConfig.pageTitles.researches.description ||
 
     <PageJumpNav
       items={orderedCategories.map((category) => ({
-        href: `#${category.toLowerCase().replace(/\s+/g, "-")}`,
+        href: `#${slugifySectionId(category)}`,
         label: category,
       }))}
     />
@@ -86,7 +87,7 @@ const pageDescription = siteConfig.pageTitles.researches.description ||
           if (!categoryPapers?.length) {
             return null;
           }
-          const categorySlug = category.toLowerCase().replace(/\s+/g, '-');
+          const categorySlug = slugifySectionId(category);
 
           return (
             <section id={categorySlug} class="scroll-mt-20 space-y-3 paper-section" data-filter-section={categorySlug}>

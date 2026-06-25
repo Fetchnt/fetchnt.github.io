@@ -2,6 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import PageJumpNav from "../components/PageJumpNav.astro";
 import aboutRaw from "../data/about.yml?raw";
+import { createUniqueSectionId } from "../lib/section-id";
 import siteConfig from "../side.config";
 import { parse } from "yaml";
 
@@ -62,30 +63,9 @@ const pageDescription = siteConfig.pageTitles.about.description || hero.descript
 const fixedSectionIds = new Set(["profile", "education", "experience", "service"]);
 const usedSectionIds = new Set(fixedSectionIds);
 
-const slugSectionTitle = (title = "") =>
-  title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-
-const uniqueSectionIdFor = (title: string | undefined, index: number) => {
-  const fallback = `section-${index + 1}`;
-  const base = slugSectionTitle(title) || fallback;
-  let id = base;
-  let suffix = 2;
-
-  while (usedSectionIds.has(id)) {
-    id = `${base}-${suffix}`;
-    suffix += 1;
-  }
-
-  usedSectionIds.add(id);
-  return id;
-};
-
 const customSections = sections.map((section, index) => ({
   ...section,
-  id: uniqueSectionIdFor(section.title, index),
+  id: createUniqueSectionId(section.title, usedSectionIds, `section-${index + 1}`),
   label: section.title?.trim() || `Section ${index + 1}`,
 }));
 

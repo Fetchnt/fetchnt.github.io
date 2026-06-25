@@ -100,7 +100,9 @@ assertFilterToolbar(research, "research", [
 assert(
 	research.includes('aria-label="Page sections"') &&
 		research.includes('href="#publication"') &&
-		research.includes('id="publication"'),
+		research.includes('id="publication"') &&
+		research.includes('href="#working-paper"') &&
+		research.includes('id="working-paper"'),
 	"research page should render section jump links with matching anchors",
 );
 
