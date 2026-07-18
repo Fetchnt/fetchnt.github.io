@@ -1,17 +1,21 @@
-import { defineConfig, presetWind3, presetTypography, transformerDirectives, presetIcons } from 'unocss';
+import {
+	defineConfig,
+	presetIcons,
+	presetTypography,
+	presetWind3,
+	transformerDirectives,
+} from 'unocss';
 import siteConfig from './src/side.config';
 
-// Extract icons from social links
+// Dynamic icon names from configuration need to be available to UnoCSS at build time.
 const iconSafelist = siteConfig.socialLinks
 	.map((link) => link.icon)
 	.filter((icon): icon is string => Boolean(icon && icon.startsWith('i-')));
 
-// Add theme toggle and UI icons
 iconSafelist.push(
-	// Theme icons
-	'i-ph-moon-stars-duotone',
-	'i-ph-sun-dim-duotone',
-	// Navigation icons
+	// Theme and navigation icons
+	'i-ph-moon',
+	'i-ph-sun',
 	'i-ph-list-bold',
 	'i-ph-x-bold',
 	'i-ph-arrow-up-bold',
@@ -59,16 +63,21 @@ iconSafelist.push(
 );
 
 export default defineConfig({
-	safelist: iconSafelist,
+	// Keep this utility generated for the generated-site accessibility assertion.
+	safelist: [...iconSafelist, 'min-h-10'],
 	presets: [
 		presetWind3(),
 		presetTypography({
 			cssExtend: {
 				':where(p, li, blockquote)': {
 					'font-family':
-						"'Inter', 'Noto Sans SC', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif"
+						"'Atkinson Hyperlegible', 'Noto Sans SC', 'Segoe UI', system-ui, sans-serif",
 				},
-			}
+				':where(h1, h2, h3, h4)': {
+					'font-family': "'Crimson Pro', Georgia, 'Times New Roman', serif",
+					'letter-spacing': '-0.015em',
+				},
+			},
 		}),
 		presetIcons({
 			scale: 1.1,
@@ -76,76 +85,134 @@ export default defineConfig({
 			cdn: 'https://esm.sh/',
 			extraProperties: {
 				display: 'inline-block',
-				'vertical-align': 'middle'
-			}
-		})
+				'vertical-align': 'middle',
+			},
+		}),
 	],
 	shortcuts: {
-		// Buttons
+		// Page structure
+		'page-stack': 'space-y-6 pb-2 sm:space-y-7 sm:pb-4',
+		'page-header':
+			'relative space-y-2.5 border-b border-paper-300/90 pb-5 pt-1 dark:border-ink-700 sm:pb-5',
+		'page-kicker':
+			'inline-flex items-center gap-1.5 font-sans text-xs font-bold uppercase tracking-[0.16em] text-accent-700 dark:text-accent-300',
+		'page-title':
+			'font-heading text-[2.25rem] font-semibold leading-[1.02] tracking-[-0.025em] text-ink-950 dark:text-paper-50 sm:text-[2.75rem]',
+		'page-description':
+			'max-w-[44rem] font-sans text-[1.0625rem] leading-7 text-ink-600 dark:text-paper-300',
+		'body-copy':
+			'font-sans text-base leading-7 text-ink-700 dark:text-paper-300',
+		'section-heading':
+			'font-heading text-2xl font-semibold leading-[1.08] tracking-[-0.015em] text-ink-900 dark:text-paper-100 sm:text-[1.75rem]',
+		'section-kicker':
+			'font-sans text-xs font-bold uppercase tracking-[0.16em] text-accent-700 dark:text-accent-300',
+
+		// Reusable editorial entry hierarchy: title → supporting text → metadata.
+		'entry-title':
+			'font-heading text-[1.25rem] font-semibold leading-[1.28] tracking-[-0.01em] text-ink-950 dark:text-paper-50',
+		'entry-supporting':
+			'font-sans text-base font-normal leading-6 text-ink-600 dark:text-paper-300',
+		'entry-summary':
+			'font-sans text-base font-normal leading-[1.625rem] text-ink-700 dark:text-paper-300',
+		'entry-meta':
+			'font-sans text-sm font-normal leading-[1.375rem] text-ink-600 dark:text-paper-300',
+		'entry-index':
+			'font-mono text-xs font-semibold leading-[1.125rem] tabular-nums text-accent-700 dark:text-accent-300',
+
+		// Restrained materials. Only the site chrome and mobile popover use real blur.
+		'glass-panel':
+			'relative isolate overflow-hidden rounded-xl border border-paper-300/90 dark:border-ink-700',
+		'glass-popover': 'glass-panel shadow-xl',
+		'glass-control':
+			'relative inline-flex overflow-hidden rounded-[0.625rem] border',
+		'glass-active': 'font-bold',
+
+		// Surfaces and metadata
+		'surface-card':
+			'rounded-xl border border-paper-300/90 bg-white/64 p-4 dark:border-ink-700 dark:bg-ink-900/68 sm:p-5',
+		'surface-card-hover':
+			'surface-card transition-[background-color,border-color] duration-150 hover:border-accent-300 hover:bg-white/88 focus-within:border-accent-400 dark:hover:border-accent-700 dark:hover:bg-ink-900',
+		'meta-chip':
+			'inline-flex min-h-7 items-center gap-1.5 rounded-md border border-paper-300 bg-paper-100/85 px-2.5 py-1 font-sans text-xs font-bold leading-none text-ink-600 dark:border-ink-700 dark:bg-ink-800 dark:text-paper-300',
+
+		// Actions
+		'action-link':
+			'inline-flex min-h-11 items-center gap-1.5 rounded-md px-1 font-sans text-sm font-bold text-accent-700 no-underline underline-offset-4 transition-colors duration-200 hover:text-accent-900 hover:underline dark:text-accent-300 dark:hover:text-accent-100',
+		'icon-button':
+			'glass-control inline-flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-[0.625rem] text-ink-600 transition-[background-color,border-color,color] duration-150 hover:text-accent-800 dark:text-paper-300 dark:hover:text-accent-200',
+
+		// Compatibility aliases used by existing templates.
 		'btn-primary':
-			'inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent-600 text-white font-medium text-sm shadow-sm transition-all duration-200 hover:bg-accent-700 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/70 focus-visible:ring-offset-2 no-underline dark:bg-accent-500 dark:hover:bg-accent-400',
+			'glass-control glass-active inline-flex min-h-11 items-center gap-2 px-4 py-2 font-sans text-sm font-bold text-accent-900 no-underline transition-[background-color,border-color,color] duration-150 hover:text-ink-950 dark:text-accent-100 dark:hover:text-paper-50',
 		'btn-secondary':
-			'inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 text-gray-700 font-medium text-sm transition-all duration-200 hover:bg-gray-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-300/70 focus-visible:ring-offset-2 no-underline border border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-700',
-		'btn-ghost':
-			'inline-flex items-center gap-2 px-4 py-2 rounded-full text-gray-600 font-medium text-sm transition-all duration-200 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 no-underline',
-
-		// Cards
-		'card':
-			'rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900',
-		'card-hover':
-			'rounded-xl border border-gray-200 bg-white p-5 transition-all hover:shadow-lg hover:border-gray-300 dark:border-gray-800 dark:bg-gray-900 dark:hover:border-gray-700',
+			'glass-control inline-flex min-h-11 items-center gap-2 px-4 py-2 font-sans text-sm font-bold text-ink-700 no-underline transition-colors duration-200 hover:text-accent-800 dark:text-paper-200 dark:hover:text-accent-200',
+		'btn-ghost': 'action-link px-3',
+		card: 'surface-card',
+		'card-hover': 'surface-card-hover',
 		'card-accent':
-			'rounded-xl bg-gradient-to-br from-accent-50 to-accent-100 border border-accent-200 p-5 dark:from-accent-900/20 dark:to-accent-800/20 dark:border-accent-800/50',
-
-		// Chips/Tags
-		'chip':
-			'px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200',
+			'rounded-2xl border border-accent-200 bg-accent-50/75 p-4 shadow-paper dark:border-accent-800 dark:bg-accent-900/25 sm:p-5',
+		chip: 'meta-chip',
 		'chip-accent':
-			'px-3 py-1 rounded-full text-sm font-medium bg-accent-100 text-accent-800 dark:bg-accent-900/40 dark:text-accent-200',
+			'inline-flex min-h-7 items-center gap-1.5 rounded-md border border-accent-200 bg-accent-50 px-2.5 py-1 text-xs font-bold text-accent-800 dark:border-accent-800 dark:bg-accent-900/35 dark:text-accent-200',
 		'chip-success':
-			'px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300',
-
-		// Section headers
-		'section-title':
-			'font-heading text-2xl font-bold text-gray-900 dark:text-gray-50',
-		'section-subtitle':
-			'text-sm text-gray-600 dark:text-gray-400',
-
-		// Links
-		'link':
-			'text-accent-700 hover:text-accent-800 dark:text-accent-300 dark:hover:text-accent-200 no-underline transition-colors',
+			'inline-flex min-h-7 items-center gap-1.5 rounded-md border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-800 dark:border-emerald-800 dark:bg-emerald-900/35 dark:text-emerald-200',
+		'section-title': 'section-heading',
+		'section-subtitle': 'page-description text-sm sm:text-base sm:leading-7',
+		link: 'action-link min-h-0',
 		'link-muted':
-			'text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 no-underline transition-colors',
+			'font-sans text-ink-600 no-underline underline-offset-4 transition-colors hover:text-ink-900 hover:underline dark:text-paper-400 dark:hover:text-paper-100',
 	},
 	theme: {
 		colors: {
-			// Academic-inspired color palette
+			// Warm paper surfaces
+			paper: {
+				50: '#fbfaf6',
+				100: '#f5f1e8',
+				200: '#ebe4d8',
+				300: '#ddd2c2',
+				400: '#c1b3a0',
+				500: '#a39480',
+			},
+			// Warm neutral compatibility scale used throughout existing pages
 			gray: {
-				50: '#fafafa',   // Nearly white
-				100: '#f5f5f5',
-				200: '#e5e5e5',
-				300: '#d4d4d4',
-				400: '#a3a3a3',
-				500: '#737373',
-				600: '#525252',
-				700: '#404040',
-				800: '#262626',
-				900: '#171717',
+				50: '#fbfaf6',
+				100: '#f5f1e8',
+				200: '#e7dfd2',
+				300: '#d1c5b6',
+				400: '#9a8f83',
+				500: '#756b61',
+				600: '#5b524a',
+				700: '#423b35',
+				800: '#2b2926',
+				900: '#1d1c1a',
 			},
-			// Scholarly blue-gray accent
+			// Ink is used for the strongest typography and dark surfaces
+			ink: {
+				50: '#f7f7f5',
+				100: '#ececea',
+				200: '#d7d6d2',
+				300: '#b8b6b0',
+				400: '#929089',
+				500: '#74726c',
+				600: '#5c5a55',
+				700: '#45433f',
+				800: '#302f2c',
+				900: '#222321',
+				950: '#161918',
+			},
+			// Restrained scholarly blue
 			accent: {
-				50: '#f0f4f8',
-				100: '#d9e2ec',
-				200: '#bcccdc',
-				300: '#9fb3c8',
-				400: '#829ab1',
-				500: '#627d98',
-				600: '#486581',  // Primary academic blue
-				700: '#334e68',
-				800: '#243b53',
-				900: '#102a43'
+				50: '#eef5f7',
+				100: '#dcebef',
+				200: '#bfd8df',
+				300: '#96bdc9',
+				400: '#679aaa',
+				500: '#497d90',
+				600: '#396779',
+				700: '#2f5363',
+				800: '#294652',
+				900: '#243b45',
 			},
-			// Success/Active states (for current courses, active projects)
 			emerald: {
 				50: '#ecfdf5',
 				100: '#d1fae5',
@@ -158,7 +225,6 @@ export default defineConfig({
 				800: '#065f46',
 				900: '#064e3b',
 			},
-			// Awards/Recognition
 			amber: {
 				50: '#fffbeb',
 				100: '#fef3c7',
@@ -173,27 +239,33 @@ export default defineConfig({
 			},
 		},
 		fontFamily: {
-			// Professional academic typography
 			sans:
-				"'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, 'Noto Sans SC', 'Helvetica Neue', Arial, sans-serif",
-			heading:
-				"'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, 'Noto Sans SC', 'Helvetica Neue', Arial, sans-serif",
+				"'Atkinson Hyperlegible', 'Noto Sans SC', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
+			heading: "'Crimson Pro', Georgia, 'Times New Roman', 'Noto Serif SC', serif",
 			mono:
-				"'JetBrains Mono', 'SF Mono', 'Fira Code', Consolas, 'Liberation Mono', Menlo, monospace",
+				"'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace",
+		},
+		fontSize: {
+			xs: ['0.8125rem', { 'line-height': '1.125rem' }],
+			sm: ['0.875rem', { 'line-height': '1.375rem' }],
+			base: ['1rem', { 'line-height': '1.625rem' }],
 		},
 		boxShadow: {
-			'sm': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
-			'DEFAULT': '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
-			'md': '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
-			'lg': '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
-			'xl': '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
-			'sketch': '2px 2px 0px 0px rgba(0,0,0,0.08)',
-			'sketch-hover': '4px 4px 0px 0px rgba(0,0,0,0.12)',
+			sm: '0 1px 2px rgb(34 35 33 / 0.06)',
+			DEFAULT: '0 1px 3px rgb(34 35 33 / 0.08), 0 1px 2px rgb(34 35 33 / 0.04)',
+			md: '0 8px 18px -12px rgb(34 35 33 / 0.28)',
+			lg: '0 16px 32px -18px rgb(34 35 33 / 0.3)',
+			xl: '0 24px 48px -24px rgb(34 35 33 / 0.34)',
+			paper: '0 1px 1px rgb(34 35 33 / 0.04), 0 12px 28px -22px rgb(34 35 33 / 0.32)',
+			'paper-lg':
+				'0 1px 2px rgb(34 35 33 / 0.05), 0 18px 38px -24px rgb(47 83 99 / 0.34)',
+			sketch: '2px 2px 0 rgb(34 35 33 / 0.08)',
+			'sketch-hover': '4px 4px 0 rgb(34 35 33 / 0.12)',
 		},
 		animation: {
-			'fade-in': 'fadeIn 0.5s ease-out forwards',
-			'fade-in-up': 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-			'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+			'fade-in': 'fadeIn 0.45s ease-out forwards',
+			'fade-in-up': 'fadeInUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+			pulse: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
 		},
 		keyframes: {
 			fadeIn: {
@@ -201,14 +273,14 @@ export default defineConfig({
 				'100%': { opacity: '1' },
 			},
 			fadeInUp: {
-				'0%': { opacity: '0', transform: 'translateY(16px)' },
+				'0%': { opacity: '0', transform: 'translateY(10px)' },
 				'100%': { opacity: '1', transform: 'translateY(0)' },
 			},
 			pulse: {
 				'0%, 100%': { opacity: '1' },
 				'50%': { opacity: '0.5' },
 			},
-		}
+		},
 	},
-	transformers: [transformerDirectives()]
+	transformers: [transformerDirectives()],
 });

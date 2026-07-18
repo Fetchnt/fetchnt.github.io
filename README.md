@@ -14,7 +14,7 @@ A modern, elegant academic portfolio theme for Astro. Build your professional re
 - **🌙 Dark Mode** - Seamless light/dark theme switching with system preference detection
 - **📱 Fully Responsive** - Mobile-first design with adaptive navigation
 - **🎯 SEO Optimized** - Built-in meta tags, sitemap, and semantic HTML
-- **🔧 Easy Configuration** - Single TypeScript config file for all site settings
+- **🔧 Easy Configuration** - One root TypeScript entry with focused content files
 - **📝 YAML Data Sources** - Simple content management through YAML files
 - **🏷️ Filter System** - Interactive category filters on Research, Projects, and Teaching pages
 - **🎭 UnoCSS Styling** - Utility-first CSS with customizable accent colors
@@ -59,7 +59,7 @@ Your site will be running at `http://localhost:4321`
 
 Before publishing, replace every placeholder in:
 
-- `src/side.config.ts`: name, title, affiliation, social links, keywords, status badge, profile image.
+- `site.config.ts`: name, affiliation, social links, research focus, status badge, and profile image.
 - `src/data/publications.bib`: publication metadata, URLs, abstracts, and `public` category.
 - `src/data/about.yml`: profile, education, experience, service, and awards.
 - `src/data/projects.yml`: project title, status, period, description, technology tags, and URL.
@@ -91,7 +91,7 @@ Repositories created from this GitHub template can keep the copied
 `.github/workflows/template-update.yml` workflow. It checks the upstream template
 for newer release tags and opens a pull request that overlays template-owned
 files while preserving personal content paths from `.template-sync.json`, such
-as `src/side.config.ts`, `src/data/**`, `src/content/posts/**`, and
+as `site.config.ts`, `src/data/**`, `src/content/posts/**`, and
 `public/profile.*`.
 
 The npm package path can coexist later: this repository can keep serving GitHub
@@ -102,12 +102,26 @@ that Dependabot can bump in package-based sites.
 
 ## 📖 Configuration Guide
 
-### Site Configuration (`src/side.config.ts`)
+Start with the smallest file that owns the information you want to change:
 
-This is the central configuration file for your entire site. Here's a complete breakdown:
+| Goal | Edit |
+| --- | --- |
+| Identity, profile, links, SEO, page introductions | `site.config.ts` |
+| Publications | `src/data/publications.bib` |
+| About, projects, and teaching records | `src/data/*.yml` |
+| Blog posts | `src/content/posts/*.md` |
+| Advanced color and type tokens | `uno.config.ts` |
+
+### Site Configuration (`site.config.ts`)
+
+This root file is the primary configuration entry. `defineSiteConfig` supplies stable
+defaults for navigation, the footer, page titles, image dimensions, and home-section copy,
+so routine personalization only needs the fields relevant to your site.
 
 ```typescript
-export const siteConfig: SiteConfig = {
+import { defineSiteConfig } from './src/config/site';
+
+export default defineSiteConfig({
   // ─────────────────────────────────────────────────────────────
   // 🏠 BASIC INFORMATION
   // ─────────────────────────────────────────────────────────────
@@ -224,7 +238,7 @@ export const siteConfig: SiteConfig = {
       description: 'Description of your blog...',
     },
   },
-};
+});
 ```
 
 ---
@@ -487,6 +501,7 @@ Find icons at: [icones.js.org](https://icones.js.org)
 │   ├── favicon.svg
 │   ├── profile.svg
 │   └── robots.txt
+├── site.config.ts             # ⭐ Primary user configuration
 ├── src/
 │   ├── assets/                # Processed images
 │   ├── components/            # Shared components
@@ -515,7 +530,9 @@ Find icons at: [icones.js.org](https://icones.js.org)
 │   │       └── [slug].astro   # Individual post
 │   ├── types/
 │   │   └── config.ts          # TypeScript interfaces
-│   └── side.config.ts         # ⭐ Main configuration
+│   ├── config/
+│   │   └── site.ts            # Defaults and configuration helper
+│   └── side.config.ts         # Compatibility import; do not edit
 ├── uno.config.ts              # UnoCSS configuration
 ├── astro.config.ts            # Astro configuration
 └── package.json
@@ -578,7 +595,7 @@ theme: {
 ### Adding New Social Links
 
 1. Find icon class at [icones.js.org](https://icones.js.org)
-2. Add to `socialLinks` in `side.config.ts`
+2. Add to `socialLinks` in `site.config.ts`
 3. Add icon to safelist in `uno.config.ts` if needed
 
 ### Custom Page Sections

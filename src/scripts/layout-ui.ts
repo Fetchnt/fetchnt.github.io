@@ -2,7 +2,9 @@ const STORAGE_KEY = "site-theme";
 
 type ThemeMode = "dark" | "light";
 
-export function getBackToTopScrollBehavior(prefersReducedMotion: boolean): ScrollBehavior {
+export function getBackToTopScrollBehavior(
+	prefersReducedMotion: boolean,
+): ScrollBehavior {
 	return prefersReducedMotion ? "auto" : "smooth";
 }
 
@@ -15,29 +17,54 @@ function getStoredTheme(): ThemeMode | null {
 	}
 }
 
-function applyTheme(mode: ThemeMode) {
+function getAppliedTheme(): ThemeMode {
+	return document.documentElement.classList.contains("dark") ? "dark" : "light";
+}
+
+function updateThemeToggleLabels(root: ParentNode, mode: ThemeMode) {
+	const nextMode: ThemeMode = mode === "dark" ? "light" : "dark";
+	const label = `Switch to ${nextMode} mode`;
+	const visibleLabel = `${nextMode === "dark" ? "Dark" : "Light"} mode`;
+
+	root.querySelectorAll<HTMLElement>("[data-theme-toggle]").forEach((button) => {
+		button.setAttribute("aria-label", label);
+		button.setAttribute("aria-pressed", String(mode === "dark"));
+		button.setAttribute("title", label);
+		button.querySelectorAll<HTMLElement>("[data-theme-label]").forEach((text) => {
+			text.textContent = visibleLabel;
+		});
+	});
+}
+
+function applyTheme(mode: ThemeMode, root: ParentNode = document) {
 	document.documentElement.classList.toggle("dark", mode === "dark");
+	document.documentElement.dataset.theme = mode;
+	updateThemeToggleLabels(root, mode);
 }
 
 function setupThemeToggles(root: ParentNode = document) {
-	root.querySelectorAll("[data-theme-toggle]").forEach((button) => {
+	applyTheme(getAppliedTheme(), root);
+
+	root.querySelectorAll<HTMLElement>("[data-theme-toggle]").forEach((button) => {
 		button.addEventListener("click", () => {
-			const isDark = document.documentElement.classList.toggle("dark");
+			const nextMode: ThemeMode = getAppliedTheme() === "dark" ? "light" : "dark";
+			applyTheme(nextMode, root);
+
 			try {
-				localStorage.setItem(STORAGE_KEY, isDark ? "dark" : "light");
+				localStorage.setItem(STORAGE_KEY, nextMode);
 			} catch {
-				return;
+				// The visual theme still changes when persistent storage is unavailable.
 			}
 		});
 	});
 }
 
-function setupSystemThemeListener() {
+function setupSystemThemeListener(root: ParentNode = document) {
 	if (!window.matchMedia) return;
 
 	window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (event) => {
 		if (!getStoredTheme()) {
-			applyTheme(event.matches ? "dark" : "light");
+			applyTheme(event.matches ? "dark" : "light", root);
 		}
 	});
 }
@@ -50,6 +77,12 @@ function setupMobileMenu() {
 
 	if (!menuBtn || !menu || !iconMenu || !iconClose) return;
 
+	const updateMenuButtonLabel = (isOpen: boolean) => {
+		const label = isOpen ? "Close navigation menu" : "Open navigation menu";
+		menuBtn.setAttribute("aria-label", label);
+		menuBtn.setAttribute("title", label);
+	};
+
 	const closeMenu = () => {
 		menuBtn.setAttribute("aria-expanded", "false");
 		menu.hidden = true;
@@ -57,6 +90,7 @@ function setupMobileMenu() {
 		menu.classList.remove("opacity-100", "scale-100", "visible");
 		iconMenu.classList.remove("hidden");
 		iconClose.classList.add("hidden");
+		updateMenuButtonLabel(false);
 	};
 
 	const openMenu = () => {
@@ -66,6 +100,7 @@ function setupMobileMenu() {
 		menu.classList.add("opacity-100", "scale-100", "visible");
 		iconMenu.classList.add("hidden");
 		iconClose.classList.remove("hidden");
+		updateMenuButtonLabel(true);
 	};
 
 	menuBtn.addEventListener("click", (event) => {
@@ -92,14 +127,28 @@ function setupMobileMenu() {
 			menuBtn.focus();
 		}
 	});
+
+	updateMenuButtonLabel(false);
 }
 
 function setupBackToTop() {
 	const backToTopBtn = document.getElementById("back-to-top");
 	if (!backToTopBtn) return;
 
+	let frameId = 0;
+	let isVisible: boolean | null = null;
+
 	const toggleBackToTop = () => {
-		backToTopBtn.setAttribute("data-visible", String(window.scrollY > 300));
+		if (frameId) return;
+
+		frameId = window.requestAnimationFrame(() => {
+			frameId = 0;
+			const nextVisible = window.scrollY > 300;
+			if (nextVisible === isVisible) return;
+
+			isVisible = nextVisible;
+			backToTopBtn.setAttribute("data-visible", String(nextVisible));
+		});
 	};
 
 	window.addEventListener("scroll", toggleBackToTop, { passive: true });
@@ -114,11 +163,20 @@ function setupBackToTop() {
 	toggleBackToTop();
 }
 
+function setupLayoutUiWhenReady() {
+	setupMobileMenu();
+	setupThemeToggles();
+	setupSystemThemeListener();
+	setupBackToTop();
+}
+
 export function setupLayoutUi() {
-	document.addEventListener("DOMContentLoaded", () => {
-		setupMobileMenu();
-		setupThemeToggles();
-		setupSystemThemeListener();
-		setupBackToTop();
-	});
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", setupLayoutUiWhenReady, {
+			once: true,
+		});
+		return;
+	}
+
+	setupLayoutUiWhenReady();
 }

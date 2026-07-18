@@ -12,15 +12,14 @@ export interface Props {
 
 const { title, description, image } = Astro.props;
 
-// SEO-related variables
 const seoTitle = title ? `${title} | ${siteConfig.title}` : siteConfig.title;
 const seoDesc = description || siteConfig.description;
-// Assumes a default OG image is specified in siteConfig, with a fallback.
 const rawOgImage = image || siteConfig.ogImage || "/profile.svg";
 const ogImage = buildAbsoluteUrl(rawOgImage, siteConfig.siteUrl);
 
 const currentYear = new Date().getFullYear();
 const siteTitle = siteConfig.author || siteConfig.title;
+const siteMonogram = Array.from(siteTitle.trim())[0]?.toUpperCase() || "S";
 const navLinks = siteConfig.navLinks;
 const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
 
@@ -58,8 +57,400 @@ function isActiveNav(href: string): boolean {
         meta: [{ name: "keywords", content: siteConfig.keywords.join(", ") }],
       }}
     />
+
+    <!-- Apply the stored/system theme before the page paints. -->
+    <script is:inline>
+      (() => {
+        const storageKey = "site-theme";
+        let storedTheme = null;
+
+        try {
+          storedTheme = localStorage.getItem(storageKey);
+        } catch {
+          // Storage can be unavailable in privacy-restricted contexts.
+        }
+
+        const prefersDark =
+          window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false;
+        const isDark =
+          storedTheme === "dark" || (storedTheme !== "light" && prefersDark);
+
+        document.documentElement.classList.toggle("dark", isDark);
+        document.documentElement.dataset.theme = isDark ? "dark" : "light";
+      })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Crimson+Pro:ital,wght@0,500;0,600;0,700;1,500&display=swap"
+    />
+
     <slot name="head" />
     <style is:global>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      :where(h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, figure) {
+        margin: 0;
+      }
+
+      :root {
+        color-scheme: light;
+		--glass-chrome: rgb(251 250 246 / 0.9);
+		--glass-panel: rgb(255 255 255 / 0.64);
+        --glass-popover: rgb(251 250 246 / 0.98);
+		--glass-control: rgb(255 255 255 / 0.56);
+		--glass-control-hover: rgb(238 245 247 / 0.92);
+		--glass-control-pressed: rgb(220 235 239 / 0.92);
+		--glass-active: rgb(220 235 239 / 0.78);
+		--glass-border: rgb(221 210 194 / 0.9);
+        --glass-border-accent: rgb(73 125 144 / 0.38);
+		--glass-highlight: rgb(255 255 255 / 0.64);
+		--glass-control-border: rgb(47 83 99 / 0.16);
+        --glass-control-border-hover: rgb(47 83 99 / 0.3);
+		--glass-control-highlight: rgb(255 255 255 / 0.64);
+		--glass-shadow-panel: none;
+		--glass-shadow-control: none;
+      }
+
+      html.dark {
+        color-scheme: dark;
+		--glass-chrome: rgb(22 25 24 / 0.92);
+		--glass-panel: rgb(34 35 33 / 0.68);
+        --glass-popover: rgb(34 35 33 / 0.98);
+		--glass-control: rgb(255 255 255 / 0.035);
+		--glass-control-hover: rgb(36 59 69 / 0.48);
+		--glass-control-pressed: rgb(47 83 99 / 0.56);
+		--glass-active: rgb(47 83 99 / 0.5);
+		--glass-border: rgb(255 255 255 / 0.11);
+        --glass-border-accent: rgb(103 154 170 / 0.5);
+		--glass-highlight: rgb(255 255 255 / 0.08);
+        --glass-control-border: rgb(255 255 255 / 0.12);
+        --glass-control-border-hover: rgb(150 189 201 / 0.34);
+		--glass-control-highlight: rgb(255 255 255 / 0.08);
+		--glass-shadow-panel: none;
+		--glass-shadow-control: none;
+      }
+
+      html {
+        background: #fbfaf6;
+        scroll-behavior: smooth;
+        scroll-padding-top: 6.5rem;
+      }
+
+      html.dark {
+        background: #161918;
+      }
+
+      body {
+        margin: 0;
+        background-attachment: fixed;
+		background-image: radial-gradient(circle at 88% -8%, rgb(103 154 170 / 0.1), transparent 32rem);
+        font-synthesis: none;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      html.dark body {
+		background-image: radial-gradient(circle at 88% -8%, rgb(73 125 144 / 0.12), transparent 34rem);
+      }
+
+      ::selection {
+        background: rgb(150 189 201 / 0.55);
+        color: #161918;
+      }
+
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+
+      :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+        outline: 2px solid #396779;
+        outline-offset: 2px;
+      }
+
+      html.dark :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+        outline-color: #96bdc9;
+      }
+
+      .liquid-glass-bar {
+        border-color: var(--glass-border);
+        background: var(--glass-chrome);
+		box-shadow: 0 1px 0 rgb(47 83 99 / 0.04);
+		-webkit-backdrop-filter: blur(10px) saturate(102%);
+		backdrop-filter: blur(10px) saturate(102%);
+      }
+
+      .glass-panel {
+        border-color: var(--glass-border);
+        background: var(--glass-panel);
+        box-shadow: var(--glass-shadow-panel);
+      }
+
+      .glass-popover {
+        background: var(--glass-popover);
+		box-shadow: 0 18px 44px -28px rgb(22 25 24 / 0.5);
+		-webkit-backdrop-filter: blur(14px) saturate(102%);
+		backdrop-filter: blur(14px) saturate(102%);
+      }
+
+      :is(.glass-control, .icon-button, .filter-btn) {
+        border-color: var(--glass-control-border);
+		border-radius: 0.625rem;
+        background: var(--glass-control);
+		box-shadow: none;
+        transition:
+          background-color 150ms ease-out,
+          border-color 150ms ease-out,
+		  color 150ms ease-out;
+      }
+
+      :is(a.glass-control, button.glass-control, .icon-button, .filter-btn):not(:disabled):hover {
+        border-color: var(--glass-control-border-hover);
+        background: var(--glass-control-hover);
+      }
+
+      :is(a.glass-control, button.glass-control, .icon-button, .filter-btn):not(:disabled):active {
+        background: var(--glass-control-pressed);
+      }
+
+      :is(button.glass-control, .icon-button, .filter-btn):disabled {
+        cursor: not-allowed;
+        opacity: 0.48;
+      }
+
+      .icon-button {
+		border-radius: 0.625rem;
+      }
+
+      :where(.glass-active, .filter-btn[data-active="true"], .glass-nav-link[aria-current="page"]) {
+        border-color: var(--glass-control-border-hover) !important;
+        background: var(--glass-active) !important;
+		box-shadow: none !important;
+      }
+
+      .glass-nav-link {
+        border-radius: 0.625rem;
+      }
+
+      :where(.glass-control, .filter-btn)
+        > :is([class^="i-"], [class*=" i-"]) {
+        font-size: 0.9375rem;
+      }
+
+      .icon-button > :is([class^="i-"], [class*=" i-"]) {
+        font-size: 1rem;
+      }
+
+      :where(.meta-chip, .page-kicker, .section-kicker)
+        > :is([class^="i-"], [class*=" i-"]) {
+        font-size: 0.8125rem;
+      }
+
+      .action-link > :is([class^="i-"], [class*=" i-"]) {
+        font-size: 0.875rem;
+      }
+
+      .section-heading > :is([class^="i-"], [class*=" i-"]) {
+        font-size: 0.9375rem;
+      }
+
+      :where(.filter-btn, .page-jump-nav .glass-control) {
+        border-radius: 0.625rem;
+      }
+
+	  .filter-bar .filter-btn,
+	  .page-jump-nav .glass-control {
+		border-color: transparent;
+		background: transparent;
+	  }
+
+	  .filter-bar .filter-btn:not(:disabled):hover,
+	  .page-jump-nav .glass-control:hover {
+		border-color: transparent;
+		background: var(--glass-control-hover);
+	  }
+
+      .content-section {
+        content-visibility: auto;
+        contain-intrinsic-size: auto 32rem;
+      }
+
+      .liquid-glass-bar :where(.glass-control, .icon-button) {
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+      }
+
+      .glass-panel :where(.glass-control, .filter-btn) {
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+      }
+
+      .glass-control.action-link:hover {
+        text-decoration: none;
+      }
+
+      .theme-switch-button {
+        width: 2.75rem;
+        height: 2.75rem;
+        padding: 0;
+		border: 0 !important;
+		border-left: 1px solid var(--glass-control-border) !important;
+		border-radius: 0 !important;
+		background: transparent !important;
+		box-shadow: none !important;
+      }
+
+      .theme-switch-button:hover {
+		background: var(--glass-control-hover) !important;
+	  }
+
+	  .theme-switch-button:focus-visible {
+		outline: 0;
+		box-shadow: inset 0 0 0 2px #396779 !important;
+	  }
+
+	  html.dark .theme-switch-button:focus-visible {
+		box-shadow: inset 0 0 0 2px #96bdc9 !important;
+	  }
+
+      .theme-menu-button {
+        justify-content: space-between;
+        padding: 0.375rem 0.375rem 0.375rem 0.875rem;
+      }
+
+      .theme-switch-visual {
+        position: relative;
+        display: block;
+        flex: 0 0 auto;
+        width: 1.25rem;
+        height: 1.25rem;
+      }
+
+      .theme-switch-thumb {
+        display: none;
+      }
+
+      .theme-switch-icon {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+		width: 1.0625rem;
+		height: 1.0625rem;
+        color: #6d5517;
+		font-size: 1.0625rem;
+        line-height: 1;
+        opacity: 1;
+        transform: translate(-50%, -50%) rotate(0deg) scale(1);
+        transition:
+          opacity 180ms ease-out,
+          transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .theme-switch-icon-sun {
+        opacity: 1;
+      }
+
+      .theme-switch-icon-moon {
+        color: #396779;
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(-24deg) scale(0.72);
+      }
+
+      .theme-menu-button .theme-switch-visual {
+		width: 1.25rem;
+		height: 1.25rem;
+      }
+
+      html.dark .theme-switch-icon-sun {
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(24deg) scale(0.72);
+      }
+
+      html.dark .theme-switch-icon-moon {
+        color: #e1f1f5;
+        opacity: 1;
+        transform: translate(-50%, -50%) rotate(0deg) scale(1);
+      }
+
+      .site-monogram-glass {
+        border-color: var(--glass-border-accent);
+		background: transparent;
+		box-shadow: none;
+      }
+
+	  .desktop-nav-shell {
+		border: 1px solid var(--glass-control-border);
+		border-radius: 0.75rem;
+		background: var(--glass-control);
+		overflow: hidden;
+	  }
+
+      @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+        .liquid-glass-bar,
+        .glass-panel,
+        .glass-popover,
+        :is(.glass-control, .icon-button, .filter-btn) {
+          background: #fbfaf6;
+        }
+
+        html.dark .liquid-glass-bar,
+        html.dark .glass-panel,
+        html.dark .glass-popover,
+        html.dark :is(.glass-control, .icon-button, .filter-btn) {
+          background: #222321;
+        }
+      }
+
+      @media (prefers-reduced-transparency: reduce) {
+        .liquid-glass-bar,
+        .glass-panel,
+        .glass-popover,
+        :is(.glass-control, .icon-button, .filter-btn) {
+          -webkit-backdrop-filter: none;
+          backdrop-filter: none;
+          background: #fbfaf6;
+        }
+
+        html.dark .liquid-glass-bar,
+        html.dark .glass-panel,
+        html.dark .glass-popover,
+        html.dark :is(.glass-control, .icon-button, .filter-btn) {
+          background: #222321;
+        }
+      }
+
+      @media (forced-colors: active) {
+        .liquid-glass-bar,
+        .glass-panel,
+        .glass-popover,
+        :is(.glass-control, .icon-button, .filter-btn) {
+          border: 1px solid CanvasText;
+          background: Canvas;
+          box-shadow: none;
+          -webkit-backdrop-filter: none;
+          backdrop-filter: none;
+        }
+      }
+
+      @media (max-width: 767px) {
+        body {
+          background-attachment: scroll;
+        }
+      }
+
       @media (prefers-reduced-motion: reduce) {
         *,
         *::before,
@@ -73,166 +464,174 @@ function isActiveNav(href: string): boolean {
     </style>
   </head>
   <body
-    class="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300"
+    class="min-h-screen bg-paper-50 text-ink-900 font-sans transition-colors duration-200 dark:bg-ink-950 dark:text-paper-100"
   >
-    <div
-      class="mx-auto flex min-h-screen max-w-4xl flex-col px-4 sm:px-6 md:px-8"
+    <a
+      href="#main-content"
+      class="fixed left-4 top-3 z-[100] inline-flex min-h-11 -translate-y-20 items-center rounded-lg bg-accent-800 px-4 py-2 text-sm font-bold text-white no-underline shadow-lg transition-transform focus:translate-y-0"
     >
-      <header class="relative flex items-center justify-between py-4 sm:py-6">
-        <a
-          data-site-title
-          class="font-heading text-xl font-bold tracking-tight no-underline text-gray-900 dark:text-gray-100 transition-transform duration-200 active:scale-95"
-          href="/"
-        >
-          {siteTitle}
-        </a>
+      Skip to main content
+    </a>
 
-        <!-- Desktop Navigation & Actions -->
-        <div class="hidden sm:flex sm:items-center sm:gap-4">
-          <nav>
-            <ul class="m-0 flex list-none items-center gap-1 p-0">
-              {
-                navLinks.map((link) => (
-                  <li>
-                    <a
-                      class:list={[
-                        "block px-3 py-1.5 text-sm font-medium no-underline transition-all rounded-full",
-                        isActiveNav(link.href)
-                          ? "bg-accent-100 text-accent-800 dark:bg-accent-900/40 dark:text-accent-200"
-                          : "text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-100 dark:hover:bg-gray-800",
-                      ]}
-                      href={link.href}
-                      aria-current={isActiveNav(link.href) ? "page" : undefined}
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                ))
-              }
-            </ul>
-          </nav>
+    <div class="mx-auto flex min-h-screen max-w-6xl flex-col px-4 sm:px-6 md:px-8">
+      <header
+        class="liquid-glass-bar sticky top-0 z-40 -mx-4 mb-5 border-b px-4 sm:-mx-6 sm:px-6 md:-mx-8 md:px-8"
+      >
+        <div class="relative flex min-h-16 items-center justify-between gap-4 py-1.5">
+          <a
+            data-site-title
+            class="group inline-flex min-h-11 min-w-0 items-center gap-2.5 rounded-md text-ink-950 no-underline dark:text-paper-50"
+            href="/"
+          >
+            <span
+              aria-hidden="true"
+              class="site-monogram-glass inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border font-heading text-base font-semibold text-accent-800 transition-colors group-hover:border-accent-500 dark:text-accent-200 dark:group-hover:border-accent-600"
+            >
+              {siteMonogram}
+            </span>
+            <span class="truncate font-heading text-xl font-semibold tracking-[-0.015em]">
+              {siteTitle}
+            </span>
+          </a>
+
+          <!-- Desktop navigation and actions -->
+          <div class="desktop-nav-shell hidden items-stretch md:flex">
+            <nav aria-label="Primary navigation">
+              <ul class="m-0 flex list-none items-center gap-0.5 p-1">
+                {
+                  navLinks.map((link) => (
+                    <li>
+                      <a
+                        class:list={[
+                          "glass-nav-link inline-flex min-h-11 items-center rounded-lg border border-transparent px-3 text-sm font-bold no-underline transition-colors duration-150",
+                          isActiveNav(link.href)
+                            ? "glass-active text-accent-900 dark:text-accent-100"
+                            : "text-ink-600 hover:bg-accent-50/75 hover:text-ink-950 dark:text-paper-400 dark:hover:bg-accent-900/35 dark:hover:text-paper-100",
+                        ]}
+                        href={link.href}
+                        aria-current={isActiveNav(link.href) ? "page" : undefined}
+                      >
+                        {link.label}
+                      </a>
+                    </li>
+                  ))
+                }
+              </ul>
+            </nav>
+            <button
+              type="button"
+              data-theme-toggle
+              class="glass-control theme-switch-button inline-flex shrink-0 cursor-pointer items-center justify-center text-ink-600 dark:text-paper-300"
+              aria-label="Switch to dark mode"
+              title="Switch to dark mode"
+            >
+              <span class="theme-switch-visual" aria-hidden="true">
+                <span class="theme-switch-thumb"></span>
+                <span class="theme-switch-icon theme-switch-icon-sun i-ph-sun"></span>
+                <span class="theme-switch-icon theme-switch-icon-moon i-ph-moon"></span>
+              </span>
+            </button>
+          </div>
+
+          <!-- Mobile menu button -->
           <button
             type="button"
-            data-theme-toggle
-            class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 text-gray-600 cursor-pointer transition-all active:scale-95 border-none"
-            aria-label="Toggle color mode"
+            id="mobile-menu-toggle"
+            class="icon-button z-50 md:hidden"
+            aria-label="Open navigation menu"
+            aria-controls="mobile-menu"
+            aria-expanded="false"
           >
-            <span class="sr-only">Toggle color mode</span>
+            <span class="sr-only">Toggle menu</span>
             <span
-              class="i-ph-moon-stars-duotone block text-lg dark:hidden"
+              id="icon-menu"
+              class="i-ph-list-bold text-xl transition-transform duration-200"
               aria-hidden="true"></span>
             <span
-              class="i-ph-sun-dim-duotone hidden text-lg dark:block"
+              id="icon-close"
+              class="i-ph-x-bold hidden text-xl transition-transform duration-200"
               aria-hidden="true"></span>
           </button>
-        </div>
 
-        <!-- Mobile Menu Button -->
-        <button
-          type="button"
-          id="mobile-menu-toggle"
-          class="sm:hidden inline-flex h-8 w-8 items-center justify-center rounded-full bg-white border border-gray-200 shadow-sketch transition-all hover:shadow-sketch-hover hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 text-gray-600 cursor-pointer z-50"
-          aria-label="Toggle menu"
-          aria-controls="mobile-menu"
-          aria-expanded="false"
-        >
-          <span class="sr-only">Toggle menu</span>
-          <span
-            id="icon-menu"
-            class="i-ph-list-bold text-lg transition-transform duration-200"
-          ></span>
-          <span
-            id="icon-close"
-            class="i-ph-x-bold text-lg hidden transition-transform duration-200"
-          ></span>
-        </button>
-
-        <!-- Mobile Dropdown Menu -->
-        <div
-          id="mobile-menu"
-          hidden
-          class="absolute top-full right-0 z-40 mt-2 w-44 origin-top-right rounded-xl bg-white p-1.5 shadow-sketch ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700 opacity-0 scale-95 invisible transition-all duration-200 transform"
-        >
-          <nav>
-            <ul class="flex flex-col gap-0.5 list-none p-0 m-0">
-              {
-                navLinks.map((link) => (
-                  <li>
-                    <a
-                      class:list={[
-                        "block px-3 py-2 text-sm font-medium no-underline transition-all rounded-lg",
-                        isActiveNav(link.href)
-                          ? "bg-accent-100 text-accent-800 dark:bg-accent-900/40 dark:text-accent-200"
-                          : "text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-100 dark:hover:bg-gray-800",
-                      ]}
-                      href={link.href}
-                      aria-current={isActiveNav(link.href) ? "page" : undefined}
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                ))
-              }
-            </ul>
-          </nav>
+          <!-- Mobile dropdown menu -->
+          <div
+            id="mobile-menu"
+            hidden
+            class="glass-popover invisible absolute right-0 top-full z-40 mt-2 w-64 max-w-[calc(100vw-2rem)] origin-top-right scale-95 rounded-xl p-2 opacity-0 transition-[opacity,transform,visibility] duration-200"
+          >
+            <nav aria-label="Mobile navigation">
+              <ul class="m-0 flex list-none flex-col gap-2 p-0">
+                {
+                  navLinks.map((link) => (
+                    <li>
+                      <a
+                        class:list={[
+                          "glass-nav-link flex min-h-11 items-center rounded-[0.625rem] border border-transparent px-3 text-sm font-bold no-underline transition-colors",
+                          isActiveNav(link.href)
+                            ? "glass-active text-accent-900 dark:text-accent-100"
+                            : "text-ink-700 hover:bg-accent-50/75 hover:text-ink-950 dark:text-paper-300 dark:hover:bg-accent-900/35 dark:hover:text-paper-50",
+                        ]}
+                        href={link.href}
+                        aria-current={isActiveNav(link.href) ? "page" : undefined}
+                      >
+                        {link.label}
+                      </a>
+                    </li>
+                  ))
+                }
+              </ul>
+            </nav>
+            <div class="mt-2 border-t border-paper-300 pt-2 dark:border-ink-700">
+              <button
+                type="button"
+                data-theme-toggle
+                class="glass-control theme-menu-button flex min-h-11 w-full cursor-pointer items-center gap-2 text-left text-sm font-bold text-ink-700 transition-colors dark:text-paper-300"
+                aria-label="Switch to dark mode"
+                title="Switch to dark mode"
+              >
+                <span data-theme-label class="whitespace-nowrap">Dark mode</span>
+                <span class="theme-switch-visual" aria-hidden="true">
+                  <span class="theme-switch-thumb"></span>
+                  <span class="theme-switch-icon theme-switch-icon-sun i-ph-sun"></span>
+                  <span class="theme-switch-icon theme-switch-icon-moon i-ph-moon"></span>
+                </span>
+              </button>
+            </div>
+          </div>
         </div>
       </header>
 
-      <main class="flex-1 space-y-8 sm:space-y-10">
+      <main id="main-content" tabindex="-1" class="flex-1 space-y-6 sm:space-y-7">
         <slot />
       </main>
 
       <footer
-        class="mt-8 border-t border-gray-200 pt-6 text-xs text-gray-500 dark:border-gray-800 dark:text-gray-400 sm:mt-12 pb-8"
+        class="mt-8 border-t border-paper-300 py-6 text-sm text-ink-600 dark:border-ink-700 dark:text-paper-400 sm:mt-10"
       >
-        <p class="m-0 text-center">
-          &copy; {
-            `${currentYear} ${siteConfig.author}. ${siteConfig.footer.copyright}`
-          }
-        </p>
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <p class="m-0 font-heading text-base font-semibold text-ink-700 dark:text-paper-200">
+            {siteTitle}
+          </p>
+          <p class="m-0">
+            &copy; {`${currentYear} ${siteConfig.author}. ${siteConfig.footer.copyright}`}
+          </p>
+        </div>
       </footer>
     </div>
 
-    <!-- Mobile Floating Action Buttons -->
-    <div class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 sm:hidden">
+    <!-- Mobile floating back-to-top action -->
+    <div class="fixed bottom-4 right-4 z-50 md:hidden">
       <button
         type="button"
         id="back-to-top"
-        class="flex h-8 w-8 items-center justify-center rounded-full bg-white border border-gray-200 shadow-sketch transition-all hover:shadow-sketch-hover hover:scale-105 active:scale-95 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 text-gray-600 opacity-0 translate-y-4 pointer-events-none data-[visible=true]:opacity-100 data-[visible=true]:translate-y-0 data-[visible=true]:pointer-events-auto duration-300 cursor-pointer"
+        class="icon-button pointer-events-none translate-y-4 opacity-0 duration-300 data-[visible=true]:pointer-events-auto data-[visible=true]:translate-y-0 data-[visible=true]:opacity-100"
         aria-label="Back to top"
+        title="Back to top"
       >
-        <span class="i-ph-arrow-up-bold text-base"></span>
-      </button>
-
-      <button
-        type="button"
-        data-theme-toggle
-        class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 text-gray-600 cursor-pointer transition-all active:scale-95 border-none shadow-sm"
-        aria-label="Toggle color mode"
-      >
-        <span class="sr-only">Toggle color mode</span>
-        <span class="i-ph-moon-stars-duotone block text-base dark:hidden"
-        ></span>
-        <span class="i-ph-sun-dim-duotone hidden text-base dark:block"></span>
+        <span class="i-ph-arrow-up-bold text-lg" aria-hidden="true"></span>
       </button>
     </div>
 
-    <script is:inline>
-      (() => {
-        const STORAGE_KEY = "site-theme";
-        try {
-          const stored = localStorage.getItem(STORAGE_KEY);
-          const prefersDark = window.matchMedia?.(
-            "(prefers-color-scheme: dark)",
-          ).matches;
-          if (stored === "dark" || (!stored && prefersDark)) {
-            document.documentElement.classList.add("dark");
-          }
-        } catch {
-          // Keep the default light theme when storage is unavailable.
-        }
-      })();
-    </script>
     <script>
       import { setupLayoutUi } from "../scripts/layout-ui";
 

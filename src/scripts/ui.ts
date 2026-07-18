@@ -20,22 +20,37 @@ function setActiveButton(buttons: NodeListOf<HTMLElement>, activeButton: HTMLEle
 		button.dataset.active = String(isActive);
 		button.setAttribute("aria-pressed", String(isActive));
 		button.classList.toggle("active", isActive);
-		toggleClasses(button, isActive, ["bg-accent-100", "dark:bg-accent-900/30"]);
-		toggleClasses(button, !isActive, ["bg-gray-100", "dark:bg-gray-800"]);
 
 		if (icon) {
-			toggleClasses(icon, isActive, ["text-accent-600", "dark:text-accent-400"]);
-			toggleClasses(icon, !isActive, ["text-gray-500", "dark:text-gray-400"]);
+			toggleClasses(icon, isActive, ["text-accent-700", "dark:text-accent-300"]);
+			toggleClasses(icon, !isActive, ["text-gray-500", "dark:text-gray-300"]);
 		}
 		if (count) {
 			toggleClasses(count, isActive, ["text-accent-700", "dark:text-accent-300"]);
-			toggleClasses(count, !isActive, ["text-gray-700", "dark:text-gray-300"]);
+			toggleClasses(count, !isActive, ["text-gray-500", "dark:text-gray-300"]);
 		}
 		if (label) {
-			toggleClasses(label, isActive, ["text-accent-600", "dark:text-accent-400"]);
-			toggleClasses(label, !isActive, ["text-gray-500", "dark:text-gray-400"]);
+			toggleClasses(label, isActive, ["text-accent-800", "dark:text-accent-200"]);
+			toggleClasses(label, !isActive, ["text-gray-700", "dark:text-gray-200"]);
 		}
 	});
+}
+
+function syncPageSectionNavigation(root: ParentNode, activeFilter: string) {
+	const navigation = root.querySelector<HTMLElement>("[aria-label='Page sections']");
+	if (!navigation) return;
+
+	const links = navigation.querySelectorAll<HTMLAnchorElement>("a[href^='#']");
+	links.forEach((link) => {
+		const sectionId = link.hash.slice(1);
+		const isVisible = activeFilter === "all" || sectionId === activeFilter;
+		link.hidden = !isVisible;
+		link.classList.toggle("hidden", !isVisible);
+	});
+
+	const shouldHideNavigation = activeFilter !== "all";
+	navigation.hidden = shouldHideNavigation;
+	navigation.classList.toggle("hidden", shouldHideNavigation);
 }
 
 export function setupFilterControls(root: ParentNode = document) {
@@ -63,6 +78,8 @@ export function setupFilterControls(root: ParentNode = document) {
 			section.hidden = !visible;
 			section.classList.toggle("hidden", !visible);
 		});
+
+		syncPageSectionNavigation(root, initialFilter ?? "all");
 	}
 
 	buttons.forEach((button) => {
@@ -77,6 +94,8 @@ export function setupFilterControls(root: ParentNode = document) {
 				section.hidden = !visible;
 				section.classList.toggle("hidden", !visible);
 			});
+
+			syncPageSectionNavigation(root, filter);
 
 			const nextSearch = buildFilterSearch(window.location.search, filter);
 			const nextUrl = `${window.location.pathname}${nextSearch}${window.location.hash}`;

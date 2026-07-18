@@ -1,0 +1,43 @@
+import { describe, expect, test } from "vitest";
+import { defineSiteConfig } from "../src/config/site";
+
+describe("site configuration defaults", () => {
+	test("completes the concise public configuration", () => {
+		const config = defineSiteConfig({
+			author: "Ada Scholar",
+			siteUrl: "https://example.edu",
+			hero: {
+				headline: "Research that travels.",
+				subheadline: "A concise academic biography.",
+			},
+		});
+
+		expect(config.title).toBe("Ada Scholar | Academic Portfolio");
+		expect(config.description).toBe("A concise academic biography.");
+		expect(config.hero.profileAlt).toBe("Portrait of Ada Scholar");
+		expect(config.hero.profileImage).toBe("/profile.svg");
+		expect(config.navLinks).toHaveLength(5);
+		expect(config.pageTitles.researches.title).toBe("Publications");
+	});
+
+	test("preserves focused overrides without requiring the full schema", () => {
+		const config = defineSiteConfig({
+			author: "Ada Scholar",
+			siteUrl: "https://example.edu",
+			hero: {
+				headline: "Research that travels.",
+				subheadline: "A concise academic biography.",
+				statusBadge: "Available for collaboration",
+			},
+			pageTitles: {
+				projects: { description: "Open research infrastructure." },
+			},
+		});
+
+		expect(config.hero.statusBadge).toBe("Available for collaboration");
+		expect(config.pageTitles.projects.title).toBe("Projects");
+		expect(config.pageTitles.projects.description).toBe(
+			"Open research infrastructure.",
+		);
+	});
+});

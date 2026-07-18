@@ -12,7 +12,7 @@
 - **🌙 深色模式** - 流畅切换明暗主题，自动跟随系统偏好
 - **📱 全面响应式** - 移动优先设计，自适应导航栏
 - **🎯 SEO 优化** - 内置 meta 标签、站点地图、语义化 HTML
-- **🔧 配置简单** - 单一 TypeScript 配置文件掌控全局
+- **🔧 配置简单** - 根目录统一入口，内容按类型分文件管理
 - **📝 YAML 数据源** - 通过 YAML 文件轻松管理内容
 - **🏷️ 筛选系统** - Research、Projects、Teaching 页面支持交互式分类筛选
 - **🎭 UnoCSS 样式** - 实用优先的 CSS，主题色随心定制
@@ -57,7 +57,7 @@ pnpm dev
 
 发布前请替换以下文件中的示例内容：
 
-- \`src/side.config.ts\`：姓名、标题、单位、社交链接、关键词、状态徽标和头像。
+- \`site.config.ts\`：姓名、单位、社交链接、关键词、研究方向、状态徽标和头像。
 - \`src/data/publications.bib\`：论文元数据、链接、摘要和 \`public\` 分类。
 - \`src/data/about.yml\`：个人资料、教育经历、工作经历、学术服务和奖项。
 - \`src/data/projects.yml\`：项目标题、状态、时间、简介、技术标签和链接。
@@ -87,7 +87,7 @@ git push origin main --tags
 通过 GitHub template 创建的使用者仓库可以保留复制过来的
 \`.github/workflows/template-update.yml\`。该 workflow 会检查上游模板是否有新的
 release tag，并创建一个 PR 来覆盖模板维护的文件，同时根据
-\`.template-sync.json\` 保护个人内容路径，例如 \`src/side.config.ts\`、
+\`.template-sync.json\` 保护个人内容路径，例如 \`site.config.ts\`、
 \`src/data/**\`、\`src/content/posts/**\` 和 \`public/profile.*\`。
 
 后续也可以并存 npm package 路径：这个仓库继续服务 GitHub template 用户，同时
@@ -97,12 +97,25 @@ release tag，并创建一个 PR 来覆盖模板维护的文件，同时根据
 
 ## 📖 配置指南
 
-### 站点配置 (\`src/side.config.ts\`)
+先根据要修改的信息，直接进入对应文件：
 
-这是整个网站的核心配置文件，所有设置一目了然：
+| 目标 | 编辑位置 |
+| --- | --- |
+| 身份、头像、链接、SEO、页面简介 | \`site.config.ts\` |
+| 论文 | \`src/data/publications.bib\` |
+| 个人经历、项目和课程 | \`src/data/*.yml\` |
+| 博客文章 | \`src/content/posts/*.md\` |
+| 高级颜色和字体令牌 | \`uno.config.ts\` |
+
+### 站点配置 (\`site.config.ts\`)
+
+这是根目录中的主配置入口。\`defineSiteConfig\` 会为导航、页脚、页面标题、
+图片尺寸和首页区块提供稳定默认值，因此日常个性化只需填写真正相关的字段。
 
 \`\`\`typescript
-export const siteConfig: SiteConfig = {
+import { defineSiteConfig } from './src/config/site';
+
+export default defineSiteConfig({
   // ─────────────────────────────────────────────────────────────
   // 🏠 基础信息
   // ─────────────────────────────────────────────────────────────
@@ -219,7 +232,7 @@ export const siteConfig: SiteConfig = {
       description: '博客简介...',
     },
   },
-};
+});
 \`\`\`
 
 ---
@@ -490,6 +503,7 @@ draft: false              # 设为 true 则不显示
 │   ├── favicon.svg
 │   ├── profile.svg
 │   └── robots.txt
+├── site.config.ts             # ⭐ 用户主配置入口
 ├── src/
 │   ├── assets/                # 需处理的图片
 │   ├── components/            # 共享组件
@@ -518,7 +532,9 @@ draft: false              # 设为 true 则不显示
 │   │       └── [slug].astro   # 文章详情
 │   ├── types/
 │   │   └── config.ts          # TypeScript 类型定义
-│   └── side.config.ts         # ⭐ 核心配置文件
+│   ├── config/
+│   │   └── site.ts            # 默认值与配置辅助函数
+│   └── side.config.ts         # 兼容导入，请勿编辑
 ├── uno.config.ts              # UnoCSS 配置
 ├── astro.config.ts            # Astro 配置
 └── package.json
@@ -581,7 +597,7 @@ theme: {
 ### 添加社交链接
 
 1. 在 [icones.js.org](https://icones.js.org) 查找图标类名
-2. 添加到 \`side.config.ts\` 的 \`socialLinks\`
+2. 添加到 \`site.config.ts\` 的 \`socialLinks\`
 3. 如需要，在 \`uno.config.ts\` 的 safelist 中注册图标
 
 ### 自定义页面模块
