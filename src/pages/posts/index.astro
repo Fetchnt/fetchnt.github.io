@@ -33,106 +33,89 @@ const totalPosts = posts.length;
 ---
 
 <Layout title={pageTitle} description={pageDescription}>
-  <div class="space-y-6">
-    <!-- Page Header -->
-    <header class="space-y-3">
-      <div
-        class="flex items-center gap-2 text-sm font-medium text-accent-600 dark:text-accent-400"
-      >
-        <span class="i-mdi:post-outline text-lg"></span>
-        <span>{pageTitle}</span>
-      </div>
-      <h1
-        class="font-heading text-3xl font-bold text-gray-900 dark:text-gray-100 md:text-4xl"
-      >
-        {pageTitle}
-      </h1>
-      <p
-        class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed max-w-2xl"
-      >
-        {pageDescription}
+  <div class="page-stack">
+    <header class="page-header">
+      <p class="page-kicker">
+        <span class="i-mdi:post-outline text-base" aria-hidden="true"></span>
+        Notes &amp; essays
       </p>
+      <h1 class="page-title">{pageTitle}</h1>
+      <p class="page-description">{pageDescription}</p>
 
-      <!-- Stats -->
-      <div class="flex flex-wrap items-center gap-3 pt-1">
-        <div
-          class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-sm"
-        >
-          <span
-            class="i-mdi:file-document-multiple text-accent-700 dark:text-accent-300 text-base"
-          ></span>
-          <span class="font-medium text-gray-900 dark:text-gray-100"
-            >{totalPosts}</span
-          >
-          <span class="text-gray-500 dark:text-gray-400">posts</span>
-        </div>
-        <div
-          class="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400"
-        >
-          <span class="i-mdi:calendar-range text-sm"></span>
-          <span>{years[years.length - 1]} — {years[0]}</span>
-        </div>
+      <div class="flex flex-wrap items-center gap-2 border-t border-gray-200 pt-4 dark:border-gray-700">
+        <span class="meta-chip">
+          <span class="i-mdi:file-document-multiple text-base text-accent-700 dark:text-accent-200" aria-hidden="true"></span>
+          <strong class="font-semibold text-gray-900 dark:text-gray-50">{totalPosts}</strong>
+          {totalPosts === 1 ? "post" : "posts"}
+        </span>
+        {years.length > 0 && (
+          <span class="meta-chip">
+            <span class="i-mdi:calendar-range text-sm" aria-hidden="true"></span>
+            <span class="tabular-nums">{years[years.length - 1]} — {years[0]}</span>
+          </span>
+        )}
       </div>
     </header>
 
-    <div class="fade-in-up animation-delay-200 space-y-8">
+    <div class="space-y-7 sm:space-y-8">
       {
         years.map((year) => (
-          <section class="space-y-4">
-            <div class="flex items-center gap-3">
-              <span class="text-2xl font-bold text-accent-600 dark:text-accent-400">
-                {year}
-              </span>
-              <div class="flex-1 h-px bg-gradient-to-r from-accent-200 to-transparent dark:from-accent-800" />
-              <span class="px-2 py-0.5 rounded-full text-xs font-medium text-accent-800 dark:text-accent-200 bg-accent-100 dark:bg-accent-900/40">
-                {groupedPosts.get(year)?.length} posts
+          <section class="content-section space-y-4" aria-labelledby={`posts-${year}`}>
+            <div class="flex items-end justify-between gap-4 border-b border-gray-200 pb-3 dark:border-gray-700">
+              <div class="space-y-1">
+                <p class="section-kicker">Annual archive</p>
+                <h2 id={`posts-${year}`} class="section-heading tabular-nums">{year}</h2>
+              </div>
+              <span class="meta-chip mb-0.5 shrink-0">
+                {groupedPosts.get(year)?.length} {groupedPosts.get(year)?.length === 1 ? "post" : "posts"}
               </span>
             </div>
 
-            <div class="space-y-3">
+            <ol class="m-0 list-none space-y-3 p-0">
               {groupedPosts.get(year)?.map((post) => (
-                <a
-                  href={`/posts/${post.slug}`}
-                  class="group block p-6 rounded-2xl bg-white dark:bg-gray-800/50 shadow-sm hover:shadow-md transition-shadow duration-300 no-underline"
-                >
-                  <article class="flex flex-col sm:flex-row sm:items-start gap-3">
-                    <div class="flex items-center gap-2 sm:flex-col sm:items-start sm:gap-0.5 shrink-0 sm:w-20">
-                      <time
-                        datetime={post.data.publishedAt.toISOString()}
-                        class="text-xs font-medium text-gray-500 dark:text-gray-400 tabular-nums"
-                      >
-                        {post.data.publishedAt.toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "numeric",
-                        })}
-                      </time>
-                      <span class="sm:hidden text-gray-300 dark:text-gray-600">
-                        ·
-                      </span>
-                      <span class="text-xs text-gray-400 dark:text-gray-500 hidden sm:block">
-                        {getReadingTimeMinutes(post.body)} min read
-                      </span>
-                    </div>
-
-                    <div class="flex-1 min-w-0 space-y-1.5">
-                      <h2 class="font-bold text-gray-900 group-hover:text-accent-600 dark:text-gray-100 dark:group-hover:text-accent-400 transition-colors leading-snug">
-                        {post.data.title}
-                      </h2>
-                      {post.data.description && (
-                        <p class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-2">
-                          {post.data.description}
-                        </p>
-                      )}
-
-                      <div class="flex items-center gap-1 text-xs font-medium text-accent-600 dark:text-accent-400 pt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span>Read more</span>
-                        <span class="i-mdi:arrow-right" />
+                <li>
+                  <a
+                    href={`/posts/${post.slug}`}
+                    class="surface-card surface-card-hover group block no-underline"
+                    aria-label={`Read ${post.data.title}`}
+                  >
+                    <article class="grid gap-4 md:grid-cols-[5.5rem_minmax(0,1fr)_auto] md:items-start md:gap-6">
+                      <div class="flex flex-wrap items-center gap-x-2 gap-y-1 md:block">
+                        <time
+                          datetime={post.data.publishedAt.toISOString()}
+                          class="text-xs font-semibold uppercase tracking-wide text-gray-600 tabular-nums dark:text-gray-300"
+                        >
+                          {post.data.publishedAt.toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                          })}
+                        </time>
+                        <span class="text-gray-500 dark:text-gray-400 md:hidden" aria-hidden="true">·</span>
+                        <span class="text-xs text-gray-500 dark:text-gray-400 md:mt-1 md:block">
+                          {getReadingTimeMinutes(post.body)} min read
+                        </span>
                       </div>
-                    </div>
-                  </article>
-                </a>
+
+                      <div class="min-w-0 space-y-2">
+						<h3 class="entry-title transition-colors group-hover:text-accent-700 dark:group-hover:text-accent-200">
+                          {post.data.title}
+                        </h3>
+                        {post.data.description && (
+						  <p class="entry-summary text-gray-600 dark:text-gray-300">
+                            {post.data.description}
+                          </p>
+                        )}
+                      </div>
+
+                      <span class="action-link self-center md:self-start">
+                        Read article
+                        <span class="i-mdi:arrow-right transition-transform group-hover:translate-x-0.5" aria-hidden="true"></span>
+                      </span>
+                    </article>
+                  </a>
+                </li>
               ))}
-            </div>
+            </ol>
           </section>
         ))
       }

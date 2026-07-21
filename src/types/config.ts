@@ -36,6 +36,10 @@ export interface SiteConfig {
 	title: string;
 	author: string;
 	description?: string;
+	/** Production site URL used for canonical, Open Graph, and sitemap URLs */
+	siteUrl: string;
+	/** Default Open Graph image path or URL */
+	ogImage?: string;
 	favicon: string;
 	keywords: string[];
 	// --- Academic Profile ---

@@ -1,6 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import PageJumpNav from "../components/PageJumpNav.astro";
 import aboutRaw from "../data/about.yml?raw";
+import { createUniqueSectionId } from "../lib/section-id";
 import siteConfig from "../side.config";
 import { parse } from "yaml";
 
@@ -10,10 +12,15 @@ interface CustomItem {
   date?: string;
   description?: string;
   link?: string;
+  icon?: string;
+  badges?: string[];
+  highlights?: string[];
+  links?: Array<{ label?: string; href?: string; icon?: string }>;
 }
 
 interface CustomSection {
   title?: string;
+  icon?: string;
   items?: (string | CustomItem)[];
 }
 
@@ -52,65 +59,84 @@ const {
 
 const pageTitle = siteConfig.pageTitles.about.title || hero.title || "About";
 const pageDescription = siteConfig.pageTitles.about.description || hero.description || "";
+
+const fixedSectionIds = new Set(["profile", "education", "experience", "service"]);
+const usedSectionIds = new Set(fixedSectionIds);
+
+const customSections = sections.map((section, index) => ({
+  ...section,
+  id: createUniqueSectionId(section.title, usedSectionIds, `section-${index + 1}`),
+  label: section.title?.trim() || `Section ${index + 1}`,
+}));
+
+const aboutNavItems = [
+  ...(profile.length > 0 ? [{ href: "#profile", label: "Profile" }] : []),
+  ...(education.length > 0 ? [{ href: "#education", label: "Education" }] : []),
+  ...(experience.length > 0 ? [{ href: "#experience", label: "Experience" }] : []),
+  ...(service.length > 0 ? [{ href: "#service", label: "Service" }] : []),
+  ...customSections.map((section) => ({
+    href: `#${section.id}`,
+    label: section.label,
+  })),
+];
 ---
 
 <Layout title={pageTitle} description={pageDescription}>
-  <div class="space-y-6">
-    <!-- Page Header -->
-    <header class="space-y-1">
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-50">
-        {pageTitle}
-      </h1>
-      <p class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed max-w-2xl">
-        {pageDescription}
-      </p>
+  <div class="page-stack">
+    <header class="page-header">
+      <p class="page-kicker">Academic profile</p>
+      <h1 class="page-title">{pageTitle}</h1>
+      <p class="page-description">{pageDescription}</p>
     </header>
 
-    {
-      profile.length > 0 && (
-        <section class="grid gap-3 sm:grid-cols-3">
-          {profile.map((item) => (
-            <div class="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800/50">
-              <p class="m-0 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                {item.label}
-              </p>
-              <p class="m-0 mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
-                {item.value}
-              </p>
-            </div>
-          ))}
-        </section>
-      )
-    }
+    <PageJumpNav items={aboutNavItems} />
 
-    <div class="fade-in-up animation-delay-200 space-y-8">
+    <div class="space-y-7 sm:space-y-8">
+      <!-- Profile Section -->
+      {
+        profile.length > 0 && (
+          <section id="profile" class="content-section scroll-mt-20 space-y-4">
+            <header class="border-b border-gray-200 pb-3 dark:border-gray-700">
+              <p class="section-kicker">At a glance</p>
+              <h2 class="section-heading">Profile</h2>
+            </header>
+            <div class="grid gap-3 md:grid-cols-3">
+              {profile.map((item) => (
+                <div class="surface-card">
+                  <p class="section-kicker">{item.label}</p>
+                  <p class="entry-title mt-2 text-[1.125rem]">
+                    {item.value}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )
+      }
+
       <!-- Education Section -->
       {
         education.length > 0 && (
-          <section class="space-y-3">
-            <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Education</h2>
-            <div class="space-y-3">
+          <section id="education" class="content-section scroll-mt-20 space-y-4">
+            <header class="border-b border-gray-200 pb-3 dark:border-gray-700">
+              <p class="section-kicker">Formal training</p>
+              <h2 class="section-heading">Education</h2>
+            </header>
+            <div class="divide-y divide-gray-200 border-y border-gray-200 dark:divide-gray-700 dark:border-gray-700">
               {education.map((edu) => (
-                <div class="group relative p-6 rounded-2xl bg-white dark:bg-gray-800/50 shadow-sm hover:shadow-md transition-shadow duration-300">
-                  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                    <div class="flex items-center gap-3">
-                      <div class="p-2 rounded-lg bg-accent-50 dark:bg-accent-900/30">
-                        <span class="i-mdi:school text-lg text-accent-600 dark:text-accent-400"></span>
-                      </div>
-                      <div class="space-y-0.5">
-                        <h3 class="font-bold text-gray-900 dark:text-gray-50">{edu.degree}</h3>
-                        <p class="text-sm text-gray-600 dark:text-gray-300 flex items-center gap-1">
-                          <span class="i-mdi:domain text-gray-400 dark:text-gray-500"></span>
-                          {edu.institution}
-                        </p>
-                      </div>
-                    </div>
-                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold text-accent-800 dark:text-accent-200 bg-accent-100 dark:bg-accent-900/40 border border-accent-200 dark:border-accent-800">
-                      <span class="i-mdi:calendar text-accent-500"></span>
-                      {edu.year}
-                    </span>
+                <article class="grid gap-2 py-4 md:grid-cols-[9rem_minmax(0,1fr)] md:gap-6">
+				  <p class="entry-index">
+                    {edu.year}
+                  </p>
+                  <div class="space-y-1">
+					<h3 class="entry-title">
+                      {edu.degree}
+                    </h3>
+					<p class="entry-supporting">
+                      {edu.institution}
+                    </p>
                   </div>
-                </div>
+                </article>
               ))}
             </div>
           </section>
@@ -120,41 +146,36 @@ const pageDescription = siteConfig.pageTitles.about.description || hero.descript
       <!-- Experience Section -->
       {
         experience.length > 0 && (
-          <section class="space-y-3">
-            <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Experience</h2>
-            <div class="space-y-4">
+          <section id="experience" class="content-section scroll-mt-20 space-y-4">
+            <header class="border-b border-gray-200 pb-3 dark:border-gray-700">
+              <p class="section-kicker">Appointments</p>
+              <h2 class="section-heading">Experience</h2>
+            </header>
+            <div class="divide-y divide-gray-200 border-y border-gray-200 dark:divide-gray-700 dark:border-gray-700">
               {experience.map((exp) => (
-                <div class="group relative p-6 rounded-2xl bg-white dark:bg-gray-800/50 shadow-sm hover:shadow-md transition-shadow duration-300">
+                <article class="grid gap-3 py-5 md:grid-cols-[9rem_minmax(0,1fr)] md:gap-6">
+				  <p class="entry-index">
+                    {exp.period}
+                  </p>
                   <div class="space-y-3">
-                    <!-- Title row with dot, role, and period aligned -->
-                    <div class="flex items-center justify-between gap-3">
-                      <div class="flex items-center gap-3">
-                        <!-- Timeline dot -->
-                        <div class="w-3 h-3 rounded-full bg-accent-500 shrink-0"></div>
-                        <h3 class="font-bold text-gray-900 dark:text-gray-50">{exp.role}</h3>
-                      </div>
-                      <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold text-accent-800 dark:text-accent-200 bg-accent-100 dark:bg-accent-900/40 border border-accent-200 dark:border-accent-800 whitespace-nowrap shrink-0">
-                        <span class="i-mdi:calendar-range text-accent-500"></span>
-                        {exp.period}
-                      </span>
+                    <div class="space-y-1">
+					  <h3 class="entry-title">
+                        {exp.role}
+                      </h3>
+					  <p class="entry-supporting font-semibold">
+                        {exp.organization}
+                      </p>
                     </div>
-                    
-                    <!-- Organization -->
-                    <p class="text-sm text-gray-600 dark:text-gray-300 flex items-center gap-1.5 ml-6">
-                      <span class="i-mdi:office-building text-gray-400 dark:text-gray-500"></span>
-                      {exp.organization}
-                    </p>
-                    
-                    <ul class="space-y-2 pl-6">
+
+                    <ul class="list-disc space-y-2 pl-5 marker:text-accent-500 dark:marker:text-accent-400">
                       {(exp.bullets || []).map((bullet) => (
-                        <li class="flex items-start gap-2.5 text-sm text-gray-600 dark:text-gray-300">
-                          <span class="i-mdi:check-circle text-accent-500 dark:text-accent-400 shrink-0 mt-0.5" />
-                          <span class="leading-relaxed">{bullet}</span>
+                        <li class="body-copy pl-1">
+                          {bullet}
                         </li>
                       ))}
                     </ul>
                   </div>
-                </div>
+                </article>
               ))}
             </div>
           </section>
@@ -164,37 +185,33 @@ const pageDescription = siteConfig.pageTitles.about.description || hero.descript
       <!-- Service Section -->
       {
         service.length > 0 && (
-          <section class="space-y-3">
-            <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Academic Service</h2>
-            <div class="grid gap-3 sm:grid-cols-2">
+          <section id="service" class="content-section scroll-mt-20 space-y-4">
+            <header class="border-b border-gray-200 pb-3 dark:border-gray-700">
+              <p class="section-kicker">Community contributions</p>
+              <h2 class="section-heading">Academic Service</h2>
+            </header>
+            <div class="grid gap-3 md:grid-cols-2">
               {service.map((item) => {
                 if (typeof item === "string") {
                   return (
-                    <div class="group flex items-center gap-3 p-6 rounded-2xl bg-white dark:bg-gray-800/50 shadow-sm hover:shadow-md transition-shadow duration-300">
-                      <div class="p-1.5 rounded-lg bg-accent-50 dark:bg-accent-900/30 shrink-0">
-                        <span class="i-mdi:star text-accent-500 dark:text-accent-400" />
-                      </div>
-                      <span class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{item}</span>
-                    </div>
+                    <article class="surface-card h-full">
+                      <p class="section-kicker">Service</p>
+                      <p class="body-copy mt-2">{item}</p>
+                    </article>
                   );
                 }
                 return (
-                  <div class="group flex items-center gap-3 p-6 rounded-2xl bg-white dark:bg-gray-800/50 shadow-sm hover:shadow-md transition-shadow duration-300">
-                    <div class="p-1.5 rounded-lg bg-accent-50 dark:bg-accent-900/30 shrink-0">
-                      <span class="i-mdi:star text-accent-500 dark:text-accent-400" />
-                    </div>
-                    <div class="text-sm space-y-0.5">
-                      <p class="font-semibold text-gray-900 dark:text-gray-100">{item.role}</p>
-                      <p class="text-gray-600 dark:text-gray-400 flex items-center gap-1">
-                        <span class="i-mdi:domain text-gray-400 dark:text-gray-500 text-xs"></span>
+                  <article class="surface-card h-full space-y-2">
+                    <p class="section-kicker">{item.period}</p>
+                    <div class="space-y-1">
+                      <h3 class="font-heading text-lg font-semibold text-gray-950 dark:text-gray-50">
+                        {item.role}
+                      </h3>
+                      <p class="body-copy">
                         {item.organization}
                       </p>
-                      <span class="inline-flex items-center gap-1 text-xs text-gray-500 dark:text-gray-500">
-                        <span class="i-mdi:calendar text-xs"></span>
-                        {item.period}
-                      </span>
                     </div>
-                  </div>
+                  </article>
                 );
               })}
             </div>
@@ -204,56 +221,93 @@ const pageDescription = siteConfig.pageTitles.about.description || hero.descript
 
       <!-- Custom Sections (Awards, etc.) -->
       {
-        sections.map((section) => (
-          <section class="space-y-3">
-            <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">{section.title}</h2>
+        customSections.map((section) => (
+          <section id={section.id} class="content-section scroll-mt-20 space-y-4">
+            <header class="border-b border-gray-200 pb-3 dark:border-gray-700">
+              <p class="section-kicker">Additional record</p>
+              <h2 class="section-heading flex items-center gap-2">
+                {section.icon && (
+                  <span class={`${section.icon} text-accent-600 dark:text-accent-300`} aria-hidden="true"></span>
+                )}
+                <span>{section.title}</span>
+              </h2>
+            </header>
             <div class="space-y-3">
               {(section.items || []).map((item) => {
                 if (typeof item === "string") {
                   return (
-                    <div class="group flex items-center gap-3 p-6 rounded-2xl bg-white dark:bg-gray-800/50 shadow-sm hover:shadow-md transition-shadow duration-300">
-                      <div class="p-1.5 rounded-lg bg-amber-50 dark:bg-amber-900/30 shrink-0">
-                        <span class="i-mdi:medal text-amber-500 dark:text-amber-400" />
-                      </div>
-                      <span class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{item}</span>
-                    </div>
+                    <article class="surface-card">
+                      <p class="body-copy">{item}</p>
+                    </article>
                   );
                 }
                 return (
-                  <div class="group relative p-6 rounded-2xl bg-white dark:bg-gray-800/50 shadow-sm hover:shadow-md transition-shadow duration-300">
-                    <!-- Decorative gradient -->
-                    <div class="absolute inset-0 rounded-xl bg-gradient-to-br from-amber-50/50 to-transparent dark:from-amber-900/10 dark:to-transparent pointer-events-none"></div>
-                    
-                    <div class="relative flex flex-col sm:flex-row sm:items-center gap-3">
-                      <div class="p-2 rounded-lg bg-amber-50 dark:bg-amber-900/30 shrink-0">
-                        <span class="i-mdi:trophy text-lg text-amber-500 dark:text-amber-400" />
-                      </div>
-                      <div class="flex-1 space-y-1">
+                  <article class="surface-card-hover group grid gap-4 md:grid-cols-[minmax(0,1fr)_auto]">
+                    <div class="min-w-0 space-y-3">
+                      <div class="space-y-1">
                         {item.title && (
-                          <h3 class="font-bold text-gray-900 dark:text-gray-100">
+                          <h3 class="entry-title">
                             {item.link ? (
-                              <a href={item.link} target="_blank" rel="noreferrer" class="hover:text-accent-600 dark:hover:text-accent-400 transition-colors no-underline text-inherit inline-flex items-center gap-1">
-                                {item.title}
-                                <span class="i-mdi:open-in-new text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                              <a
+                                href={item.link}
+                                target="_blank"
+                                rel="noreferrer"
+                                class="inline text-inherit no-underline transition-colors hover:text-accent-700 focus-visible:text-accent-700 dark:hover:text-accent-300 dark:focus-visible:text-accent-300"
+                              >
+                                <span>{item.title}</span>
+                                <span class="i-mdi:open-in-new ml-1 inline-block align-[0.05em] text-xs" aria-hidden="true"></span>
                               </a>
                             ) : item.title}
                           </h3>
                         )}
                         {item.subtitle && (
-                          <p class="text-sm font-medium text-accent-600 dark:text-accent-400">{item.subtitle}</p>
+                          <p class="entry-meta font-semibold text-accent-700 dark:text-accent-300">{item.subtitle}</p>
                         )}
                         {item.description && (
-                          <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{item.description}</p>
+                          <p class="entry-summary">{item.description}</p>
                         )}
                       </div>
-                      {item.date && (
-                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 shrink-0">
-                          <span class="i-mdi:calendar text-gray-400 dark:text-gray-500 text-xs"></span>
-                          {item.date}
-                        </span>
+
+                      {item.badges && item.badges.length > 0 && (
+                          <div class="flex flex-wrap gap-2">
+                            {item.badges.map((badge) => (
+                              <span class="meta-chip">{badge}</span>
+                            ))}
+                          </div>
+                      )}
+                      {item.highlights && item.highlights.length > 0 && (
+                          <ul class="space-y-2 border-l-2 border-accent-200 pl-4 dark:border-accent-800">
+                            {item.highlights.map((highlight) => (
+                              <li class="body-copy">
+                                {highlight}
+                              </li>
+                            ))}
+                          </ul>
+                      )}
+                      {item.links && item.links.length > 0 && (
+                          <div class="flex flex-wrap gap-2">
+                            {item.links.map((link) => (
+                              link.href && (
+                                <a
+                                  href={link.href}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  class="action-link min-h-11"
+                                >
+                                  <span class={link.icon ?? "i-mdi:open-in-new"} aria-hidden="true"></span>
+                                  {link.label ?? "Read more"}
+                                </a>
+                              )
+                            ))}
+                          </div>
                       )}
                     </div>
-                  </div>
+                    {item.date && (
+                      <p class="entry-meta tabular-nums">
+                        {item.date}
+                      </p>
+                    )}
+                  </article>
                 );
               })}
             </div>

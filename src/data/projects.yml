@@ -1,12 +1,28 @@
 - title: Scholars Portal
+  subtitle: Template infrastructure for academic homepages
   status: active
   period: 2023 — Present
   description: Source-available portal that aggregates publications, talks, and teaching materials into a single academic profile with analytics.
+  badges:
+    - Template
+    - Open source
+  highlights:
+    - Keeps publications, posts, and project metadata in simple content files.
+    - Supports release-tagged updates for downstream personal sites.
+  metadata:
+    - label: Role
+      value: Maintainer
+    - label: Audience
+      value: Researchers
   tech:
     - Astro
     - TypeScript
     - Content Collections
-  url: https://github.com/jxpeng98/
+  links:
+    - label: Repository
+      href: https://github.com/jxpeng98/
+    - label: Documentation
+      href: https://github.com/jxpeng98/
 
 - title: Multilingual Citation Miner
   status: past

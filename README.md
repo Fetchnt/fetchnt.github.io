@@ -14,7 +14,7 @@ A modern, elegant academic portfolio theme for Astro. Build your professional re
 - **🌙 Dark Mode** - Seamless light/dark theme switching with system preference detection
 - **📱 Fully Responsive** - Mobile-first design with adaptive navigation
 - **🎯 SEO Optimized** - Built-in meta tags, sitemap, and semantic HTML
-- **🔧 Easy Configuration** - Single TypeScript config file for all site settings
+- **🔧 Easy Configuration** - One root TypeScript entry with focused content files
 - **📝 YAML Data Sources** - Simple content management through YAML files
 - **🏷️ Filter System** - Interactive category filters on Research, Projects, and Teaching pages
 - **🎭 UnoCSS Styling** - Utility-first CSS with customizable accent colors
@@ -30,8 +30,8 @@ A modern, elegant academic portfolio theme for Astro. Build your professional re
 
 ```bash
 # Clone the repository
-git clone https://github.com/jxpeng98/astro-scholars.git
-cd astro-scholars
+git clone https://github.com/jxpeng98/astro-theme-scholars.git
+cd astro-theme-scholars
 
 # Install dependencies
 pnpm install
@@ -59,7 +59,7 @@ Your site will be running at `http://localhost:4321`
 
 Before publishing, replace every placeholder in:
 
-- `src/side.config.ts`: name, title, affiliation, social links, keywords, status badge, profile image.
+- `site.config.ts`: name, affiliation, social links, research focus, status badge, and profile image.
 - `src/data/publications.bib`: publication metadata, URLs, abstracts, and `public` category.
 - `src/data/about.yml`: profile, education, experience, service, and awards.
 - `src/data/projects.yml`: project title, status, period, description, technology tags, and URL.
@@ -67,17 +67,61 @@ Before publishing, replace every placeholder in:
 - `src/content/posts`: remove sample posts or mark drafts with `draft: true`.
 
 Run `pnpm verify` before deployment.
+`siteUrl` is the single source for canonical URLs, Open Graph image URLs, and
+the Astro sitemap integration. Update it before publishing a copied site.
+
+---
+
+## Versioned Template Updates
+
+This template is tracked with SemVer release tags such as `v0.5.0`.
+`package.json`, `.template-version`, and the latest `CHANGELOG.md` entry should
+always describe the same version.
+
+Maintainers can check a release before tagging:
+
+```bash
+node scripts/check-release.mjs --tag v0.5.0
+pnpm verify
+git tag -a v0.5.0 -m "Release v0.5.0"
+git push origin main --tags
+```
+
+Repositories created from this GitHub template can keep the copied
+`.github/workflows/template-update.yml` workflow. It checks the upstream template
+for newer release tags and opens a pull request that overlays template-owned
+files while preserving personal content paths from `.template-sync.json`, such
+as `site.config.ts`, `src/data/**`, `src/content/posts/**`, and
+`public/profile.*`.
+
+The npm package path can coexist later: this repository can keep serving GitHub
+template users while a future package exports reusable layouts and components
+that Dependabot can bump in package-based sites.
 
 ---
 
 ## 📖 Configuration Guide
 
-### Site Configuration (`src/side.config.ts`)
+Start with the smallest file that owns the information you want to change:
 
-This is the central configuration file for your entire site. Here's a complete breakdown:
+| Goal | Edit |
+| --- | --- |
+| Identity, profile, links, SEO, page introductions | `site.config.ts` |
+| Publications | `src/data/publications.bib` |
+| About, projects, and teaching records | `src/data/*.yml` |
+| Blog posts | `src/content/posts/*.md` |
+| Advanced color and type tokens | `uno.config.ts` |
+
+### Site Configuration (`site.config.ts`)
+
+This root file is the primary configuration entry. `defineSiteConfig` supplies stable
+defaults for navigation, the footer, page titles, image dimensions, and home-section copy,
+so routine personalization only needs the fields relevant to your site.
 
 ```typescript
-export const siteConfig: SiteConfig = {
+import { defineSiteConfig } from './src/config/site';
+
+export default defineSiteConfig({
   // ─────────────────────────────────────────────────────────────
   // 🏠 BASIC INFORMATION
   // ─────────────────────────────────────────────────────────────
@@ -90,6 +134,12 @@ export const siteConfig: SiteConfig = {
   
   /** SEO description (appears in search results) */
   description: 'Your research focus and expertise...',
+
+  /** Production URL used for canonical, Open Graph, and sitemap URLs */
+  siteUrl: 'https://your-site.example',
+
+  /** Default Open Graph image path or full URL */
+  ogImage: '/profile.svg',
   
   /** Favicon path (relative to /public) */
   favicon: '/favicon.svg',
@@ -163,17 +213,32 @@ export const siteConfig: SiteConfig = {
   },
 
   // ─────────────────────────────────────────────────────────────
-  // 📄 PAGE DESCRIPTIONS (SEO & subtitles)
+  // 📄 PAGE TITLES AND DESCRIPTIONS (SEO & subtitles)
   // ─────────────────────────────────────────────────────────────
   
-  pageDescriptions: {
-    about: 'Your brief bio for the About page...',
-    researches: 'Description of your research focus...',
-    projects: 'Description of your projects...',
-    teaching: 'Description of your teaching philosophy...',
-    posts: 'Description of your blog...',
+  pageTitles: {
+    about: {
+      title: 'About',
+      description: 'Your brief bio for the About page...',
+    },
+    researches: {
+      title: 'Publications',
+      description: 'Description of your research focus...',
+    },
+    projects: {
+      title: 'Projects',
+      description: 'Description of your projects...',
+    },
+    teaching: {
+      title: 'Teaching',
+      description: 'Description of your teaching philosophy...',
+    },
+    posts: {
+      title: 'Blog',
+      description: 'Description of your blog...',
+    },
   },
-};
+});
 ```
 
 ---
@@ -286,13 +351,26 @@ sections:
 
 ```yaml
 - title: Project Name
+  subtitle: Optional short context
   period: 2023 — Present    # Include "Present" for active projects
   description: What this project does...
+  badges:
+    - Featured
+  highlights:
+    - Optional short achievement or responsibility.
+  metadata:
+    - label: Role
+      value: Maintainer
   tech:
     - Astro
     - TypeScript
     - PostgreSQL
-  url: https://github.com/...   # optional
+  url: https://github.com/...   # optional fallback link
+  links:                        # optional; takes precedence over url
+    - label: Repository
+      href: https://github.com/...
+    - label: Demo
+      href: https://example.com
 ```
 
 **Page Features:**
@@ -313,12 +391,21 @@ current:
       - title: Course Title
         code: INFO 742
         summary: Course description...
+        badges:                 # optional
+          - Graduate
+        highlights:             # optional
+          - Students build a reproducible final project.
         tags:                    # optional
           - graduate
           - seminar
-        link:                    # optional
+        link:                    # optional single link
           label: Course Site
           href: https://...
+        links:                   # optional multiple links; takes precedence over link
+          - label: Syllabus
+            href: https://...
+          - label: Readings
+            href: https://...
 
 past:
   - term: Fall 2024
@@ -414,6 +501,7 @@ Find icons at: [icones.js.org](https://icones.js.org)
 │   ├── favicon.svg
 │   ├── profile.svg
 │   └── robots.txt
+├── site.config.ts             # ⭐ Primary user configuration
 ├── src/
 │   ├── assets/                # Processed images
 │   ├── components/            # Shared components
@@ -442,9 +530,11 @@ Find icons at: [icones.js.org](https://icones.js.org)
 │   │       └── [slug].astro   # Individual post
 │   ├── types/
 │   │   └── config.ts          # TypeScript interfaces
-│   └── side.config.ts         # ⭐ Main configuration
+│   ├── config/
+│   │   └── site.ts            # Defaults and configuration helper
+│   └── side.config.ts         # Compatibility import; do not edit
 ├── uno.config.ts              # UnoCSS configuration
-├── astro.config.mjs           # Astro configuration
+├── astro.config.ts            # Astro configuration
 └── package.json
 ```
 
@@ -505,7 +595,7 @@ theme: {
 ### Adding New Social Links
 
 1. Find icon class at [icones.js.org](https://icones.js.org)
-2. Add to `socialLinks` in `side.config.ts`
+2. Add to `socialLinks` in `site.config.ts`
 3. Add icon to safelist in `uno.config.ts` if needed
 
 ### Custom Page Sections
@@ -515,9 +605,24 @@ For the About page, add new sections in `about.yml`:
 ```yaml
 sections:
   - title: Your Section Title
+    icon: i-mdi:trophy-award
     items:
-      - Your item content
+      - title: Detailed item
+        subtitle: Optional subtitle
+        date: 2026
+        description: Optional longer description
+        badges:
+          - Award
+        highlights:
+          - Optional short detail.
+        links:
+          - label: Related page
+            href: https://example.com
+      - Simple text item
 ```
+
+If you use custom icon class names in YAML fields, add them to the `uno.config.ts`
+safelist so UnoCSS includes them in the generated CSS.
 
 ---
 
@@ -525,7 +630,7 @@ sections:
 
 Contributions are welcome! Feel free to:
 
-- 🐛 Report bugs via [Issues](https://github.com/jxpeng98/astro-scholars/issues)
+- 🐛 Report bugs via [Issues](https://github.com/jxpeng98/astro-theme-scholars/issues)
 - 💡 Suggest features
 - 🔧 Submit pull requests
 

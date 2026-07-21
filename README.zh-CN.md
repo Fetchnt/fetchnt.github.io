@@ -12,7 +12,7 @@
 - **🌙 深色模式** - 流畅切换明暗主题，自动跟随系统偏好
 - **📱 全面响应式** - 移动优先设计，自适应导航栏
 - **🎯 SEO 优化** - 内置 meta 标签、站点地图、语义化 HTML
-- **🔧 配置简单** - 单一 TypeScript 配置文件掌控全局
+- **🔧 配置简单** - 根目录统一入口，内容按类型分文件管理
 - **📝 YAML 数据源** - 通过 YAML 文件轻松管理内容
 - **🏷️ 筛选系统** - Research、Projects、Teaching 页面支持交互式分类筛选
 - **🎭 UnoCSS 样式** - 实用优先的 CSS，主题色随心定制
@@ -28,8 +28,8 @@
 
 \`\`\`bash
 # 克隆仓库
-git clone https://github.com/jxpeng98/astro-scholars.git
-cd astro-scholars
+git clone https://github.com/jxpeng98/astro-theme-scholars.git
+cd astro-theme-scholars
 
 # 安装依赖
 pnpm install
@@ -57,7 +57,7 @@ pnpm dev
 
 发布前请替换以下文件中的示例内容：
 
-- \`src/side.config.ts\`：姓名、标题、单位、社交链接、关键词、状态徽标和头像。
+- \`site.config.ts\`：姓名、单位、社交链接、关键词、研究方向、状态徽标和头像。
 - \`src/data/publications.bib\`：论文元数据、链接、摘要和 \`public\` 分类。
 - \`src/data/about.yml\`：个人资料、教育经历、工作经历、学术服务和奖项。
 - \`src/data/projects.yml\`：项目标题、状态、时间、简介、技术标签和链接。
@@ -65,17 +65,57 @@ pnpm dev
 - \`src/content/posts\`：删除示例文章，或使用 \`draft: true\` 标记为草稿。
 
 部署前运行 \`pnpm verify\`。
+`siteUrl` 是 canonical URL、Open Graph 图片 URL 和 Astro sitemap 集成的唯一来源。
+复制模板后发布前请先更新它。
+
+---
+
+## 版本化模板更新
+
+这个模板使用 SemVer release tag 追踪版本，例如 \`v0.5.0\`。\`package.json\`、
+\`.template-version\` 和 \`CHANGELOG.md\` 最新条目应保持同一个版本号。
+
+维护者发布前可以先检查版本一致性：
+
+\`\`\`bash
+node scripts/check-release.mjs --tag v0.5.0
+pnpm verify
+git tag -a v0.5.0 -m "Release v0.5.0"
+git push origin main --tags
+\`\`\`
+
+通过 GitHub template 创建的使用者仓库可以保留复制过来的
+\`.github/workflows/template-update.yml\`。该 workflow 会检查上游模板是否有新的
+release tag，并创建一个 PR 来覆盖模板维护的文件，同时根据
+\`.template-sync.json\` 保护个人内容路径，例如 \`site.config.ts\`、
+\`src/data/**\`、\`src/content/posts/**\` 和 \`public/profile.*\`。
+
+后续也可以并存 npm package 路径：这个仓库继续服务 GitHub template 用户，同时
+将布局和组件导出为包，让基于 package 的站点通过 Dependabot 升级依赖。
 
 ---
 
 ## 📖 配置指南
 
-### 站点配置 (\`src/side.config.ts\`)
+先根据要修改的信息，直接进入对应文件：
 
-这是整个网站的核心配置文件，所有设置一目了然：
+| 目标 | 编辑位置 |
+| --- | --- |
+| 身份、头像、链接、SEO、页面简介 | \`site.config.ts\` |
+| 论文 | \`src/data/publications.bib\` |
+| 个人经历、项目和课程 | \`src/data/*.yml\` |
+| 博客文章 | \`src/content/posts/*.md\` |
+| 高级颜色和字体令牌 | \`uno.config.ts\` |
+
+### 站点配置 (\`site.config.ts\`)
+
+这是根目录中的主配置入口。\`defineSiteConfig\` 会为导航、页脚、页面标题、
+图片尺寸和首页区块提供稳定默认值，因此日常个性化只需填写真正相关的字段。
 
 \`\`\`typescript
-export const siteConfig: SiteConfig = {
+import { defineSiteConfig } from './src/config/site';
+
+export default defineSiteConfig({
   // ─────────────────────────────────────────────────────────────
   // 🏠 基础信息
   // ─────────────────────────────────────────────────────────────
@@ -88,6 +128,12 @@ export const siteConfig: SiteConfig = {
   
   /** SEO 描述（出现在搜索结果中） */
   description: '专注于学习分析与人机交互研究...',
+
+  /** 生产站点 URL，用于 canonical、Open Graph 和 sitemap */
+  siteUrl: 'https://your-site.example',
+
+  /** 默认 Open Graph 图片路径或完整 URL */
+  ogImage: '/profile.svg',
   
   /** 网站图标路径（相对于 /public） */
   favicon: '/favicon.svg',
@@ -161,17 +207,32 @@ export const siteConfig: SiteConfig = {
   },
 
   // ─────────────────────────────────────────────────────────────
-  // 📄 各页面描述（SEO 及副标题）
+  // 📄 各页面标题与描述（SEO 及副标题）
   // ─────────────────────────────────────────────────────────────
   
-  pageDescriptions: {
-    about: '关于我的简介...',
-    researches: '研究方向与成果介绍...',
-    projects: '项目展示说明...',
-    teaching: '教学理念介绍...',
-    posts: '博客简介...',
+  pageTitles: {
+    about: {
+      title: '关于',
+      description: '关于我的简介...',
+    },
+    researches: {
+      title: '论文',
+      description: '研究方向与成果介绍...',
+    },
+    projects: {
+      title: '项目',
+      description: '项目展示说明...',
+    },
+    teaching: {
+      title: '教学',
+      description: '教学理念介绍...',
+    },
+    posts: {
+      title: '博客',
+      description: '博客简介...',
+    },
   },
-};
+});
 \`\`\`
 
 ---
@@ -288,13 +349,26 @@ sections:
 
 \`\`\`yaml
 - title: 项目名称
+  subtitle: 可选的简短说明
   period: 2023 — 至今    # 包含「至今」会归类为进行中
   description: 项目简介...
+  badges:
+    - Featured
+  highlights:
+    - 可选的项目亮点或职责描述。
+  metadata:
+    - label: 角色
+      value: 维护者
   tech:
     - Astro
     - TypeScript
     - PostgreSQL
-  url: https://github.com/...   # 可选
+  url: https://github.com/...   # 可选的默认链接
+  links:                        # 可选；存在时优先于 url
+    - label: Repository
+      href: https://github.com/...
+    - label: Demo
+      href: https://example.com
 \`\`\`
 
 **页面功能：**
@@ -316,12 +390,21 @@ current:
       - title: 课程名称
         code: INFO 742
         summary: 课程简介...
+        badges:                 # 可选
+          - Graduate
+        highlights:             # 可选
+          - 学生完成一个可复现的期末项目。
         tags:                    # 可选
           - 研究生
           - 研讨课
-        link:                    # 可选
+        link:                    # 可选的单个链接
           label: 课程网站
           href: https://...
+        links:                   # 可选的多个链接；存在时优先于 link
+          - label: Syllabus
+            href: https://...
+          - label: Readings
+            href: https://...
 
 past:
   - term: 2024 秋季
@@ -420,6 +503,7 @@ draft: false              # 设为 true 则不显示
 │   ├── favicon.svg
 │   ├── profile.svg
 │   └── robots.txt
+├── site.config.ts             # ⭐ 用户主配置入口
 ├── src/
 │   ├── assets/                # 需处理的图片
 │   ├── components/            # 共享组件
@@ -448,9 +532,11 @@ draft: false              # 设为 true 则不显示
 │   │       └── [slug].astro   # 文章详情
 │   ├── types/
 │   │   └── config.ts          # TypeScript 类型定义
-│   └── side.config.ts         # ⭐ 核心配置文件
+│   ├── config/
+│   │   └── site.ts            # 默认值与配置辅助函数
+│   └── side.config.ts         # 兼容导入，请勿编辑
 ├── uno.config.ts              # UnoCSS 配置
-├── astro.config.mjs           # Astro 配置
+├── astro.config.ts            # Astro 配置
 └── package.json
 \`\`\`
 
@@ -511,7 +597,7 @@ theme: {
 ### 添加社交链接
 
 1. 在 [icones.js.org](https://icones.js.org) 查找图标类名
-2. 添加到 \`side.config.ts\` 的 \`socialLinks\`
+2. 添加到 \`site.config.ts\` 的 \`socialLinks\`
 3. 如需要，在 \`uno.config.ts\` 的 safelist 中注册图标
 
 ### 自定义页面模块
@@ -521,9 +607,24 @@ theme: {
 \`\`\`yaml
 sections:
   - title: 您的模块标题
+    icon: i-mdi:trophy-award
     items:
-      - 内容条目
+      - title: 详细条目
+        subtitle: 可选副标题
+        date: 2026
+        description: 可选的详细说明
+        badges:
+          - Award
+        highlights:
+          - 可选的补充亮点。
+        links:
+          - label: 相关页面
+            href: https://example.com
+      - 简单文本条目
 \`\`\`
+
+如果在 YAML 字段中使用自定义图标类名，请将它们加入 \`uno.config.ts\` 的
+safelist，确保 UnoCSS 会生成对应样式。
 
 ---
 
@@ -531,7 +632,7 @@ sections:
 
 欢迎参与项目建设！您可以：
 
-- 🐛 通过 [Issues](https://github.com/jxpeng98/astro-scholars/issues) 反馈问题
+- 🐛 通过 [Issues](https://github.com/jxpeng98/astro-theme-scholars/issues) 反馈问题
 - 💡 提出功能建议
 - 🔧 提交 Pull Request
 

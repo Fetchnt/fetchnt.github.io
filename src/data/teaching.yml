@@ -4,13 +4,21 @@ current:
       - title: Human-Centered AI Systems
         code: INFO 742
         summary: Graduate seminar covering participatory design, model interpretability, and policy considerations in AI deployments.
+        badges:
+          - Graduate
+          - Discussion-based
+        highlights:
+          - Weekly critique of real AI system deployments.
+          - Final project connects technical evaluation with stakeholder review.
         tags:
           - graduate
           - seminar
           - ai
-        link:
-          label: Course syllabus
-          href: https://example.edu/info742
+        links:
+          - label: Course syllabus
+            href: https://example.edu/info742
+          - label: Reading list
+            href: https://example.edu/info742/readings
       - title: Learning Analytics Studio
         code: INFO 623
         summary: Project-based studio guiding students through data collection, analysis, and storytelling for educational contexts.
