@@ -13,7 +13,7 @@ A modern, elegant academic portfolio theme for Astro. Build your professional re
 - **📚 BibTeX Integration** - Automatic parsing of publications with category filtering
 - **🌙 Dark Mode** - Seamless light/dark theme switching with system preference detection
 - **📱 Fully Responsive** - Mobile-first design with adaptive navigation
-- **🎯 SEO Optimized** - Built-in meta tags, sitemap, and semantic HTML
+- **🎯 SEO Optimized** - Canonicals, social cards, JSON-LD, sitemap, and generated robots.txt
 - **🔧 Easy Configuration** - One root TypeScript entry with focused content files
 - **📝 YAML Data Sources** - Simple content management through YAML files
 - **🏷️ Filter System** - Interactive category filters on Research, Projects, and Teaching pages
@@ -67,8 +67,9 @@ Before publishing, replace every placeholder in:
 - `src/content/posts`: remove sample posts or mark drafts with `draft: true`.
 
 Run `pnpm verify` before deployment.
-`siteUrl` is the single source for canonical URLs, Open Graph image URLs, and
-the Astro sitemap integration. Update it before publishing a copied site.
+`siteUrl` is the single source for canonical URLs, Open Graph image URLs,
+`robots.txt`, and the Astro sitemap integration. Update it before publishing a
+copied site.
 
 ---
 
@@ -138,8 +139,15 @@ export default defineSiteConfig({
   /** Production URL used for canonical, Open Graph, and sitemap URLs */
   siteUrl: 'https://your-site.example',
 
-  /** Default Open Graph image path or full URL */
-  ogImage: '/profile.svg',
+  /** Document language and Open Graph locale */
+  language: 'en',
+  locale: 'en_US',
+
+  /** Social preview image; a 1200 × 630 raster image is recommended */
+  ogImage: '/social-card.png',
+  ogImageAlt: 'Your Name — academic portfolio',
+  ogImageWidth: 1200,
+  ogImageHeight: 630,
   
   /** Favicon path (relative to /public) */
   favicon: '/favicon.svg',
@@ -499,16 +507,15 @@ Find icons at: [icones.js.org](https://icones.js.org)
 /
 ├── public/                    # Static assets
 │   ├── favicon.svg
-│   ├── profile.svg
-│   └── robots.txt
+│   └── profile.svg
 ├── site.config.ts             # ⭐ Primary user configuration
 ├── src/
 │   ├── assets/                # Processed images
 │   ├── components/            # Shared components
 │   │   └── projects.ts        # Projects data loader
 │   ├── content/               # Blog posts (Astro Content Collections)
-│   │   ├── config.ts          # Content schema
 │   │   └── posts/             # Markdown posts
+│   ├── content.config.ts      # Astro Content Layer schema
 │   ├── data/                  # YAML & BibTeX data
 │   │   ├── about.yml          # About page content
 │   │   ├── projects.yml       # Projects list
@@ -523,6 +530,7 @@ Find icons at: [icones.js.org](https://icones.js.org)
 │   │   ├── index.astro        # Home
 │   │   ├── about.astro        # About
 │   │   ├── researches.astro   # Publications
+│   │   ├── robots.txt.ts      # Generated crawl directives
 │   │   ├── projects.astro     # Projects
 │   │   ├── teaching.astro     # Teaching
 │   │   └── posts/

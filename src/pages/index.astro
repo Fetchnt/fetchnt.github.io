@@ -43,7 +43,11 @@ const headline = siteConfig.hero.headline || about.name;
 const profileAlt = siteConfig.hero.profileAlt || about.name;
 ---
 
-<Layout title="Home" description={siteConfig.hero.subheadline}>
+<Layout
+  title="Home"
+  description={siteConfig.hero.subheadline}
+  schemaType="ProfilePage"
+>
   <div class="page-stack">
     <section class="relative border-y border-paper-300/90 py-8 dark:border-ink-700 sm:py-10 lg:py-12">
       <div class="relative grid gap-8 lg:grid-cols-[minmax(0,1fr)_12rem] lg:items-start lg:gap-12">

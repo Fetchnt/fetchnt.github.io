@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
 	buildAbsoluteUrl,
+	buildCanonicalUrl,
 	normalizeSiteUrl,
 	withTrailingSlash,
 } from "../src/lib/site-url";
@@ -28,6 +29,24 @@ describe("site URL helpers", () => {
 	it("keeps external URLs unchanged", () => {
 		expect(buildAbsoluteUrl("https://cdn.example.edu/profile.png", "https://example.edu/")).toBe(
 			"https://cdn.example.edu/profile.png",
+		);
+	});
+
+	it("builds canonical URLs without query parameters or fragments", () => {
+		expect(
+			buildCanonicalUrl(
+				"/posts/research-note?ref=archive#methods",
+				"https://example.edu/",
+			),
+		).toBe("https://example.edu/posts/research-note/");
+		expect(buildCanonicalUrl("/", "https://example.edu")).toBe(
+			"https://example.edu/",
+		);
+	});
+
+	it("preserves file-like canonical paths", () => {
+		expect(buildCanonicalUrl("/robots.txt", "https://example.edu")).toBe(
+			"https://example.edu/robots.txt",
 		);
 	});
 });

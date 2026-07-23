@@ -32,7 +32,11 @@ const pageDescription =
 const totalPosts = posts.length;
 ---
 
-<Layout title={pageTitle} description={pageDescription}>
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  schemaType="CollectionPage"
+>
   <div class="page-stack">
     <header class="page-header">
       <p class="page-kicker">

@@ -23,3 +23,17 @@ export function buildAbsoluteUrl(pathOrUrl: string, siteUrl: string): string {
 	const normalizedPath = value.startsWith("/") ? value : `/${value}`;
 	return `${normalizedSiteUrl}${normalizedPath}`;
 }
+
+export function buildCanonicalUrl(pathname: string, siteUrl: string): string {
+	const canonical = new URL(pathname, withTrailingSlash(siteUrl));
+	canonical.search = "";
+	canonical.hash = "";
+
+	const lastSegment = canonical.pathname.split("/").filter(Boolean).at(-1);
+	const isFilePath = lastSegment?.includes(".") ?? false;
+	if (!isFilePath && !canonical.pathname.endsWith("/")) {
+		canonical.pathname = `${canonical.pathname}/`;
+	}
+
+	return canonical.href;
+}

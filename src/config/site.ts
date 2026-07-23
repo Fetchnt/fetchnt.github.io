@@ -79,13 +79,27 @@ const defaultHomeBlocks: SiteConfig["homeBlocks"] = {
  */
 export function defineSiteConfig(input: SiteConfigInput): SiteConfig {
 	const profileImage = input.hero.profileImage ?? "/profile.svg";
+	const profileAlt = input.hero.profileAlt ?? `Portrait of ${input.author}`;
+	const profileImageHeight = input.hero.profileImageHeight ?? 160;
+	const profileImageWidth = input.hero.profileImageWidth ?? 160;
+	const ogImage = input.ogImage ?? profileImage;
+	const ogImageUsesProfile = ogImage === profileImage;
 
 	return {
 		title: input.title ?? `${input.author} | Academic Portfolio`,
 		author: input.author,
 		description: input.description ?? input.hero.subheadline,
 		siteUrl: input.siteUrl,
-		ogImage: input.ogImage ?? profileImage,
+		language: input.language ?? "en",
+		locale: input.locale ?? "en_US",
+		ogImage,
+		ogImageAlt:
+			input.ogImageAlt ??
+			(ogImageUsesProfile ? profileAlt : `${input.author} academic portfolio`),
+		ogImageWidth:
+			input.ogImageWidth ?? (ogImageUsesProfile ? profileImageWidth : undefined),
+		ogImageHeight:
+			input.ogImageHeight ?? (ogImageUsesProfile ? profileImageHeight : undefined),
 		favicon: input.favicon ?? "/favicon.svg",
 		keywords: input.keywords ?? [],
 		affiliations: input.affiliations ?? [],
@@ -98,10 +112,10 @@ export function defineSiteConfig(input: SiteConfigInput): SiteConfig {
 		hero: {
 			headline: input.hero.headline,
 			subheadline: input.hero.subheadline,
-			profileAlt: input.hero.profileAlt ?? `Portrait of ${input.author}`,
+			profileAlt,
 			profileImage,
-			profileImageHeight: input.hero.profileImageHeight ?? 160,
-			profileImageWidth: input.hero.profileImageWidth ?? 160,
+			profileImageHeight,
+			profileImageWidth,
 			...(input.hero.statusBadge !== undefined
 				? { statusBadge: input.hero.statusBadge }
 				: {}),

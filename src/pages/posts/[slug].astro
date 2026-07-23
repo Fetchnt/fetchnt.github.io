@@ -2,6 +2,8 @@
 import Layout from '../../layouts/Layout.astro';
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import { getReadingTimeMinutes } from '../../lib/reading-time';
+import { buildCanonicalUrl } from '../../lib/site-url';
+import siteConfig from '../../side.config';
 
 export async function getStaticPaths() {
 	const posts = (await getCollection('posts')).filter((post) => !post.data.draft);
@@ -16,9 +18,22 @@ const { Content } = await render(post);
 
 // Calculate reading time (rough estimate: 200 words per minute)
 const readingTime = getReadingTimeMinutes(post.body ?? '');
+const canonicalUrl = buildCanonicalUrl(Astro.url.pathname, siteConfig.siteUrl);
+const heroImage = post.data.heroImage;
 ---
 
-<Layout title={post.data.title} description={post.data.description}>
+<Layout
+	title={post.data.title}
+	description={post.data.description}
+	image={heroImage?.src}
+	imageAlt={heroImage ? post.data.title : undefined}
+	imageWidth={heroImage?.width}
+	imageHeight={heroImage?.height}
+	schemaType="BlogPosting"
+	publishedAt={post.data.publishedAt}
+	modifiedAt={post.data.updatedAt}
+	tags={post.data.tags}
+>
 	<article class="page-stack mx-auto max-w-2xl">
 		<header class="page-header">
 			<nav aria-label="Breadcrumb" class="flex min-w-0 items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
@@ -52,14 +67,17 @@ const readingTime = getReadingTimeMinutes(post.body ?? '');
 					</span>
 
 					{post.data.updatedAt && (
-						<span class="meta-chip">
+						<time
+							class="meta-chip"
+							datetime={post.data.updatedAt.toISOString()}
+						>
 							<span class="i-mdi:update text-sm" aria-hidden="true"></span>
 							Updated {new Date(post.data.updatedAt).toLocaleDateString(undefined, {
 								month: 'short',
 								day: 'numeric',
 								year: 'numeric'
 							})}
-						</span>
+						</time>
 					)}
 				</div>
 
@@ -97,7 +115,7 @@ const readingTime = getReadingTimeMinutes(post.body ?? '');
 				<div class="flex items-center gap-2 text-xs font-medium text-gray-600 dark:text-gray-300">
 					<span class="mr-1">Share this note</span>
 					<a
-						href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.data.title)}&url=${encodeURIComponent(Astro.url.href)}`}
+						href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.data.title)}&url=${encodeURIComponent(canonicalUrl)}`}
 						target="_blank"
 						rel="noopener noreferrer"
 						class="icon-button"
@@ -107,7 +125,7 @@ const readingTime = getReadingTimeMinutes(post.body ?? '');
 						<span class="i-mdi:twitter text-base" aria-hidden="true"></span>
 					</a>
 					<a
-						href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(Astro.url.href)}`}
+						href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonicalUrl)}`}
 						target="_blank"
 						rel="noopener noreferrer"
 						class="icon-button"

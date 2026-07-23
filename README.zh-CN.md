@@ -11,7 +11,7 @@
 - **📚 BibTeX 集成** - 自动解析论文，支持分类筛选
 - **🌙 深色模式** - 流畅切换明暗主题，自动跟随系统偏好
 - **📱 全面响应式** - 移动优先设计，自适应导航栏
-- **🎯 SEO 优化** - 内置 meta 标签、站点地图、语义化 HTML
+- **🎯 SEO 优化** - 内置 canonical、社交卡片、JSON-LD、站点地图和动态 robots.txt
 - **🔧 配置简单** - 根目录统一入口，内容按类型分文件管理
 - **📝 YAML 数据源** - 通过 YAML 文件轻松管理内容
 - **🏷️ 筛选系统** - Research、Projects、Teaching 页面支持交互式分类筛选
@@ -65,8 +65,8 @@ pnpm dev
 - \`src/content/posts\`：删除示例文章，或使用 \`draft: true\` 标记为草稿。
 
 部署前运行 \`pnpm verify\`。
-`siteUrl` 是 canonical URL、Open Graph 图片 URL 和 Astro sitemap 集成的唯一来源。
-复制模板后发布前请先更新它。
+`siteUrl` 是 canonical URL、Open Graph 图片 URL、`robots.txt` 和 Astro sitemap
+集成的唯一来源。复制模板后发布前请先更新它。
 
 ---
 
@@ -132,8 +132,15 @@ export default defineSiteConfig({
   /** 生产站点 URL，用于 canonical、Open Graph 和 sitemap */
   siteUrl: 'https://your-site.example',
 
-  /** 默认 Open Graph 图片路径或完整 URL */
-  ogImage: '/profile.svg',
+  /** 文档语言和 Open Graph 区域设置 */
+  language: 'zh-CN',
+  locale: 'zh_CN',
+
+  /** 社交分享图，推荐使用 1200 × 630 的栅格图片 */
+  ogImage: '/social-card.png',
+  ogImageAlt: '张三的学术主页',
+  ogImageWidth: 1200,
+  ogImageHeight: 630,
   
   /** 网站图标路径（相对于 /public） */
   favicon: '/favicon.svg',
@@ -501,16 +508,15 @@ draft: false              # 设为 true 则不显示
 /
 ├── public/                    # 静态资源
 │   ├── favicon.svg
-│   ├── profile.svg
-│   └── robots.txt
+│   └── profile.svg
 ├── site.config.ts             # ⭐ 用户主配置入口
 ├── src/
 │   ├── assets/                # 需处理的图片
 │   ├── components/            # 共享组件
 │   │   └── projects.ts        # 项目数据加载器
 │   ├── content/               # 博客文章（Astro Content Collections）
-│   │   ├── config.ts          # 内容 schema
 │   │   └── posts/             # Markdown 文章
+│   ├── content.config.ts      # Astro Content Layer schema
 │   ├── data/                  # YAML 和 BibTeX 数据
 │   │   ├── about.yml          # 关于页面内容
 │   │   ├── projects.yml       # 项目列表
@@ -525,6 +531,7 @@ draft: false              # 设为 true 则不显示
 │   │   ├── index.astro        # 首页
 │   │   ├── about.astro        # 关于
 │   │   ├── researches.astro   # 研究
+│   │   ├── robots.txt.ts      # 动态生成的抓取规则
 │   │   ├── projects.astro     # 项目
 │   │   ├── teaching.astro     # 教学
 │   │   └── posts/

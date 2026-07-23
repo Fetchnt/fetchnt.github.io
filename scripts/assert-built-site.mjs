@@ -78,12 +78,35 @@ function assertFilterToolbar(html, pageName, filters) {
 
 const index = await readDist("index.html");
 assert(
+	titles(index)[0] === "Your Name | Academic Portfolio",
+	"home page title should use the concise configured site title",
+);
+assert(
 	index.includes('link rel="canonical" href="https://astro-theme-scholars.pages.dev/"'),
 	"home page canonical should use the configured production URL",
 );
 assert(
 	index.includes('property="og:image" content="https://astro-theme-scholars.pages.dev/profile.svg"'),
 	"home page OG image should be absolute",
+);
+assert(
+	index.includes(
+		'meta property="og:url" content="https://astro-theme-scholars.pages.dev/"',
+	) &&
+		index.includes('meta property="og:image:alt" content="Portrait of Your Name"') &&
+		index.includes('meta name="twitter:card" content="summary"') &&
+		index.includes('meta name="author" content="Your Name"'),
+	"home page should render complete Open Graph, Twitter, and author metadata",
+);
+assert(
+	countMatches(index, 'meta name="keywords"') === 1,
+	"home page should emit one keywords meta tag",
+);
+assert(
+	index.includes('"@type":"ProfilePage"') &&
+		index.includes('"@type":"Person"') &&
+		index.includes('"@type":"WebSite"'),
+	"home page should render linked profile and website structured data",
 );
 assert(
 	index.includes('meta name="astro-view-transitions-enabled" content="true"'),
@@ -127,6 +150,18 @@ assert(
 		'meta name="description" content="Lessons learned while bootstrapping a personal academic website with Astro.',
 	),
 	"post page should use post description metadata",
+);
+assert(
+	post.includes(
+		'link rel="canonical" href="https://astro-theme-scholars.pages.dev/posts/astro-overview/"',
+	) &&
+		post.includes('meta property="og:type" content="article"') &&
+		post.includes(
+			'meta property="article:published_time" content="2024-07-12T00:00:00.000Z"',
+		) &&
+		post.includes('"@type":"BlogPosting"') &&
+		post.includes('"@type":"BreadcrumbList"'),
+	"post page should render canonical article metadata and structured data",
 );
 
 try {
@@ -182,6 +217,15 @@ const sitemap = await readDist("sitemap-0.xml");
 assert(
 	sitemap.includes("https://astro-theme-scholars.pages.dev/about/"),
 	"sitemap should use the configured production URL",
+);
+const robots = await readDist("robots.txt");
+assert(
+	robots.includes("User-agent: *") &&
+		robots.includes("Allow: /") &&
+		robots.includes(
+			"Sitemap: https://astro-theme-scholars.pages.dev/sitemap-index.xml",
+		),
+	"robots.txt should be generated from the configured production URL",
 );
 
 assert(await existsInDist("profile.svg"), "default profile image should exist in dist");

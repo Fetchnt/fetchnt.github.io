@@ -48,7 +48,11 @@ const pageDescription = siteConfig.pageTitles.researches.description ||
   "Peer-reviewed publications, workshop papers, and essays focusing on the flow of learning signals across scholarly and civic platforms.";
 ---
 
-<Layout title={pageTitle} description={pageDescription}>
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  schemaType="CollectionPage"
+>
   <div class="page-stack">
     <header class="page-header">
       <p class="page-kicker">Research record</p>

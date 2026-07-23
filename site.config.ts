@@ -30,6 +30,13 @@ export const siteConfig = defineSiteConfig({
 		"academic website",
 		"research",
 	],
+	// Optional social-preview overrides:
+	// language: "en",
+	// locale: "en_US",
+	// ogImage: "/social-card.png", // Prefer a 1200 × 630 raster image.
+	// ogImageAlt: "Your Name — academic portfolio",
+	// ogImageWidth: 1200,
+	// ogImageHeight: 630,
 	affiliations: [
 		{
 			role: "Assistant Professor",

@@ -2,31 +2,118 @@
 import { SEO } from "astro-seo";
 import { ClientRouter } from "astro:transitions";
 import "uno.css";
-import { buildAbsoluteUrl } from "../lib/site-url";
+import {
+  buildAbsoluteUrl,
+  buildCanonicalUrl,
+} from "../lib/site-url";
+import {
+  buildStructuredData,
+  getTwitterHandle,
+  type PageSchemaType,
+  type SeoBreadcrumb,
+} from "../lib/seo";
 import siteConfig from "../side.config";
 
 export interface Props {
   title?: string;
   description?: string;
   image?: string;
+  imageAlt?: string;
+  imageWidth?: number;
+  imageHeight?: number;
+  schemaType?: PageSchemaType;
+  publishedAt?: Date;
+  modifiedAt?: Date;
+  tags?: string[];
+  noindex?: boolean;
 }
 
-const { title, description, image } = Astro.props;
+const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
+const isHomePage = currentPath === "/";
+const {
+  title,
+  description,
+  image,
+  imageAlt,
+  imageWidth,
+  imageHeight,
+  schemaType = isHomePage ? "ProfilePage" : "WebPage",
+  publishedAt,
+  modifiedAt,
+  tags,
+  noindex = false,
+} = Astro.props;
 
-const seoTitle = title ? `${title} | ${siteConfig.title}` : siteConfig.title;
-const seoDesc = description || siteConfig.description;
+const seoTitle = title && !isHomePage ? `${title} | ${siteConfig.title}` : siteConfig.title;
+const pageTitle = title || siteConfig.title;
+const seoDesc =
+  description || siteConfig.description || siteConfig.hero.subheadline;
 const rawOgImage = image || siteConfig.ogImage || "/profile.svg";
 const ogImage = buildAbsoluteUrl(rawOgImage, siteConfig.siteUrl);
+const resolvedImageAlt = imageAlt || siteConfig.ogImageAlt || pageTitle;
+const resolvedImageWidth = imageWidth ?? (!image ? siteConfig.ogImageWidth : undefined);
+const resolvedImageHeight = imageHeight ?? (!image ? siteConfig.ogImageHeight : undefined);
+const canonicalUrl = buildCanonicalUrl(Astro.url.pathname, siteConfig.siteUrl);
+const twitterHandle = getTwitterHandle(siteConfig.socialLinks);
+const twitterCard =
+  resolvedImageWidth &&
+  resolvedImageHeight &&
+  resolvedImageWidth / resolvedImageHeight >= 1.5
+    ? "summary_large_image"
+    : "summary";
+const publishedTime = publishedAt?.toISOString();
+const modifiedTime = modifiedAt?.toISOString() || publishedTime;
 
 const currentYear = new Date().getFullYear();
 const siteTitle = siteConfig.author || siteConfig.title;
 const siteMonogram = Array.from(siteTitle.trim())[0]?.toUpperCase() || "S";
 const navLinks = siteConfig.navLinks;
-const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
-const isHomePage = currentPath === "/";
 const footerCopyright = isHomePage
   ? `${currentYear} ${siteConfig.footer.copyright}`
   : `${currentYear} ${siteConfig.author}. ${siteConfig.footer.copyright}`;
+
+const siteRootUrl = buildCanonicalUrl("/", siteConfig.siteUrl);
+const parentNavLink = [...navLinks]
+  .sort((a, b) => b.href.length - a.href.length)
+  .find((link) => {
+    const normalizedHref = link.href.replace(/\/$/, "") || "/";
+    return currentPath.startsWith(`${normalizedHref}/`);
+  });
+const breadcrumbs: SeoBreadcrumb[] = isHomePage
+  ? []
+  : [
+      { name: "Home", url: siteRootUrl },
+      ...(parentNavLink
+        ? [
+            {
+              name: parentNavLink.label,
+              url: buildCanonicalUrl(parentNavLink.href, siteConfig.siteUrl),
+            },
+          ]
+        : []),
+      { name: pageTitle, url: canonicalUrl },
+    ];
+const structuredData = buildStructuredData({
+  siteConfig,
+  canonicalUrl,
+  pageTitle,
+  description: seoDesc,
+  imageUrl: ogImage,
+  imageWidth: resolvedImageWidth,
+  imageHeight: resolvedImageHeight,
+  schemaType,
+  publishedAt: publishedTime,
+  modifiedAt: modifiedTime,
+  tags,
+  breadcrumbs,
+});
+const structuredDataJson = JSON.stringify(structuredData).replace(/</g, "\\u003c");
+const extendedMeta = [
+  { name: "author", content: siteConfig.author },
+  ...(siteConfig.keywords.length
+    ? [{ name: "keywords", content: siteConfig.keywords.join(", ") }]
+    : []),
+];
 
 function isActiveNav(href: string): boolean {
   const normalizedHref = href.replace(/\/$/, "") || "/";
@@ -37,31 +124,71 @@ function isActiveNav(href: string): boolean {
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={siteConfig.language}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/svg+xml" href={siteConfig.favicon} />
-
-    <meta name="keywords" content={siteConfig.keywords.join(", ")} />
     <meta name="generator" content={Astro.generator} />
-    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link
+      rel="sitemap"
+      href={buildAbsoluteUrl("/sitemap-index.xml", siteConfig.siteUrl)}
+    />
 
     <SEO
       title={seoTitle}
       description={seoDesc}
+      canonical={canonicalUrl}
+      noindex={noindex}
+      robotsExtras="max-snippet:-1, max-image-preview:large, max-video-preview:-1"
       openGraph={{
         basic: {
           title: seoTitle,
-          type: "website",
+          type: schemaType === "BlogPosting" ? "article" : "website",
           image: ogImage,
+          url: canonicalUrl,
         },
+        optional: {
+          description: seoDesc,
+          locale: siteConfig.locale,
+          siteName: siteConfig.title,
+        },
+        image: {
+          secureUrl: ogImage,
+          alt: resolvedImageAlt,
+          width: resolvedImageWidth,
+          height: resolvedImageHeight,
+        },
+        ...(schemaType === "BlogPosting"
+          ? {
+              article: {
+                publishedTime,
+                modifiedTime,
+                authors: [`${siteRootUrl}#person`],
+                section: "Research notes",
+                tags,
+              },
+            }
+          : {}),
+      }}
+      twitter={{
+        card: twitterCard,
+        site: twitterHandle,
+        creator: twitterHandle,
+        title: seoTitle,
+        description: seoDesc,
+        image: ogImage,
+        imageAlt: resolvedImageAlt,
       }}
       extend={{
-        link: [{ rel: "icon", href: siteConfig.favicon }],
-        meta: [{ name: "keywords", content: siteConfig.keywords.join(", ") }],
+        link: [{ rel: "icon", type: "image/svg+xml", href: siteConfig.favicon }],
+        meta: extendedMeta,
       }}
     />
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={structuredDataJson}
+    ></script>
     <ClientRouter />
 
     <!-- Apply the stored/system theme before the page paints. -->

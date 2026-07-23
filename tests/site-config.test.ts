@@ -16,6 +16,11 @@ describe("site configuration defaults", () => {
 		expect(config.description).toBe("A concise academic biography.");
 		expect(config.hero.profileAlt).toBe("Portrait of Ada Scholar");
 		expect(config.hero.profileImage).toBe("/profile.svg");
+		expect(config.language).toBe("en");
+		expect(config.locale).toBe("en_US");
+		expect(config.ogImageAlt).toBe("Portrait of Ada Scholar");
+		expect(config.ogImageWidth).toBe(160);
+		expect(config.ogImageHeight).toBe(160);
 		expect(config.navLinks).toHaveLength(5);
 		expect(config.pageTitles.researches.title).toBe("Publications");
 	});

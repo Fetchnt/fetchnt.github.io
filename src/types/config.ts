@@ -38,8 +38,18 @@ export interface SiteConfig {
 	description?: string;
 	/** Production site URL used for canonical, Open Graph, and sitemap URLs */
 	siteUrl: string;
+	/** BCP 47 language code used by the document and structured data */
+	language: string;
+	/** Open Graph locale, for example en_US or zh_CN */
+	locale: string;
 	/** Default Open Graph image path or URL */
 	ogImage?: string;
+	/** Accessible description for the default Open Graph image */
+	ogImageAlt: string;
+	/** Optional Open Graph image width in pixels */
+	ogImageWidth?: number;
+	/** Optional Open Graph image height in pixels */
+	ogImageHeight?: number;
 	favicon: string;
 	keywords: string[];
 	// --- Academic Profile ---

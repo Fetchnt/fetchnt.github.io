@@ -20,7 +20,11 @@ const totalCurrent = current.reduce((acc, s) => acc + (s.modules?.length || 0), 
 const totalPast = past.reduce((acc, s) => acc + (s.modules?.length || 0), 0);
 ---
 
-<Layout title={pageTitle} description={pageDescription}>
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  schemaType="CollectionPage"
+>
   <div class="page-stack">
     <header class="page-header">
       <p class="page-kicker">Teaching portfolio</p>
