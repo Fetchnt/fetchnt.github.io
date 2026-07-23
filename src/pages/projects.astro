@@ -240,5 +240,7 @@ const projectGroups = [
 <script>
   import { setupFilterControls } from "../scripts/ui";
 
-  setupFilterControls();
+  document.addEventListener("astro:page-load", () => {
+    setupFilterControls();
+  });
 </script>

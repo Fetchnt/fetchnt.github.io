@@ -75,7 +75,7 @@ const totalPosts = posts.length;
               {groupedPosts.get(year)?.map((post) => (
                 <li>
                   <a
-                    href={`/posts/${post.slug}`}
+                    href={`/posts/${post.id}`}
                     class="surface-card surface-card-hover group block no-underline"
                     aria-label={`Read ${post.data.title}`}
                   >
@@ -92,7 +92,7 @@ const totalPosts = posts.length;
                         </time>
                         <span class="text-gray-500 dark:text-gray-400 md:hidden" aria-hidden="true">·</span>
                         <span class="text-xs text-gray-500 dark:text-gray-400 md:mt-1 md:block">
-                          {getReadingTimeMinutes(post.body)} min read
+                          {getReadingTimeMinutes(post.body ?? "")} min read
                         </span>
                       </div>
 

@@ -2,6 +2,8 @@ const STORAGE_KEY = "site-theme";
 
 type ThemeMode = "dark" | "light";
 
+let layoutAbortController: AbortController | undefined;
+
 export function getBackToTopScrollBehavior(
 	prefersReducedMotion: boolean,
 ): ScrollBehavior {
@@ -42,34 +44,42 @@ function applyTheme(mode: ThemeMode, root: ParentNode = document) {
 	updateThemeToggleLabels(root, mode);
 }
 
-function setupThemeToggles(root: ParentNode = document) {
+function setupThemeToggles(root: ParentNode, signal: AbortSignal) {
 	applyTheme(getAppliedTheme(), root);
 
 	root.querySelectorAll<HTMLElement>("[data-theme-toggle]").forEach((button) => {
-		button.addEventListener("click", () => {
-			const nextMode: ThemeMode = getAppliedTheme() === "dark" ? "light" : "dark";
-			applyTheme(nextMode, root);
+		button.addEventListener(
+			"click",
+			() => {
+				const nextMode: ThemeMode = getAppliedTheme() === "dark" ? "light" : "dark";
+				applyTheme(nextMode, root);
 
-			try {
-				localStorage.setItem(STORAGE_KEY, nextMode);
-			} catch {
-				// The visual theme still changes when persistent storage is unavailable.
-			}
-		});
+				try {
+					localStorage.setItem(STORAGE_KEY, nextMode);
+				} catch {
+					// The visual theme still changes when persistent storage is unavailable.
+				}
+			},
+			{ signal },
+		);
 	});
 }
 
-function setupSystemThemeListener(root: ParentNode = document) {
+function setupSystemThemeListener(root: ParentNode, signal: AbortSignal) {
 	if (!window.matchMedia) return;
 
-	window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (event) => {
-		if (!getStoredTheme()) {
-			applyTheme(event.matches ? "dark" : "light", root);
-		}
-	});
+	window.matchMedia("(prefers-color-scheme: dark)").addEventListener(
+		"change",
+		(event) => {
+			if (!getStoredTheme()) {
+				applyTheme(event.matches ? "dark" : "light", root);
+			}
+		},
+		{ signal },
+	);
 }
 
-function setupMobileMenu() {
+function setupMobileMenu(signal: AbortSignal) {
 	const menuBtn = document.getElementById("mobile-menu-toggle");
 	const menu = document.getElementById("mobile-menu");
 	const iconMenu = document.getElementById("icon-menu");
@@ -103,35 +113,50 @@ function setupMobileMenu() {
 		updateMenuButtonLabel(true);
 	};
 
-	menuBtn.addEventListener("click", (event) => {
-		event.stopPropagation();
-		menuBtn.getAttribute("aria-expanded") === "true" ? closeMenu() : openMenu();
-	});
+	menuBtn.addEventListener(
+		"click",
+		(event) => {
+			event.stopPropagation();
+			menuBtn.getAttribute("aria-expanded") === "true" ? closeMenu() : openMenu();
+		},
+		{ signal },
+	);
 
-	document.addEventListener("click", (event) => {
-		const target = event.target;
-		if (!(target instanceof Node)) return;
+	document.addEventListener(
+		"click",
+		(event) => {
+			const target = event.target;
+			if (!(target instanceof Node)) return;
 
-		if (
-			menuBtn.getAttribute("aria-expanded") === "true" &&
-			!menu.contains(target) &&
-			!menuBtn.contains(target)
-		) {
-			closeMenu();
-		}
-	});
+			if (
+				menuBtn.getAttribute("aria-expanded") === "true" &&
+				!menu.contains(target) &&
+				!menuBtn.contains(target)
+			) {
+				closeMenu();
+			}
+		},
+		{ signal },
+	);
 
-	document.addEventListener("keydown", (event) => {
-		if (event.key === "Escape" && menuBtn.getAttribute("aria-expanded") === "true") {
-			closeMenu();
-			menuBtn.focus();
-		}
-	});
+	document.addEventListener(
+		"keydown",
+		(event) => {
+			if (
+				event.key === "Escape" &&
+				menuBtn.getAttribute("aria-expanded") === "true"
+			) {
+				closeMenu();
+				menuBtn.focus();
+			}
+		},
+		{ signal },
+	);
 
 	updateMenuButtonLabel(false);
 }
 
-function setupBackToTop() {
+function setupBackToTop(signal: AbortSignal) {
 	const backToTopBtn = document.getElementById("back-to-top");
 	if (!backToTopBtn) return;
 
@@ -151,23 +176,34 @@ function setupBackToTop() {
 		});
 	};
 
-	window.addEventListener("scroll", toggleBackToTop, { passive: true });
-	backToTopBtn.addEventListener("click", () => {
-		const prefersReducedMotion =
-			window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
-		window.scrollTo({
-			top: 0,
-			behavior: getBackToTopScrollBehavior(prefersReducedMotion),
-		});
+	window.addEventListener("scroll", toggleBackToTop, { passive: true, signal });
+	backToTopBtn.addEventListener(
+		"click",
+		() => {
+			const prefersReducedMotion =
+				window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+			window.scrollTo({
+				top: 0,
+				behavior: getBackToTopScrollBehavior(prefersReducedMotion),
+			});
+		},
+		{ signal },
+	);
+	signal.addEventListener("abort", () => window.cancelAnimationFrame(frameId), {
+		once: true,
 	});
 	toggleBackToTop();
 }
 
 function setupLayoutUiWhenReady() {
-	setupMobileMenu();
-	setupThemeToggles();
-	setupSystemThemeListener();
-	setupBackToTop();
+	layoutAbortController?.abort();
+	layoutAbortController = new AbortController();
+	const { signal } = layoutAbortController;
+
+	setupMobileMenu(signal);
+	setupThemeToggles(document, signal);
+	setupSystemThemeListener(document, signal);
+	setupBackToTop(signal);
 }
 
 export function setupLayoutUi() {

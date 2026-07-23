@@ -212,6 +212,8 @@ const pageDescription = siteConfig.pageTitles.researches.description ||
 <script>
   import { setupAbstractToggles, setupFilterControls } from "../scripts/ui";
 
-  setupAbstractToggles();
-  setupFilterControls();
+  document.addEventListener("astro:page-load", () => {
+    setupAbstractToggles();
+    setupFilterControls();
+  });
 </script>

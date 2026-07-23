@@ -85,6 +85,16 @@ assert(
 	index.includes('property="og:image" content="https://astro-theme-scholars.pages.dev/profile.svg"'),
 	"home page OG image should be absolute",
 );
+assert(
+	index.includes('meta name="astro-view-transitions-enabled" content="true"'),
+	"pages should enable Astro client-side navigation",
+);
+assert(
+	index.includes('data-astro-image="constrained"') &&
+		index.includes('fetchpriority="high"') &&
+		index.includes('loading="eager"'),
+	"home profile image should use Astro responsive image priority hints",
+);
 
 const research = await readDist("researches/index.html");
 assert(titles(research).length === 1, "research page should emit one <title>");
@@ -182,7 +192,7 @@ assert(
 	"filter button touch target utility should be generated in CSS",
 );
 assert(
-	css.includes("@media(prefers-reduced-motion:reduce)") &&
+	/@media\s*\(prefers-reduced-motion:reduce\)/.test(css) &&
 		css.includes("animation-duration:.01ms!important") &&
 		css.includes("animation-iteration-count:1!important") &&
 		css.includes("scroll-behavior:auto!important") &&
@@ -194,6 +204,8 @@ const js = await readDistJs();
 assert(
 	js.includes("mobile-menu-toggle") &&
 		js.includes("back-to-top") &&
-		js.includes("prefers-reduced-motion: reduce"),
+		js.includes("prefers-reduced-motion: reduce") &&
+		js.includes("astro:page-load") &&
+		js.includes("AbortController"),
 	"layout browser behavior should be bundled in generated JavaScript",
 );

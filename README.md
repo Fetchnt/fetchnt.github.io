@@ -23,7 +23,7 @@ A modern, elegant academic portfolio theme for Astro. Build your professional re
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (v18+ recommended)
+- [Node.js](https://nodejs.org/) (v22.13+ required; v24 LTS recommended)
 - [pnpm](https://pnpm.io/) (recommended) or npm
 
 ### Installation

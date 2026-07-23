@@ -243,5 +243,7 @@ const totalPast = past.reduce((acc, s) => acc + (s.modules?.length || 0), 0);
 <script>
   import { setupFilterControls } from "../scripts/ui";
 
-  setupFilterControls();
+  document.addEventListener("astro:page-load", () => {
+    setupFilterControls();
+  });
 </script>

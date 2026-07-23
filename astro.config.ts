@@ -15,5 +15,11 @@ export default defineConfig({
 		},
 		plugins: [UnoCSS()],
 	},
-	prefetch: true,
+	image: {
+		responsiveStyles: true,
+	},
+	prefetch: {
+		prefetchAll: true,
+		defaultStrategy: "viewport",
+	},
 });

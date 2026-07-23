@@ -115,9 +115,10 @@ const profileAlt = siteConfig.hero.profileAlt || about.name;
                 alt={profileAlt}
                 width={siteConfig.hero.profileImageWidth || 160}
                 height={siteConfig.hero.profileImageHeight || 160}
+                layout="constrained"
+                fit="cover"
+                priority
                 class="aspect-square h-auto w-full rounded-md object-cover"
-                loading="eager"
-                fetchpriority="high"
               />
           </div>
           {statusBadge && (
@@ -235,7 +236,7 @@ const profileAlt = siteConfig.hero.profileAlt || about.name;
 
       <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {recentPosts.map((post, index) => (
-          <a href={`/posts/${post.slug}`} class="group block h-full no-underline">
+          <a href={`/posts/${post.id}`} class="group block h-full no-underline">
             <article class="surface-card-hover flex h-full flex-col">
               <div class="mb-5 flex items-center justify-between gap-3">
                 <span class="font-mono text-xs font-semibold text-accent-600 dark:text-accent-300">
@@ -270,5 +271,7 @@ const profileAlt = siteConfig.hero.profileAlt || about.name;
 <script>
   import { setupAbstractToggles } from "../scripts/ui";
 
-  setupAbstractToggles();
+  document.addEventListener("astro:page-load", () => {
+    setupAbstractToggles();
+  });
 </script>

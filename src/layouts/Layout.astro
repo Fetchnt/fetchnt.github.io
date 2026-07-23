@@ -1,5 +1,6 @@
 ---
 import { SEO } from "astro-seo";
+import { ClientRouter } from "astro:transitions";
 import "uno.css";
 import { buildAbsoluteUrl } from "../lib/site-url";
 import siteConfig from "../side.config";
@@ -61,6 +62,7 @@ function isActiveNav(href: string): boolean {
         meta: [{ name: "keywords", content: siteConfig.keywords.join(", ") }],
       }}
     />
+    <ClientRouter />
 
     <!-- Apply the stored/system theme before the page paints. -->
     <script is:inline>
@@ -81,6 +83,18 @@ function isActiveNav(href: string): boolean {
 
         document.documentElement.classList.toggle("dark", isDark);
         document.documentElement.dataset.theme = isDark ? "dark" : "light";
+
+        document.addEventListener("astro:before-swap", (event) => {
+          const currentTheme = document.documentElement.classList.contains("dark")
+            ? "dark"
+            : "light";
+
+          event.newDocument.documentElement.classList.toggle(
+            "dark",
+            currentTheme === "dark",
+          );
+          event.newDocument.documentElement.dataset.theme = currentTheme;
+        });
       })();
     </script>
 
@@ -307,8 +321,9 @@ function isActiveNav(href: string): boolean {
       }
 
       .theme-switch-button {
-        width: 2.75rem;
-        height: 2.75rem;
+        align-self: stretch;
+        width: 3rem;
+        min-height: 3.25rem;
         padding: 0;
 		border: 0 !important;
 		border-left: 1px solid var(--glass-control-border) !important;
@@ -332,12 +347,13 @@ function isActiveNav(href: string): boolean {
 
       .theme-menu-button {
         justify-content: space-between;
-        padding: 0.375rem 0.375rem 0.375rem 0.875rem;
+        padding: 0.5rem 0.75rem;
       }
 
       .theme-switch-visual {
         position: relative;
-        display: block;
+        display: grid;
+        place-items: center;
         flex: 0 0 auto;
         width: 1.25rem;
         height: 1.25rem;
@@ -396,6 +412,7 @@ function isActiveNav(href: string): boolean {
       }
 
 	  .desktop-nav-shell {
+        align-items: stretch;
 		border: 1px solid var(--glass-control-border);
 		border-radius: 0.75rem;
 		background: var(--glass-control);
@@ -455,6 +472,12 @@ function isActiveNav(href: string): boolean {
         }
       }
 
+      ::view-transition-old(root),
+      ::view-transition-new(root) {
+        animation-duration: 160ms;
+        animation-timing-function: ease-out;
+      }
+
       @media (prefers-reduced-motion: reduce) {
         *,
         *::before,
@@ -463,6 +486,11 @@ function isActiveNav(href: string): boolean {
           animation-iteration-count: 1 !important;
           scroll-behavior: auto !important;
           transition-duration: 0.01ms !important;
+        }
+
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+          animation-duration: 0.01ms !important;
         }
       }
     </style>
@@ -649,7 +677,7 @@ function isActiveNav(href: string): boolean {
     <script>
       import { setupLayoutUi } from "../scripts/layout-ui";
 
-      setupLayoutUi();
+      document.addEventListener("astro:page-load", setupLayoutUi);
     </script>
   </body>
 </html>

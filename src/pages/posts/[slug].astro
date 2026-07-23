@@ -1,21 +1,21 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { getCollection, type CollectionEntry } from 'astro:content';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
 import { getReadingTimeMinutes } from '../../lib/reading-time';
 
 export async function getStaticPaths() {
 	const posts = (await getCollection('posts')).filter((post) => !post.data.draft);
 	return posts.map((post) => ({
-		params: { slug: post.slug },
+		params: { slug: post.id },
 		props: { post }
 	}));
 }
 
 const { post } = Astro.props as { post: CollectionEntry<'posts'> };
-const { Content } = await post.render();
+const { Content } = await render(post);
 
 // Calculate reading time (rough estimate: 200 words per minute)
-const readingTime = getReadingTimeMinutes(post.body);
+const readingTime = getReadingTimeMinutes(post.body ?? '');
 ---
 
 <Layout title={post.data.title} description={post.data.description}>

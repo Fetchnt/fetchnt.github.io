@@ -21,7 +21,7 @@
 
 ### 环境要求
 
-- [Node.js](https://nodejs.org/) (推荐 v18+)
+- [Node.js](https://nodejs.org/)（要求 v22.13+，推荐 v24 LTS）
 - [pnpm](https://pnpm.io/)（推荐）或 npm
 
 ### 安装步骤

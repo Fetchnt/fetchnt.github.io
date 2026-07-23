@@ -4,6 +4,9 @@ import {
 	readFilterFromSearch,
 } from "../lib/filter-state";
 
+const boundFilterButtons = new WeakSet<HTMLElement>();
+const boundAbstractToggles = new WeakSet<HTMLButtonElement>();
+
 function toggleClasses(element: Element, enabled: boolean, classes: string[]) {
 	for (const className of classes) {
 		element.classList.toggle(className, enabled);
@@ -83,6 +86,9 @@ export function setupFilterControls(root: ParentNode = document) {
 	}
 
 	buttons.forEach((button) => {
+		if (boundFilterButtons.has(button)) return;
+		boundFilterButtons.add(button);
+
 		button.addEventListener("click", () => {
 			const filter = button.dataset.filter;
 			if (!filter) return;
@@ -106,6 +112,9 @@ export function setupFilterControls(root: ParentNode = document) {
 
 export function setupAbstractToggles(root: ParentNode = document) {
 	root.querySelectorAll<HTMLButtonElement>("[data-abstract-toggle]").forEach((toggle) => {
+		if (boundAbstractToggles.has(toggle)) return;
+		boundAbstractToggles.add(toggle);
+
 		toggle.addEventListener("click", () => {
 			const targetId = toggle.dataset.target;
 			if (!targetId) return;
