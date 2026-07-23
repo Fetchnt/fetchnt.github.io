@@ -50,6 +50,10 @@ function countMatches(html, value) {
 	return html.split(value).length - 1;
 }
 
+function footer(html) {
+	return html.match(/<footer[\s\S]*?<\/footer>/)?.[0] ?? "";
+}
+
 function assertFilterToolbar(html, pageName, filters) {
 	assert(
 		html.includes('role="toolbar"') && html.includes('aria-label="Filter sections"'),
@@ -173,6 +177,12 @@ try {
 
 const about = await readDist("about/index.html");
 assert(about.includes("Current Role"), "about page should render profile data");
+assert(
+	footer(index) === footer(about) &&
+		footer(index).includes('class="flex justify-end text-right"') &&
+		!footer(index).includes("Your Name"),
+	"all pages should render the same right-aligned copyright-only footer",
+);
 assert(
 	about.includes("Research Areas"),
 	"about page should render research areas profile data",
