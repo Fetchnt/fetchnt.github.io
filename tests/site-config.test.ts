@@ -23,6 +23,9 @@ describe("site configuration defaults", () => {
 		expect(config.ogImageHeight).toBe(160);
 		expect(config.navLinks).toHaveLength(5);
 		expect(config.pageTitles.researches.title).toBe("Publications");
+		expect(config.homeBlocks.hero.enabled).toBe(true);
+		expect(config.homeBlocks.publications.enabled).toBe(true);
+		expect(config.homeBlocks.posts.enabled).toBe(true);
 	});
 
 	test("preserves focused overrides without requiring the full schema", () => {
@@ -37,6 +40,10 @@ describe("site configuration defaults", () => {
 			pageTitles: {
 				projects: { description: "Open research infrastructure." },
 			},
+			homeBlocks: {
+				hero: { enabled: false },
+				posts: { enabled: false },
+			},
 		});
 
 		expect(config.hero.statusBadge).toBe("Available for collaboration");
@@ -44,5 +51,8 @@ describe("site configuration defaults", () => {
 		expect(config.pageTitles.projects.description).toBe(
 			"Open research infrastructure.",
 		);
+		expect(config.homeBlocks.hero.enabled).toBe(false);
+		expect(config.homeBlocks.publications.enabled).toBe(true);
+		expect(config.homeBlocks.posts.enabled).toBe(false);
 	});
 });

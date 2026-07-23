@@ -5,16 +5,23 @@ import { getFeaturedPapers } from "../lib/papers";
 import siteConfig from "../side.config";
 import { Image } from "astro:assets";
 
-const recentPosts = (await getCollection("posts"))
-  .filter((post) => !post.data.draft)
-  .sort(
-    (a, b) =>
-      new Date(b.data.publishedAt).getTime() -
-      new Date(a.data.publishedAt).getTime(),
-  )
-  .slice(0, 3);
+const showHero = siteConfig.homeBlocks.hero.enabled;
+const showPublications = siteConfig.homeBlocks.publications.enabled;
+const showPosts = siteConfig.homeBlocks.posts.enabled;
 
-const selectedPapers = getFeaturedPapers(3);
+const recentPosts = showPosts
+  ? (await getCollection("posts"))
+      .filter((post) => !post.data.draft)
+      .sort(
+        (a, b) =>
+          new Date(b.data.publishedAt).getTime() -
+          new Date(a.data.publishedAt).getTime(),
+      )
+      .slice(0, 3)
+  : [];
+
+const selectedPapers = showPublications ? getFeaturedPapers(3) : [];
+const postsSectionNumber = showPublications ? "02" : "01";
 
 const rawProfileImage = siteConfig.hero.profileImage.trim();
 const profileImageUrl = /^https?:/i.test(rawProfileImage)
@@ -49,7 +56,8 @@ const profileAlt = siteConfig.hero.profileAlt || about.name;
   schemaType="ProfilePage"
 >
   <div class="page-stack">
-    <section class="relative border-y border-paper-300/90 py-8 dark:border-ink-700 sm:py-10 lg:py-12">
+    {showHero && (
+      <section class="relative border-y border-paper-300/90 py-8 dark:border-ink-700 sm:py-10 lg:py-12">
       <div class="relative grid gap-8 lg:grid-cols-[minmax(0,1fr)_12rem] lg:items-start lg:gap-12">
         <div class="min-w-0">
           <h1 class="max-w-4xl font-heading text-[clamp(2.5rem,5vw,4.25rem)] font-semibold leading-[0.98] tracking-[-0.035em] text-gray-900 dark:text-gray-50">
@@ -133,9 +141,11 @@ const profileAlt = siteConfig.hero.profileAlt || about.name;
           )}
         </aside>
       </div>
-    </section>
+      </section>
+    )}
 
-    <section class="content-section" aria-labelledby="selected-publications">
+    {showPublications && (
+      <section class="content-section" aria-labelledby="selected-publications">
       <div class="mb-4 flex flex-col gap-3 border-b border-gray-300 pb-4 dark:border-gray-700 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p class="section-kicker">01 / Research</p>
@@ -221,12 +231,14 @@ const profileAlt = siteConfig.hero.profileAlt || about.name;
           );
         })}
       </div>
-    </section>
+      </section>
+    )}
 
-    <section class="content-section" aria-labelledby="latest-posts">
+    {showPosts && (
+      <section class="content-section" aria-labelledby="latest-posts">
       <div class="mb-4 flex flex-col gap-3 border-b border-gray-300 pb-4 dark:border-gray-700 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p class="section-kicker">02 / Notes</p>
+          <p class="section-kicker">{postsSectionNumber} / Notes</p>
           <h2 id="latest-posts" class="section-heading">{siteConfig.homeBlocks.posts.title}</h2>
           {siteConfig.homeBlocks.posts.description && (
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">{siteConfig.homeBlocks.posts.description}</p>
@@ -268,7 +280,8 @@ const profileAlt = siteConfig.hero.profileAlt || about.name;
           </a>
         ))}
       </div>
-    </section>
+      </section>
+    )}
   </div>
 </Layout>
 

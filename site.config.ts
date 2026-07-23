@@ -102,6 +102,13 @@ export const siteConfig = defineSiteConfig({
 				"Thoughts on academia, research methods, technology, and the spaces in between.",
 		},
 	},
+
+	// Homepage composition: switch off any block you do not want to display.
+	homeBlocks: {
+		hero: { enabled: true },
+		publications: { enabled: true },
+		posts: { enabled: true },
+	},
 });
 
 export default siteConfig;

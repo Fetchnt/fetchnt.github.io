@@ -8,6 +8,10 @@ type SectionCopy = {
 	description?: string;
 };
 
+type HomeSectionInput = SectionCopy & {
+	enabled?: boolean;
+};
+
 type PageTitlesInput = Partial<
 	Record<keyof SiteConfig["pageTitles"], SectionCopy>
 >;
@@ -25,8 +29,9 @@ export interface SiteConfigInput
 	footer?: Partial<SiteConfig["footer"]>;
 	pageTitles?: PageTitlesInput;
 	homeBlocks?: {
-		publications?: SectionCopy;
-		posts?: SectionCopy;
+		hero?: { enabled?: boolean };
+		publications?: HomeSectionInput;
+		posts?: HomeSectionInput;
 	};
 }
 
@@ -62,11 +67,16 @@ const defaultPageTitles: SiteConfig["pageTitles"] = {
 };
 
 const defaultHomeBlocks: SiteConfig["homeBlocks"] = {
+	hero: {
+		enabled: true,
+	},
 	publications: {
+		enabled: true,
 		title: "Selected Publications",
 		description: "Recent peer-reviewed work",
 	},
 	posts: {
+		enabled: true,
 		title: "Latest Posts",
 		description: "Thoughts and updates",
 	},
@@ -137,6 +147,10 @@ export function defineSiteConfig(input: SiteConfigInput): SiteConfig {
 			posts: { ...defaultPageTitles.posts, ...input.pageTitles?.posts },
 		},
 		homeBlocks: {
+			hero: {
+				...defaultHomeBlocks.hero,
+				...input.homeBlocks?.hero,
+			},
 			publications: {
 				...defaultHomeBlocks.publications,
 				...input.homeBlocks?.publications,

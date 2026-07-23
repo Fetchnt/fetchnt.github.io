@@ -239,6 +239,21 @@ export default defineSiteConfig({
       description: '博客简介...',
     },
   },
+
+  // 选择首页需要显示的区块。
+  homeBlocks: {
+    hero: { enabled: true },
+    publications: {
+      enabled: true,
+      title: '精选论文',
+      description: '近期同行评审成果',
+    },
+    posts: {
+      enabled: true,
+      title: '最新博客',
+      description: '研究随笔与动态',
+    },
+  },
 });
 \`\`\`
 
@@ -253,6 +268,10 @@ export default defineSiteConfig({
 - **头图区域**：头像、姓名、所属机构、状态徽章、个人简介、研究兴趣、社交链接
 - **精选论文**：展示 3 篇重点论文（BibTeX 中 \`public = {yes}\` 的条目）
 - **最新博客**：最近 3 篇博客文章
+
+在 \`site.config.ts\` 中将 \`homeBlocks.<区块>.enabled\` 设置为 \`false\`
+即可隐藏对应内容。剩余的编号区块会自动重新编号；关闭论文或博客区块后，
+构建过程也不会加载相应数据。
 
 **卡片设计特点：**
 

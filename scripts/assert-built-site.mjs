@@ -122,6 +122,13 @@ assert(
 		index.includes('loading="eager"'),
 	"home profile image should use Astro responsive image priority hints",
 );
+assert(
+	index.includes('id="selected-publications"') &&
+		index.includes('id="latest-posts"') &&
+		index.includes("01 / Research") &&
+		index.includes("02 / Notes"),
+	"default configuration should render all enabled home page blocks in order",
+);
 
 const research = await readDist("researches/index.html");
 assert(titles(research).length === 1, "research page should emit one <title>");

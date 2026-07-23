@@ -246,6 +246,21 @@ export default defineSiteConfig({
       description: 'Description of your blog...',
     },
   },
+
+  // Choose which blocks appear on the home page.
+  homeBlocks: {
+    hero: { enabled: true },
+    publications: {
+      enabled: true,
+      title: 'Selected Publications',
+      description: 'Recent peer-reviewed work',
+    },
+    posts: {
+      enabled: true,
+      title: 'Latest Posts',
+      description: 'Thoughts and updates',
+    },
+  },
 });
 ```
 
@@ -260,6 +275,10 @@ The home page displays:
 - **Hero Section**: Profile image, name, affiliations, status badge, bio, research interests, and social links
 - **Selected Publications**: Top 3 featured papers from your BibTeX file (papers with `public = {yes}`)
 - **Latest Posts**: 3 most recent blog posts
+
+Set `homeBlocks.<block>.enabled` to `false` in `site.config.ts` to hide any
+of these sections. Remaining numbered sections are renumbered automatically,
+and disabled publication or post blocks are not loaded during the build.
 
 **Card Design Features:**
 - Hover effect with accent-colored left border gradient
