@@ -22,6 +22,10 @@ const siteTitle = siteConfig.author || siteConfig.title;
 const siteMonogram = Array.from(siteTitle.trim())[0]?.toUpperCase() || "S";
 const navLinks = siteConfig.navLinks;
 const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
+const isHomePage = currentPath === "/";
+const footerCopyright = isHomePage
+  ? `${currentYear} ${siteConfig.footer.copyright}`
+  : `${currentYear} ${siteConfig.author}. ${siteConfig.footer.copyright}`;
 
 function isActiveNav(href: string): boolean {
   const normalizedHref = href.replace(/\/$/, "") || "/";
@@ -482,6 +486,7 @@ function isActiveNav(href: string): boolean {
             data-site-title
             class="group inline-flex min-h-11 min-w-0 items-center gap-2.5 rounded-md text-ink-950 no-underline dark:text-paper-50"
             href="/"
+            aria-label={`${siteTitle} home`}
           >
             <span
               aria-hidden="true"
@@ -608,12 +613,21 @@ function isActiveNav(href: string): boolean {
       <footer
         class="mt-8 border-t border-paper-300 py-6 text-sm text-ink-600 dark:border-ink-700 dark:text-paper-400 sm:mt-10"
       >
-        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <p class="m-0 font-heading text-base font-semibold text-ink-700 dark:text-paper-200">
-            {siteTitle}
-          </p>
+        <div
+          class:list={[
+            "flex flex-col gap-2 sm:flex-row sm:items-center",
+            isHomePage ? "sm:justify-end" : "sm:justify-between",
+          ]}
+        >
+          {
+            !isHomePage && (
+              <p class="m-0 font-heading text-base font-semibold text-ink-700 dark:text-paper-200">
+                {siteTitle}
+              </p>
+            )
+          }
           <p class="m-0">
-            &copy; {`${currentYear} ${siteConfig.author}. ${siteConfig.footer.copyright}`}
+            &copy; {footerCopyright}
           </p>
         </div>
       </footer>

@@ -48,20 +48,13 @@ const profileAlt = siteConfig.hero.profileAlt || about.name;
     <section class="relative border-y border-paper-300/90 py-8 dark:border-ink-700 sm:py-10 lg:py-12">
       <div class="relative grid gap-8 lg:grid-cols-[minmax(0,1fr)_12rem] lg:items-start lg:gap-12">
         <div class="min-w-0">
-          <p class="page-kicker">
-            <span class="h-px w-7 bg-accent-600 dark:bg-accent-300" aria-hidden="true"></span>
-            Research portfolio
-          </p>
-          <h1 class="mt-2 max-w-4xl font-heading text-[clamp(2.5rem,5vw,4.25rem)] font-semibold leading-[0.98] tracking-[-0.035em] text-gray-900 dark:text-gray-50">
+          <h1 class="max-w-4xl font-heading text-[clamp(2.5rem,5vw,4.25rem)] font-semibold leading-[0.98] tracking-[-0.035em] text-gray-900 dark:text-gray-50">
             {headline}
           </h1>
 
-          <div class="mt-5 border-l-2 border-accent-500 pl-4">
-            <p class="font-heading text-2xl font-semibold text-gray-900 dark:text-gray-50">
-              {about.name}
-            </p>
-            {affiliations.length > 0 && (
-              <div class="mt-1 space-y-1">
+          {affiliations.length > 0 && (
+            <div class="mt-5 border-l-2 border-accent-500 pl-4">
+              <div class="space-y-1">
                 {affiliations.map((aff) => (
                   <p class="text-base leading-7 text-gray-600 dark:text-gray-300">
                     {aff.role}
@@ -81,8 +74,8 @@ const profileAlt = siteConfig.hero.profileAlt || about.name;
                   </p>
                 ))}
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
           <p class="mt-5 max-w-[43rem] text-[1.0625rem] leading-7 text-gray-700 dark:text-gray-200">
             {about.bio}
