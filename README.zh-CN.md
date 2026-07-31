@@ -1,669 +1,275 @@
-# Scholar Pages：专为学术打造的 Astro 主题
+[English](./README.md) · [简体中文](./README.zh-CN.md)
 
-一款现代、优雅的学术个人主页主题。基于 Astro 构建，采用精致的卡片式设计，支持 BibTeX 自动解析，完美适配深色模式。
+# Scholar Pages
 
-![Scholar Pages 主题桌面和移动端预览](https://r2imga.jxpeng.dev/2025/10/9dfa4106fa05badc9f5e80b4694c9309.png)
+一款面向学术主页、研究档案与个人学者网站的精致 Astro 主题。
 
-## ✨ 核心特性
+Scholar Pages 在保持网站轻量、快速的同时，也让内容维护足够简单：个人资料集中在一个
+TypeScript 配置文件中，论文、项目、教学经历与文章则分别使用熟悉的 BibTeX、YAML
+和 Markdown 管理。
 
-- **⚡ Astro 驱动** - 极速静态生成，默认零 JavaScript 负担
-- **🎨 现代卡片设计** - 精致的卡片式 UI，配合悬停效果、渐变和微动画
-- **📚 BibTeX 集成** - 自动解析论文，支持分类筛选
-- **🌙 深色模式** - 流畅切换明暗主题，自动跟随系统偏好
-- **📱 全面响应式** - 移动优先设计，自适应导航栏
-- **🎯 SEO 优化** - 内置 canonical、社交卡片、JSON-LD、站点地图和动态 robots.txt
-- **🔧 配置简单** - 根目录统一入口，内容按类型分文件管理
-- **📝 YAML 数据源** - 通过 YAML 文件轻松管理内容
-- **🏷️ 筛选系统** - Research、Projects、Teaching 页面支持交互式分类筛选
-- **🎭 UnoCSS 样式** - 实用优先的 CSS，主题色随心定制
+![Scholar Pages 桌面端首页](./docs/screenshots/home-desktop.jpg)
 
-## 🚀 快速开始
+## 核心亮点
+
+- **为学术展示而设计**：以统一、克制的编辑式布局呈现论文、任职经历、教学、
+  项目、学术服务、奖项和研究随笔。
+- **内容优先的维护方式**：使用 BibTeX 管理论文，使用 YAML 管理结构化经历，
+  使用 Markdown 或 MDX 撰写文章。
+- **响应式与主题适配**：桌面端和移动端均经过细致适配，并内置浅色、深色模式。
+- **高效浏览研究内容**：论文、项目与教学页面支持分类筛选和区块快速跳转。
+- **灵活组合首页**：无需修改页面模板，即可启用或隐藏头图、精选论文和最新文章。
+- **完善的 SEO 基础**：内置 canonical URL、Open Graph、JSON-LD、站点地图和
+  动态 `robots.txt`。
+- **适合长期维护**：下游站点可以在保留个人内容的同时，接收版本化模板更新。
+
+## 更多预览
+
+### 论文与分类筛选
+
+![Scholar Pages 论文页面](./docs/screenshots/research-desktop.jpg)
+
+### 移动端深色模式
+
+<p align="center">
+  <img
+    src="./docs/screenshots/home-mobile-dark.jpg"
+    alt="Scholar Pages 移动端深色首页"
+    width="320"
+  />
+</p>
+
+## 快速开始
 
 ### 环境要求
 
-- [Node.js](https://nodejs.org/)（要求 v22.13+，推荐 v24 LTS）
-- [pnpm](https://pnpm.io/)（推荐）或 npm
+- [Node.js](https://nodejs.org/) 22.13 或更高版本
+- [pnpm](https://pnpm.io/) 11 或更高版本
 
-### 安装步骤
+### 安装并运行
 
-\`\`\`bash
-# 克隆仓库
+```bash
 git clone https://github.com/jxpeng98/astro-theme-scholars.git
 cd astro-theme-scholars
-
-# 安装依赖
 pnpm install
-
-# 启动开发服务器
 pnpm dev
-\`\`\`
+```
 
-浏览器访问 \`http://localhost:4321\` 即可预览
+打开 [http://localhost:4321](http://localhost:4321) 即可预览网站。
 
-### 常用命令
+发布前请替换示例身份、链接和内容。建议按照以下顺序操作：
 
-| 命令            | 说明                                |
-| --------------- | ----------------------------------- |
-| \`pnpm dev\`      | 启动开发服务器（热更新）            |
-| \`pnpm build\`    | 构建生产版本到 \`./dist/\`            |
-| \`pnpm preview\`  | 本地预览生产版本                    |
-| \`pnpm astro ...\`| 运行 Astro CLI 命令（如 \`astro check\`）|
-| \`pnpm test\`     | 运行单元测试                        |
-| \`pnpm verify\`   | 运行测试、Astro 检查、构建和 HTML 检查 |
+1. 在 `site.config.ts` 中更新 `author`、`siteUrl` 和 `hero`。
+2. 使用自己的头像替换 `public/profile.svg`，或修改 `hero.profileImage`。
+3. 将论文添加到 `src/data/publications.bib`。
+4. 修改 `src/data/` 中的 YAML 数据。
+5. 替换或删除 `src/content/posts/` 中的示例文章。
 
----
+准备部署时，请先运行 `pnpm verify`。
 
-## 个性化发布前检查
+## 内容修改入口
 
-发布前请替换以下文件中的示例内容：
-
-- \`site.config.ts\`：姓名、单位、社交链接、关键词、研究方向、状态徽标和头像。
-- \`src/data/publications.bib\`：论文元数据、链接、摘要和 \`public\` 分类。
-- \`src/data/about.yml\`：个人资料、教育经历、工作经历、学术服务和奖项。
-- \`src/data/projects.yml\`：项目标题、状态、时间、简介、技术标签和链接。
-- \`src/data/teaching.yml\`：当前和过往课程。
-- \`src/content/posts\`：删除示例文章，或使用 \`draft: true\` 标记为草稿。
-
-部署前运行 \`pnpm verify\`。
-`siteUrl` 是 canonical URL、Open Graph 图片 URL、`robots.txt` 和 Astro sitemap
-集成的唯一来源。复制模板后发布前请先更新它。
-
----
-
-## 版本化模板更新
-
-这个模板使用 SemVer release tag 追踪版本，例如 \`v0.5.0\`。\`package.json\`、
-\`.template-version\` 和 \`CHANGELOG.md\` 最新条目应保持同一个版本号。
-
-维护者发布前可以先检查版本一致性：
-
-\`\`\`bash
-node scripts/check-release.mjs --tag v0.5.0
-pnpm verify
-git tag -a v0.5.0 -m "Release v0.5.0"
-git push origin main --tags
-\`\`\`
-
-通过 GitHub template 创建的使用者仓库可以保留复制过来的
-\`.github/workflows/template-update.yml\`。该 workflow 会检查上游模板是否有新的
-release tag，并创建一个 PR 来覆盖模板维护的文件，同时根据
-\`.template-sync.json\` 保护个人内容路径，例如 \`site.config.ts\`、
-\`src/data/**\`、\`src/content/posts/**\` 和 \`public/profile.*\`。
-
-后续也可以并存 npm package 路径：这个仓库继续服务 GitHub template 用户，同时
-将布局和组件导出为包，让基于 package 的站点通过 Dependabot 升级依赖。
-
----
-
-## 📖 配置指南
-
-先根据要修改的信息，直接进入对应文件：
-
-| 目标 | 编辑位置 |
+| 要修改的内容 | 文件 |
 | --- | --- |
-| 身份、头像、链接、SEO、页面简介 | \`site.config.ts\` |
-| 论文 | \`src/data/publications.bib\` |
-| 个人经历、项目和课程 | \`src/data/*.yml\` |
-| 博客文章 | \`src/content/posts/*.md\` |
-| 高级颜色和字体令牌 | \`uno.config.ts\` |
+| 姓名、个人资料、单位、链接、SEO 和页面简介 | `site.config.ts` |
+| 已发表论文与工作论文 | `src/data/publications.bib` |
+| 简介、工作经历、教育经历、学术服务和奖项 | `src/data/about.yml` |
+| 研究与软件项目 | `src/data/projects.yml` |
+| 当前和过往教学经历 | `src/data/teaching.yml` |
+| 博客与研究随笔 | `src/content/posts/*.{md,mdx}` |
+| 头像和其他静态资源 | `public/` |
+| 颜色、字体、图标与复用样式令牌 | `uno.config.ts` |
 
-### 站点配置 (\`site.config.ts\`)
+## 站点配置
 
-这是根目录中的主配置入口。\`defineSiteConfig\` 会为导航、页脚、页面标题、
-图片尺寸和首页区块提供稳定默认值，因此日常个性化只需填写真正相关的字段。
+`site.config.ts` 是日常个性化的主要入口。`defineSiteConfig` 会为导航、页面标题、
+页脚文案、图片尺寸和首页区块标题补充合理的默认值。
 
-\`\`\`typescript
-import { defineSiteConfig } from './src/config/site';
+```ts
+import { defineSiteConfig } from "./src/config/site";
 
-export default defineSiteConfig({
-  // ─────────────────────────────────────────────────────────────
-  // 🏠 基础信息
-  // ─────────────────────────────────────────────────────────────
-  
-  /** 浏览器标签页标题 */
-  title: '张三 | 学术主页',
-  
-  /** 您的姓名（显示在页头和页脚） */
-  author: '张三',
-  
-  /** SEO 描述（出现在搜索结果中） */
-  description: '专注于学习分析与人机交互研究...',
-
-  /** 生产站点 URL，用于 canonical、Open Graph 和 sitemap */
-  siteUrl: 'https://your-site.example',
-
-  /** 文档语言和 Open Graph 区域设置 */
-  language: 'zh-CN',
-  locale: 'zh_CN',
-
-  /** 社交分享图，推荐使用 1200 × 630 的栅格图片 */
-  ogImage: '/social-card.png',
-  ogImageAlt: '张三的学术主页',
-  ogImageWidth: 1200,
-  ogImageHeight: 630,
-  
-  /** 网站图标路径（相对于 /public） */
-  favicon: '/favicon.svg',
-  
-  /** SEO 关键词 */
-  keywords: ['学习分析', '人机交互', '研究'],
-
-  // ─────────────────────────────────────────────────────────────
-  // 🎓 学术档案
-  // ─────────────────────────────────────────────────────────────
-  
-  /** 所属机构（显示在首页） */
+export const siteConfig = defineSiteConfig({
+  author: "你的姓名",
+  siteUrl: "https://your-site.example",
+  hero: {
+    headline: "用一句简洁的话概括你的研究方向。",
+    subheadline: "用一小段文字介绍你的工作与学术兴趣。",
+    profileImage: "/profile.jpg",
+    statusBadge: "欢迎合作",
+  },
   affiliations: [
     {
-      role: '助理教授',
-      department: '信息学院',      // 可选
-      institution: '某某大学',
-      url: 'https://example.edu',  // 可选，添加链接
+      role: "助理教授",
+      department: "信息学院",
+      institution: "某某大学",
+      url: "https://example.edu",
     },
   ],
-
-  /** 研究兴趣（首页显示为标签） */
   researchInterests: [
-    '学习分析',
-    '人机交互',
+    "学习分析",
+    "人机交互",
   ],
-
-  // ─────────────────────────────────────────────────────────────
-  // 🔗 社交链接
-  // 图标库：https://icones.js.org（推荐 'academicons' 或 'mdi' 系列）
-  // ─────────────────────────────────────────────────────────────
-  
   socialLinks: [
-    { label: 'Google Scholar', href: 'https://scholar.google.com/...', icon: 'i-academicons:google-scholar' },
-    { label: 'ORCID', href: 'https://orcid.org/...', icon: 'i-academicons:orcid' },
-    { label: 'GitHub', href: 'https://github.com/...', icon: 'i-mdi:github' },
-    { label: '邮箱', href: 'mailto:you@example.edu', icon: 'i-mdi:email-outline' },
-    { label: 'Twitter', href: 'https://twitter.com/...', icon: 'i-mdi:twitter' },
+    {
+      label: "Google Scholar",
+      href: "https://scholar.google.com/...",
+      icon: "i-academicons:google-scholar",
+    },
+    {
+      label: "GitHub",
+      href: "https://github.com/your-handle",
+      icon: "i-mdi:github",
+    },
   ],
-
-  // ─────────────────────────────────────────────────────────────
-  // 🧭 导航菜单
-  // ─────────────────────────────────────────────────────────────
-  
-  navLinks: [
-    { href: '/about', label: 'About' },
-    { href: '/researches', label: 'Research' },
-    { href: '/teaching', label: 'Teaching' },
-    { href: '/projects', label: 'Projects' },
-    { href: '/posts', label: 'Blog' },
-  ],
-
-  // ─────────────────────────────────────────────────────────────
-  // 📝 页脚
-  // ─────────────────────────────────────────────────────────────
-  
-  footer: {
-    copyright: '保留所有权利',
-  },
-
-  // ─────────────────────────────────────────────────────────────
-  // 🏠 首页头图区域
-  // ─────────────────────────────────────────────────────────────
-  
-  hero: {
-    headline: '用一句话概括您的研究方向',
-    subheadline: '更详细的自我介绍，描述您的研究工作和学术兴趣...',
-    profileAlt: '张三的头像',
-    profileImage: '/profile.svg',  // 或完整 URL
-    statusBadge: '欢迎合作',       // 可选
-  },
-
-  // ─────────────────────────────────────────────────────────────
-  // 📄 各页面标题与描述（SEO 及副标题）
-  // ─────────────────────────────────────────────────────────────
-  
-  pageTitles: {
-    about: {
-      title: '关于',
-      description: '关于我的简介...',
-    },
-    researches: {
-      title: '论文',
-      description: '研究方向与成果介绍...',
-    },
-    projects: {
-      title: '项目',
-      description: '项目展示说明...',
-    },
-    teaching: {
-      title: '教学',
-      description: '教学理念介绍...',
-    },
-    posts: {
-      title: '博客',
-      description: '博客简介...',
-    },
-  },
-
-  // 选择首页需要显示的区块。
   homeBlocks: {
     hero: { enabled: true },
-    publications: {
-      enabled: true,
-      title: '精选论文',
-      description: '近期同行评审成果',
-    },
-    posts: {
-      enabled: true,
-      title: '最新博客',
-      description: '研究随笔与动态',
-    },
+    publications: { enabled: true },
+    posts: { enabled: true },
   },
 });
-\`\`\`
 
----
+export default siteConfig;
+```
 
-## 📄 页面详解
+`siteUrl` 是 canonical URL、Open Graph URL、`robots.txt` 和站点地图的统一来源。
+部署前请务必将其设置为最终的生产地址。
 
-### 🏠 首页 (\`/\`)
+## 内容管理
 
-首页展示以下内容：
+### 论文
 
-- **头图区域**：头像、姓名、所属机构、状态徽章、个人简介、研究兴趣、社交链接
-- **精选论文**：展示 3 篇重点论文（BibTeX 中 \`public = {yes}\` 的条目）
-- **最新博客**：最近 3 篇博客文章
+将论文添加到 `src/data/publications.bib`。除标准 BibTeX 字段外，主题还使用
+`public` 字段在研究页面中对论文进行分组。
 
-在 \`site.config.ts\` 中将 \`homeBlocks.<区块>.enabled\` 设置为 \`false\`
-即可隐藏对应内容。剩余的编号区块会自动重新编号；关闭论文或博客区块后，
-构建过程也不会加载相应数据。
-
-**卡片设计特点：**
-
-- 悬停时左侧出现渐变色装饰线
-- 摘要可展开，配有引号图标样式
-- 操作按钮包括 Abstract 和 PDF 链接
-
-### 👤 关于页面 (\`/about\`)
-
-**数据来源：** \`src/data/about.yml\`
-
-\`\`\`yaml
-hero:
-  title: About
-  description: 简短的自我介绍...
-
-education:
-  - degree: 博士，人机交互
-    institution: 某某大学
-    year: 2021
-  - degree: 硕士，学习科学
-    institution: 某某研究院
-    year: 2016
-
-experience:
-  - role: 助理教授
-    organization: 信息学院
-    period: 2022 — 至今
-    bullets:
-      - 主持学习信号实验室
-      - 教授人机交互与 AI 研究生课程
-
-service:
-  # 结构化格式
-  - role: 程序委员会主席
-    organization: ACM 某某会议
-    period: 2023 — 2024
-  # 简单文本格式
-  - 某某期刊编委会成员
-
-# 自定义模块（如获奖、演讲等）
-sections:
-  - title: 获奖情况
-    items:
-      # 详细条目
-      - title: 最佳论文奖
-        subtitle: ACM CHI 2023
-        date: 2023
-        description: 论文《社交学习信号研究》
-        link: https://example.com/award
-      # 简单条目
-      - 院长奖学金 (2010-2014)
-\`\`\`
-
-**卡片设计特点：**
-
-- 教育经历卡片带学校图标和年份徽章
-- 工作经历卡片带时间线圆点装饰
-- 学术服务采用双列网格布局，配星标图标
-- 获奖模块带奖杯图标和渐变背景
-
-### 📚 研究页面 (\`/researches\`)
-
-**数据来源：** \`src/data/publications.bib\`
-
-**BibTeX 字段说明：**
-
-\`\`\`bibtex
-@inproceedings{key2024paper,
+```bibtex
+@inproceedings{key2026paper,
   title = {论文标题},
   author = {张, 三 and 李, 四},
-  booktitle = {会议名称},           % 或 journal = {...}
-  year = {2024},
-  url = {https://doi.org/...},     % 可选，添加 PDF 链接
-  abstract = {论文摘要...},         % 可选，添加可展开摘要
-  public = {yes},                  % yes = 已发表, wp = 工作论文, wip = 进行中
-  keywords = {关键词1, 关键词2}     % 可选
+  booktitle = {会议名称},
+  year = {2026},
+  url = {https://doi.org/...},
+  abstract = {论文摘要。},
+  public = {yes},
+  keywords = {关键词1, 关键词2}
 }
-\`\`\`
+```
 
-**分类规则：**
+| `public` 值 | 页面分组 |
+| --- | --- |
+| `yes` | Publication（已发表） |
+| `wp` | Working Paper（工作论文） |
+| `wip` | Work in Progress（进行中） |
+| 其他值或未填写 | Other（其他） |
 
-| \`public\` 值 | 分类 |
-|-------------|------|
-| \`yes\` | Publication（已发表） |
-| \`wp\` | Working Paper（工作论文） |
-| \`wip\` | Work in Progress（进行中） |
-| (其他/缺失) | Other（其他） |
+标记为 `public = {yes}` 的论文可以进入首页的精选论文区块。
 
-**页面功能：**
+### 关于、项目与教学
 
-- **筛选栏**：点击切换分类（全部 / 已发表 / 工作论文 / 进行中）
-- **编号卡片**：每篇论文带主题色序号徽章
-- **元信息徽章**：期刊/会议名带书签图标，年份带日历图标
-- **操作按钮**：可展开摘要（带引号样式）、PDF 链接
-- **条件显示**：空字段（如作者、期刊）自动隐藏
+`src/data/` 中的内容使用 YAML 管理，便于阅读、调整顺序和版本控制。仓库内的示例
+已经展示了可用字段：
 
-### 💼 项目页面 (\`/projects\`)
+- `about.yml` 支持个人信息、工作经历、教育经历、学术服务，以及奖项、演讲等
+  自定义区块。
+- `projects.yml` 支持状态、时间、简介、徽章、亮点、元数据、技术栈和多个链接。
+- `teaching.yml` 区分当前与过往学期，并支持课程编号、简介、标签、亮点和链接。
 
-**数据来源：** \`src/data/projects.yml\`
+大多数字段都是可选项；未填写的内容不会生成空白元素。
 
-\`\`\`yaml
-- title: 项目名称
-  subtitle: 可选的简短说明
-  period: 2023 — 至今    # 包含「至今」会归类为进行中
-  description: 项目简介...
-  badges:
-    - Featured
-  highlights:
-    - 可选的项目亮点或职责描述。
-  metadata:
-    - label: 角色
-      value: 维护者
-  tech:
-    - Astro
-    - TypeScript
-    - PostgreSQL
-  url: https://github.com/...   # 可选的默认链接
-  links:                        # 可选；存在时优先于 url
-    - label: Repository
-      href: https://github.com/...
-    - label: Demo
-      href: https://example.com
-\`\`\`
+### 文章
 
-**页面功能：**
+在 `src/content/posts/` 中创建 Markdown 或 MDX 文件：
 
-- **自动分组**：period 包含「Present」或「至今」→ Active；其他 → Past
-- **筛选栏**：全部 / Active / Past 筛选
-- **状态指示器**：绿色闪烁圆点 + "Active" 标签
-- **技术栈标签**：代码图标 + 技术名称
-- **悬停效果**：显示「View Project →」引导文字（需有 URL）
-
-### 📖 教学页面 (\`/teaching\`)
-
-**数据来源：** \`src/data/teaching.yml\`
-
-\`\`\`yaml
-current:
-  - term: 2025 春季
-    modules:
-      - title: 课程名称
-        code: INFO 742
-        summary: 课程简介...
-        badges:                 # 可选
-          - Graduate
-        highlights:             # 可选
-          - 学生完成一个可复现的期末项目。
-        tags:                    # 可选
-          - 研究生
-          - 研讨课
-        link:                    # 可选的单个链接
-          label: 课程网站
-          href: https://...
-        links:                   # 可选的多个链接；存在时优先于 link
-          - label: Syllabus
-            href: https://...
-          - label: Readings
-            href: https://...
-
-past:
-  - term: 2024 秋季
-    modules:
-      - title: 往期课程
-        code: INFO 511
-        summary: 课程内容...
-\`\`\`
-
-**页面功能：**
-
-- **筛选栏**：全部 / 当前 / 往期筛选
-- **学期分组**：按学期组织课程
-- **当前课程标识**：左侧渐变装饰条
-- **课程代码徽章**：学校图标 + 课程编号
-- **标签样式**：# 前缀的分类标签
-- **链接按钮**：新标签页打开课程网站
-
-### ✍️ 博客页面 (\`/posts\`)
-
-**数据来源：** \`src/content/posts/*.md\`
-
-**Frontmatter 格式：**
-
-\`\`\`yaml
+```yaml
 ---
-title: 文章标题
-description: 简短摘要...   # 可选
-publishedAt: 2024-01-15
-draft: false              # 设为 true 则不显示
+title: "文章标题"
+description: "简短摘要。"
+publishedAt: 2026-01-15
+updatedAt: 2026-02-03
+tags:
+  - 研究方法
+  - 开放科学
+draft: false
 ---
-\`\`\`
+```
 
-**页面功能：**
+将 `draft` 设为 `true`，即可让文章不出现在生成的网站中。
 
-- **年份分组**：按年份组织文章，配渐变分隔线
-- **文章数量**：每年显示文章数徽章
-- **阅读时间**：根据内容长度自动估算
-- **卡片设计**：整卡可点击
-- **悬停效果**：显示「Read more →」引导文字
+## 内置页面
 
----
+| 路径 | 用途 |
+| --- | --- |
+| `/` | 个人资料、研究兴趣、精选论文和最新文章 |
+| `/about` | 个人信息、经历、教育、学术服务与自定义区块 |
+| `/researches` | 按研究状态分组并支持筛选的论文列表 |
+| `/teaching` | 按学期组织的当前与过往教学记录 |
+| `/projects` | 包含元数据与链接的当前和过往项目 |
+| `/posts` | 按年份组织的文章列表 |
+| `/posts/[slug]` | 单篇 Markdown 或 MDX 文章 |
 
-## 🎨 设计系统
+## 项目结构
 
-### 卡片组件
-
-所有页面采用统一的卡片设计：
-
-\`\`\`text
-┌─────────────────────────────────────────┐
-│  • 标题（悬停变色）                      │
-│  📍 元信息（带图标）                     │
-│  描述文字（超出截断）                    │
-│  [标签] [标签] [标签]                    │
-│  🔗 操作链接（悬停显示）                 │
-└─────────────────────────────────────────┘
-\`\`\`
-
-**通用卡片样式：**
-
-- \`rounded-xl\` 圆角
-- 白色背景（深色模式：gray-900/50）
-- 悬停时边框变为主题色
-- 微妙阴影效果（\`shadow-accent-500/5\`）
-- 300ms 平滑过渡动画
-
-### 配色方案
-
-主题采用语义化配色系统：
-
-| 颜色 | 用途 |
-|------|------|
-| \`accent-*\` | 主题色，链接，激活状态 |
-| \`gray-*\` | 文字，背景，边框 |
-| \`emerald-*\` | 活跃/成功状态（状态徽章） |
-| \`amber-*\` | 获奖和荣誉 |
-
-### 图标
-
-图标通过 UnoCSS 图标预设提供：
-
-- **学术类**：\`i-academicons:*\`（Google Scholar、ORCID、ResearchGate）
-- **通用类**：\`i-mdi:*\`（GitHub、邮箱、日历等）
-- **界面类**：\`i-ph:*\`（主题切换、菜单图标）
-
-图标查找：[icones.js.org](https://icones.js.org)
-
----
-
-## 📁 项目结构
-
-\`\`\`text
-/
-├── public/                    # 静态资源
-│   ├── favicon.svg
-│   └── profile.svg
-├── site.config.ts             # ⭐ 用户主配置入口
+```text
+.
+├── public/                    # 静态图片和图标
+├── docs/screenshots/         # README 预览图
+├── site.config.ts            # 站点主配置
 ├── src/
-│   ├── assets/                # 需处理的图片
-│   ├── components/            # 共享组件
-│   │   └── projects.ts        # 项目数据加载器
-│   ├── content/               # 博客文章（Astro Content Collections）
-│   │   └── posts/             # Markdown 文章
-│   ├── content.config.ts      # Astro Content Layer schema
-│   ├── data/                  # YAML 和 BibTeX 数据
-│   │   ├── about.yml          # 关于页面内容
-│   │   ├── projects.yml       # 项目列表
-│   │   ├── publications.bib   # 学术论文
-│   │   └── teaching.yml       # 教学课程
-│   ├── layouts/
-│   │   └── Layout.astro       # 主布局（页头、页脚、主题）
-│   ├── lib/                   # 工具函数
-│   │   ├── bibtex.ts          # BibTeX 解析器
-│   │   └── papers.ts          # 论文数据处理
-│   ├── pages/                 # 页面路由
-│   │   ├── index.astro        # 首页
-│   │   ├── about.astro        # 关于
-│   │   ├── researches.astro   # 研究
-│   │   ├── robots.txt.ts      # 动态生成的抓取规则
-│   │   ├── projects.astro     # 项目
-│   │   ├── teaching.astro     # 教学
-│   │   └── posts/
-│   │       ├── index.astro    # 博客列表
-│   │       └── [slug].astro   # 文章详情
-│   ├── types/
-│   │   └── config.ts          # TypeScript 类型定义
-│   ├── config/
-│   │   └── site.ts            # 默认值与配置辅助函数
-│   └── side.config.ts         # 兼容导入，请勿编辑
-├── uno.config.ts              # UnoCSS 配置
-├── astro.config.ts            # Astro 配置
+│   ├── components/           # 页面与筛选公共组件
+│   ├── config/               # 配置默认值
+│   ├── content/posts/        # Markdown 和 MDX 文章
+│   ├── data/                 # BibTeX 与 YAML 内容
+│   ├── layouts/              # 页面公共布局
+│   ├── lib/                  # 内容处理与 SEO 工具
+│   └── pages/                # Astro 路由
+├── astro.config.ts
+├── uno.config.ts
 └── package.json
-\`\`\`
+```
 
----
+## 常用命令
 
-## 🚀 部署上线
+| 命令 | 说明 |
+| --- | --- |
+| `pnpm dev` | 启动开发服务器 |
+| `pnpm build` | 将静态网站构建到 `dist/` |
+| `pnpm preview` | 在本地预览生产构建 |
+| `pnpm test` | 运行单元测试 |
+| `pnpm astro check` | 运行 Astro 与 TypeScript 检查 |
+| `pnpm verify` | 依次运行测试、检查、构建和生成结果断言 |
 
-构建并部署到任意静态托管服务：
+## 部署
 
-\`\`\`bash
+Scholar Pages 会构建为静态的 `dist/` 目录：
+
+```bash
+pnpm verify
 pnpm build
-\`\`\`
+```
 
-将 \`dist/\` 文件夹上传至：
+你可以将 `dist/` 部署到 Cloudflare Pages、Vercel、Netlify、GitHub Pages 或其他
+静态托管平台。构建命令填写 `pnpm build`，输出目录填写 `dist`。
 
-- [Vercel](https://vercel.com/) - 零配置，自动部署
-- [Netlify](https://netlify.com/) - 拖拽部署
-- [Cloudflare Pages](https://pages.cloudflare.com/) - 全球 CDN
-- [GitHub Pages](https://pages.github.com/) - 免费托管
+## 模板更新
 
-### Vercel（推荐）
+项目使用 `v0.5.0` 这类 SemVer 标签发布版本。通过 GitHub 模板创建的站点可以保留
+`.github/workflows/template-update.yml`：它会检查上游新版本并创建更新 PR，同时
+保留 `.template-sync.json` 中列出的个人内容路径。
 
-\`\`\`bash
-# 安装 Vercel CLI
-npm i -g vercel
+模板维护者可以使用以下命令检查发布：
 
-# 一键部署
-vercel
-\`\`\`
+```bash
+node scripts/check-release.mjs --tag v0.5.0
+pnpm verify
+```
 
-### Netlify
+发布时请确保 `package.json`、`.template-version` 和 `CHANGELOG.md` 最新条目中的
+版本号一致。
 
-\`\`\`bash
-# 构建命令: pnpm build
-# 发布目录: dist
-\`\`\`
+## 参与贡献
 
----
+欢迎提交 Issue 和 Pull Request。对于影响范围较大的改动，建议先创建 Issue，
+以便提前讨论预期行为和实现范围。
 
-## 🔧 自定义技巧
+## 开源协议
 
-### 修改主题色
-
-编辑 \`uno.config.ts\` 中的主题色配置：
-
-\`\`\`typescript
-theme: {
-  colors: {
-    accent: {
-      50: '#f0f9ff',
-      // ... 自定义各色阶
-      600: '#0284c7',
-    }
-  }
-}
-\`\`\`
-
-### 添加社交链接
-
-1. 在 [icones.js.org](https://icones.js.org) 查找图标类名
-2. 添加到 \`site.config.ts\` 的 \`socialLinks\`
-3. 如需要，在 \`uno.config.ts\` 的 safelist 中注册图标
-
-### 自定义页面模块
-
-在 \`about.yml\` 中添加新模块：
-
-\`\`\`yaml
-sections:
-  - title: 您的模块标题
-    icon: i-mdi:trophy-award
-    items:
-      - title: 详细条目
-        subtitle: 可选副标题
-        date: 2026
-        description: 可选的详细说明
-        badges:
-          - Award
-        highlights:
-          - 可选的补充亮点。
-        links:
-          - label: 相关页面
-            href: https://example.com
-      - 简单文本条目
-\`\`\`
-
-如果在 YAML 字段中使用自定义图标类名，请将它们加入 \`uno.config.ts\` 的
-safelist，确保 UnoCSS 会生成对应样式。
-
----
-
-## 🤝 参与贡献
-
-欢迎参与项目建设！您可以：
-
-- 🐛 通过 [Issues](https://github.com/jxpeng98/astro-theme-scholars/issues) 反馈问题
-- 💡 提出功能建议
-- 🔧 提交 Pull Request
-
----
-
-## 📄 开源协议
-
-[MIT 许可证](./LICENSE) - 可自由使用、修改和分发。
+本项目基于 [MIT License](./LICENSE) 发布。
