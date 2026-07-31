@@ -187,8 +187,10 @@ assert(about.includes("Current Role"), "about page should render profile data");
 assert(
 	footer(index) === footer(about) &&
 		footer(index).includes('class="flex justify-end text-right"') &&
-		!footer(index).includes("Your Name"),
-	"all pages should render the same right-aligned copyright-only footer",
+		footer(index).includes(
+			`&copy; ${new Date().getFullYear()} Your Name. All rights reserved.`,
+		),
+	"all pages should render the same right-aligned author and copyright footer",
 );
 assert(
 	about.includes("Research Areas"),

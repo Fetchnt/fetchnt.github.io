@@ -68,7 +68,7 @@ const currentYear = new Date().getFullYear();
 const siteTitle = siteConfig.author || siteConfig.title;
 const siteMonogram = Array.from(siteTitle.trim())[0]?.toUpperCase() || "S";
 const navLinks = siteConfig.navLinks;
-const footerCopyright = `${currentYear} ${siteConfig.footer.copyright}`;
+const footerCopyright = `${currentYear} ${siteConfig.author}. ${siteConfig.footer.copyright}`;
 
 const siteRootUrl = buildCanonicalUrl("/", siteConfig.siteUrl);
 const parentNavLink = [...navLinks]
