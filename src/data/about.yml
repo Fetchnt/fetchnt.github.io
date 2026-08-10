@@ -1,10 +1,20 @@
+hero:
+  title: Sobre mí
+  description: >
+    Programador competitivo (ICPC), desarrollador en C++ y Java.
+
+profile:
+  - label: Enfoque
+    value: Programación competitiva y desarrollo de software
+  - label: Lenguajes
+    value: C++17, Java
+
 sections:
-  sections:
   - title: Presentación
     icon: i-mdi:video
     items:
       - title: Video de presentación
-        description: .
+        description: Video de 60-90 segundos contando quién soy y por qué elegí Bases de Datos 1.
         links:
           - label: Ver video
             href: https://youtu.be/TU-VIDEO-AQUI
@@ -14,9 +24,6 @@ sections:
     items:
       - title: Modelado
         description: Pendiente
-        links:
-          - label: Ver en repo
-            href: https://github.com/Fetchnt/NOMBRE-DEL-REPO-NUEVO
       - title: Normalización
         description: Pendiente
       - title: SQL
