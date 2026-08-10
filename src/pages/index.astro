@@ -48,6 +48,7 @@ const researchInterests = siteConfig.researchInterests || [];
 const statusBadge = siteConfig.hero.statusBadge;
 const headline = siteConfig.hero.headline || about.name;
 const profileAlt = siteConfig.hero.profileAlt || about.name;
+const videoId = siteConfig.hero.videoId;
 ---
 
 <Layout
@@ -119,24 +120,6 @@ const profileAlt = siteConfig.hero.profileAlt || about.name;
             ))}
           </div>
         </div>
-         {siteConfig.hero.videoId && (
-        <div class="relative mt-10 overflow-hidden rounded-lg border border-paper-300 bg-white/64 p-1.5 dark:border-ink-700 dark:bg-ink-900/68 lg:mt-12">
-          <div class="relative w-full overflow-hidden rounded-md" style="aspect-ratio: 16 / 9;">
-            <iframe
-              class="absolute inset-0 h-full w-full"
-              src={`https://www.youtube-nocookie.com/embed/${siteConfig.hero.videoId}`}
-              title="Video de presentación"
-              frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerpolicy="strict-origin-when-cross-origin"
-              allowfullscreen
-              loading="lazy"
-            ></iframe>
-          </div>
-        </div>
-      )}
-      </section>
-    )}
 
         <aside class="mx-auto w-full max-w-48 lg:mx-0" aria-label="Profile">
           <div class="relative overflow-hidden rounded-lg border border-paper-300 bg-white/64 p-1.5 dark:border-ink-700 dark:bg-ink-900/68">
@@ -159,6 +142,23 @@ const profileAlt = siteConfig.hero.profileAlt || about.name;
           )}
         </aside>
       </div>
+
+      {videoId && (
+        <div class="relative mt-10 overflow-hidden rounded-lg border border-paper-300 bg-white/64 p-1.5 dark:border-ink-700 dark:bg-ink-900/68 lg:mt-12">
+          <div class="relative w-full overflow-hidden rounded-md" style="aspect-ratio: 16 / 9;">
+            <iframe
+              class="absolute inset-0 h-full w-full"
+              src={`https://www.youtube-nocookie.com/embed/${videoId}`}
+              title="Video de presentación"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen
+              loading="lazy"
+            ></iframe>
+          </div>
+        </div>
+      )}
       </section>
     )}
 
