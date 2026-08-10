@@ -9,24 +9,24 @@ import { defineSiteConfig } from "./src/config/site";
 
 export const siteConfig = defineSiteConfig({
 	// Required: the four values most sites should personalize first.
-	author: "Fetchzinho", // TODO: pon tu nombre real si prefieres mostrarlo en vez del handle
+	author: "Miguel Lopez",
 	siteUrl: "https://fetchnt.github.io",
 	hero: {
 		headline: "Programador competitivo | C++ & desarrollo de software",
 		subheadline:
-			"Compito en ICPC con el equipo EroMergeSort, escribo C++17 para programación competitiva y también trabajo en proyectos de desarrollo en Java. Migré mi entorno de trabajo a CachyOS (Arch) con Hyprland.",
+			"Compito en ICPC , escribo C++ y Python para programación competitiva y también trabajo en proyectos de desarrollo en Java.",
 		profileImage: "/avatar.jpg", // sube tu foto a public/avatar.jpg y reemplaza este nombre si usas otro
 		statusBadge: "Estudiante", // TODO: ajusta si aplica (ej. "Disponible para prácticas")
 	},
 
 	// Common profile and discovery settings.
 	description:
-		"Portafolio de Miguel Lopez: programador competitivo (ICPC)",
+		"Portafolio de Miguel Lopez: programación competitiva (ICPC), C++17 y proyectos de desarrollo en Java.",
 	keywords: [
 		"programación competitiva",
 		"ICPC",
 		"C++",
-		"Python",
+		"Java",
 		"estructuras de datos",
 		"algoritmos",
 	],
@@ -34,7 +34,7 @@ export const siteConfig = defineSiteConfig({
 	language: "es",
 	locale: "es_ES",
 	// ogImage: "/social-card.png", // Prefer a 1200 × 630 raster image.
-	// ogImageAlt: "Fetchzinho — portafolio",
+	// ogImageAlt: "Miguel Lopez — portafolio",
 
 	// Sin afiliaciones académicas: se deja vacío para que no se muestre esa franja.
 	affiliations: [],
@@ -59,7 +59,7 @@ export const siteConfig = defineSiteConfig({
 		},
 		{
 			label: "Email",
-			href: "fetchnt@proton.me", // TODO: pon tu correo real
+			href: "mailto:tu-correo@ejemplo.com", // TODO: pon tu correo real
 			icon: "i-mdi:email-outline",
 		},
 	],
@@ -76,16 +76,16 @@ export const siteConfig = defineSiteConfig({
 		about: {
 			title: "Sobre mí",
 			description:
-				"Programador competitivo (ICPC) y desarrollador en C++, Java y Python.",
+				"Programador competitivo (ICPC) y desarrollador en C++ y Java.",
 		},
 		projects: {
 			title: "Proyectos",
 			description:
-				"Proyectos sobre desarrollo de software.",
+				"Proyectos de desarrollo de software.",
 		},
 		posts: {
 			title: "Blog",
-			description: "Notas sobre desarrollo.",
+			description: "Notas sobre programación competitiva y desarrollo.",
 		},
 	},
 
