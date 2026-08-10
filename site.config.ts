@@ -10,7 +10,7 @@ import { defineSiteConfig } from "./src/config/site";
 export const siteConfig = defineSiteConfig({
 	// Required: the four values most sites should personalize first.
 	author: "Your Name",
-	siteUrl: "https://astro-theme-scholars.pages.dev",
+	siteUrl: "https://fetchnt.github.io",
 	hero: {
 		headline:
 			"Scholarship at the intersection of learning analytics and web infrastructure.",
