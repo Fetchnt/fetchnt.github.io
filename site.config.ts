@@ -17,11 +17,12 @@ export const siteConfig = defineSiteConfig({
 			"Compito en ICPC , escribo C++ y Python para programación competitiva y también trabajo en proyectos de desarrollo en Java.",
 		profileImage: "/avatar.jpg", // sube tu foto a public/avatar.jpg y reemplaza este nombre si usas otro
 		statusBadge: "Estudiante", // TODO: ajusta si aplica (ej. "Disponible para prácticas")
+		videoId: "OMSuc9pLCso", // Video de presentación (YouTube) — se muestra en el inicio
 	},
 
 	// Common profile and discovery settings.
 	description:
-		"Portafolio de Miguel Lopez: programación competitiva (ICPC), C++17 y proyectos de desarrollo en Java.",
+		"Portafolio de Misguel Lopez: programación competitiva (ICPC), C++17 y proyectos de desarrollo en Java.",
 	keywords: [
 		"programación competitiva",
 		"ICPC",

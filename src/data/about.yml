@@ -10,15 +10,6 @@ profile:
     value: C++17, Java
 
 sections:
-  - title: Presentación
-    icon: i-mdi:video
-    items:
-      - title: Video de presentación
-       # description: Video de 60-90 segundos contando quién soy y por qué elegí Bases de Datos 1.
-        links:
-          - label: Ver video
-            href: https://youtu.be/OMSuc9pLCso
-
   - title: Evidencias
     icon: i-mdi:folder-check
     items:
