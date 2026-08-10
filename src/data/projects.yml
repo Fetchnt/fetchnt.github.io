@@ -1,43 +1,32 @@
-- title: Scholars Portal
-  subtitle: Template infrastructure for academic homepages
+- title: Notebook ICPC EroMergeSOrt
+  subtitle: Se esta realizando un notebook en base a los codigos o temas que se ven necesarios en nuestro notebook
   status: active
-  period: 2023 — Present
-  description: Source-available portal that aggregates publications, talks, and teaching materials into a single academic profile with analytics.
-  badges:
-    - Template
-    - Open source
-  highlights:
-    - Keeps publications, posts, and project metadata in simple content files.
-    - Supports release-tagged updates for downstream personal sites.
-  metadata:
-    - label: Role
-      value: Maintainer
-    - label: Audience
-      value: Researchers
+  period: 2026 — Present
+  description: Se esta realizando un notebook en base a los codigos o temas que se ven necesarios en nuestro notebook
+ # badges:
+  #  - Template
+  # - Open source
+ # highlights:
+   # - Keeps publications, posts, and project metadata in simple content files.
+   # - Supports release-tagged updates for downstream personal sites.
+ # metadata:
+  #  - label: Role
+  #   value: Maintainer
+  #- label: Audience
+  #     value: Researchers
   tech:
-    - Astro
-    - TypeScript
-    - Content Collections
+    - C++
+    - LaTex
   links:
     - label: Repository
-      href: https://github.com/jxpeng98/
-    - label: Documentation
-      href: https://github.com/jxpeng98/
+      href: https://github.com/Fetchnt/
 
-- title: Multilingual Citation Miner
-  status: past
-  period: 2022 — 2023
-  description: Natural-language processing pipeline that extracts multilingual citations from PDF proceedings to improve bibliometric coverage for underrepresented venues.
-  tech:
-    - Python
-    - spaCy
-    - PostgreSQL
-
-- title: Learning Signals Lab
-  status: past
-  period: 2021 — 2022
-  description: Interactive dashboards and data collection workflows for a research lab studying social learning signals across online communities.
-  tech:
-    - Next.js
-    - GraphQL
-    - D3.js
+ #-title: Multilingual Citation Miner
+ # status: past
+ # period: 2022 — 2023
+ # description: Natural-language processing pipeline that extracts multilingual citations from PDF proceedings to improve bibliometric coverage for underrepresented venues.
+ # tech:
+ #   - Python
+ #   - spaCy
+ #   - PostgreSQL
+ #
