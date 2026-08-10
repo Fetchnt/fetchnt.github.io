@@ -9,104 +9,90 @@ import { defineSiteConfig } from "./src/config/site";
 
 export const siteConfig = defineSiteConfig({
 	// Required: the four values most sites should personalize first.
-	author: "Your Name",
+	author: "Fetchzinho", // TODO: pon tu nombre real si prefieres mostrarlo en vez del handle
 	siteUrl: "https://fetchnt.github.io",
 	hero: {
-		headline:
-			"Scholarship at the intersection of learning analytics and web infrastructure.",
+		headline: "Programador competitivo | C++ & desarrollo de software",
 		subheadline:
-			"I am a researcher focused on building equitable tooling for open scholarship. My group studies how learning signals travel across platforms, and we ship practical infrastructure for sharing data, publications, and code.",
-		profileImage: "/profile.svg",
-		statusBadge: "Open to collaboration",
+			"Compito en ICPC con el equipo EroMergeSort, escribo C++17 para programación competitiva y también trabajo en proyectos de desarrollo en Java. Migré mi entorno de trabajo a CachyOS (Arch) con Hyprland.",
+		profileImage: "/avatar.jpg", // sube tu foto a public/avatar.jpg y reemplaza este nombre si usas otro
+		statusBadge: "Estudiante", // TODO: ajusta si aplica (ej. "Disponible para prácticas")
 	},
 
 	// Common profile and discovery settings.
 	description:
-		"Scholarship at the intersection of learning analytics and web infrastructure, building equitable tooling for open scholarship.",
+		"Portafolio de Miguel Lopez: programador competitivo (ICPC)",
 	keywords: [
-		"learning analytics",
-		"open scholarship",
-		"web infrastructure",
-		"academic website",
-		"research",
+		"programación competitiva",
+		"ICPC",
+		"C++",
+		"Python",
+		"estructuras de datos",
+		"algoritmos",
 	],
 	// Optional social-preview overrides:
-	// language: "en",
-	// locale: "en_US",
+	language: "es",
+	locale: "es_ES",
 	// ogImage: "/social-card.png", // Prefer a 1200 × 630 raster image.
-	// ogImageAlt: "Your Name — academic portfolio",
-	// ogImageWidth: 1200,
-	// ogImageHeight: 630,
-	affiliations: [
-		{
-			role: "Assistant Professor",
-			department: "School of Information",
-			institution: "University Name",
-			url: "https://example.edu/info",
-		},
-	],
+	// ogImageAlt: "Fetchzinho — portafolio",
+
+	// Sin afiliaciones académicas: se deja vacío para que no se muestre esa franja.
+	affiliations: [],
+
 	researchInterests: [
-		"Learning Analytics",
-		"Human-Computer Interaction",
-		"Open Scholarship",
-		"Civic Technology",
+		"Programación competitiva",
+		"Estructuras de datos y algoritmos",
+		"C++17",
+		"Desarrollo en Java",
 	],
+
 	socialLinks: [
 		{
-			label: "Google Scholar",
-			href: "https://scholar.google.com/citations?user=YOUR_ID",
-			icon: "i-academicons:google-scholar",
-		},
-		{
-			label: "ORCID",
-			href: "https://orcid.org/0000-0000-0000-0000",
-			icon: "i-academicons:orcid",
-		},
-		{
 			label: "GitHub",
-			href: "https://github.com/your-handle",
+			href: "https://github.com/Fetchnt",
 			icon: "i-mdi:github",
 		},
 		{
-			label: "Email",
-			href: "mailto:you@example.edu",
-			icon: "i-mdi:email-outline",
+			label: "Repositorio del proyecto",
+			href: "https://github.com/Fetchnt/NOMBRE-DEL-REPO-NUEVO", // TODO: reemplaza cuando crees el repo
+			icon: "i-mdi:database",
 		},
 		{
-			label: "Twitter",
-			href: "https://twitter.com/your-handle",
-			icon: "i-mdi:twitter",
+			label: "Email",
+			href: "fetchnt@proton.me", // TODO: pon tu correo real
+			icon: "i-mdi:email-outline",
 		},
+	],
+
+	// Menú de navegación: sin Publicaciones ni Docencia.
+	navLinks: [
+		{ href: "/about", label: "Sobre mí" },
+		{ href: "/projects", label: "Proyectos" },
+		{ href: "/posts", label: "Blog" },
 	],
 
 	// Optional: omit any entry to use the concise academic default copy.
 	pageTitles: {
 		about: {
+			title: "Sobre mí",
 			description:
-				"Scholar, educator, and builder focused on learning analytics, humane computing, and tools that support open collaboration.",
-		},
-		researches: {
-			description:
-				"Peer-reviewed publications, working papers, and essays on learning analytics, open scholarship, and civic technology.",
+				"Programador competitivo (ICPC) y desarrollador en C++, Java y Python.",
 		},
 		projects: {
+			title: "Proyectos",
 			description:
-				"Open-source tools and research infrastructure projects for the academic community.",
-		},
-		teaching: {
-			description:
-				"Courses designed to bridge technical skills with critical inquiry in learning sciences and information studies.",
+				"Proyectos sobre desarrollo de software.",
 		},
 		posts: {
-			description:
-				"Thoughts on academia, research methods, technology, and the spaces in between.",
+			title: "Blog",
+			description: "Notas sobre desarrollo.",
 		},
 	},
 
-	// Homepage composition: switch off any block you do not want to display.
+	// Homepage composition: sin bloque de publicaciones académicas.
 	homeBlocks: {
 		hero: { enabled: true },
-		publications: { enabled: true },
+		publications: { enabled: false },
 		posts: { enabled: true },
 	},
 });
