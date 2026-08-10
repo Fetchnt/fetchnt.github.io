@@ -129,6 +129,9 @@ export function defineSiteConfig(input: SiteConfigInput): SiteConfig {
 			...(input.hero.statusBadge !== undefined
 				? { statusBadge: input.hero.statusBadge }
 				: {}),
+			...(input.hero.videoId !== undefined
+				? { statusBadge: input.hero.statusBadge}
+				: {}),
 		},
 		pageTitles: {
 			about: { ...defaultPageTitles.about, ...input.pageTitles?.about },
