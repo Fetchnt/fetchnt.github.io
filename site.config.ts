@@ -27,7 +27,6 @@ export const siteConfig = defineSiteConfig({
 		"ICPC",
 		"C++",
 		"Java",
-		"estructuras de datos",
 		"algoritmos",
 	],
 	// Optional social-preview overrides:
@@ -54,12 +53,12 @@ export const siteConfig = defineSiteConfig({
 		},
 		{
 			label: "Repositorio del proyecto",
-			href: "https://github.com/Fetchnt/NOMBRE-DEL-REPO-NUEVO", // TODO: reemplaza cuando crees el repo
+			href: "https://github.com/Fetchnt/Investigacion-DB", // TODO: reemplaza cuando crees el repo
 			icon: "i-mdi:database",
 		},
 		{
 			label: "Email",
-			href: "mailto:tu-correo@ejemplo.com", // TODO: pon tu correo real
+			href: "fetchnt@proton.me", // TODO: pon tu correo real
 			icon: "i-mdi:email-outline",
 		},
 	],
