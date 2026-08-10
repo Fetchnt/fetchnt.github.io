@@ -7,7 +7,6 @@ import siteConfig from "./src/side.config";
 import { withTrailingSlash } from "./src/lib/site-url";
 
 export default defineConfig({
-	base: "/Investigacion-BD/",
 	site: withTrailingSlash(siteConfig.siteUrl),
 	integrations: [icon(), sitemap()],
 	vite: {
