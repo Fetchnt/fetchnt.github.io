@@ -73,6 +73,7 @@ export interface SiteConfig {
 		/** Optional: Profile image width in pixels (default: 160) */
 		profileImageWidth?: number;
 		statusBadge?: string;
+		videoId?: string;
 	};
 	// --- Page Titles and Descriptions ---
 	pageTitles: {
