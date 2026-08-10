@@ -130,7 +130,7 @@ export function defineSiteConfig(input: SiteConfigInput): SiteConfig {
 				? { statusBadge: input.hero.statusBadge }
 				: {}),
 			...(input.hero.videoId !== undefined
-				? { statusBadge: input.hero.statusBadge}
+				? { videoId: input.hero.videoId }
 				: {}),
 		},
 		pageTitles: {
