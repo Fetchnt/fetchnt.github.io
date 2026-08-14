@@ -21,12 +21,13 @@
     - label: Repository
       href: https://github.com/Fetchnt/
 
- #-title: Multilingual Citation Miner
- # status: past
- # period: 2022 — 2023
- # description: Natural-language processing pipeline that extracts multilingual citations from PDF proceedings to improve bibliometric coverage for underrepresented venues.
- # tech:
- #   - Python
- #   - spaCy
- #   - PostgreSQL
- #
+  -title: Portafolio
+  status: active
+  period: 2026 — present
+  description: Portafolio BD sobre ejercicios dejados en clase, teniendo en cuenta lo visto en clase
+  tech:
+    - Draw.io
+  links:
+    - label: Repository
+      href: https://github.com/Fetchnt/Investigacion-DB
+ 

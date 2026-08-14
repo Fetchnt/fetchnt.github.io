@@ -14,7 +14,7 @@ sections:
     icon: i-mdi:folder-check
     items:
       - title: Modelado
-        description: Pendiente
+        description: https://github.com/Fetchnt/Investigacion-DB/tree/main/Modelado
       - title: Normalización
         description: Pendiente
       - title: SQL
