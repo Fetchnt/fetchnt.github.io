@@ -21,3 +21,8 @@ sections:
         description: Pendiente
       - title: Proyecto
         description: Pendiente
+  - title: Notebook
+    icon: i-mdi:book
+    items:
+      - title: Repositorio Notebook
+        description: https://github.com/Fetchnt/NoteBook_ICPC
