@@ -1,5 +1,5 @@
 ---
-title: Notebook IPPC
+title: Notebook ICPC
 description: Creacion del Notebook ICPC
 publishedAt: 2026-08-13
 tags:
